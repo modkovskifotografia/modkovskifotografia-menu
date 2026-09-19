@@ -1,0 +1,8 @@
+{
+  "name": "Modkovski Fotografia",
+  "description": "Proposta comercial e portfólio de fotografia e vídeos.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
