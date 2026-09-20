@@ -476,7 +476,15 @@ function ReelVideoCard({
   );
 }
 
-export default function Portfolio() {
+interface PortfolioProps {
+  eyebrow?: string;
+  title?: string;
+}
+
+export default function Portfolio({
+  eyebrow = brandConfig.portfolio.eyebrow,
+  title = brandConfig.portfolio.title,
+}: PortfolioProps = {}) {
   const [slots, setSlots] = useState<SlotItem[]>(initialSlots);
 
   useEffect(() => {
@@ -536,12 +544,16 @@ export default function Portfolio() {
         {/* Section Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 md:mb-20">
           <div className="max-w-xl">
-            <span className="text-[10px] md:text-xs font-semibold tracking-[0.3em] text-brand-wine uppercase block mb-4">
-              {brandConfig.portfolio.eyebrow}
-            </span>
-            <h2 className="text-4xl md:text-5xl font-light text-brand-text tracking-tight font-serif">
-              {brandConfig.portfolio.title}
-            </h2>
+            {eyebrow && (
+              <span className="text-[10px] md:text-xs font-semibold tracking-[0.3em] text-brand-wine uppercase block mb-4">
+                {eyebrow}
+              </span>
+            )}
+            {title && (
+              <h2 className="text-4xl md:text-5xl font-light text-brand-text tracking-tight font-serif">
+                {title}
+              </h2>
+            )}
           </div>
 
           <motion.div

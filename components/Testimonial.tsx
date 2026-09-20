@@ -20,7 +20,15 @@ const slideVariants = {
   }),
 };
 
-export default function Testimonial() {
+interface TestimonialProps {
+  eyebrow?: string;
+  title?: string;
+}
+
+export default function Testimonial({
+  eyebrow = brandConfig.testimonial.eyebrow,
+  title = brandConfig.testimonial.title,
+}: TestimonialProps = {}) {
   const testimonials = brandConfig.testimonial.items || [
     {
       id: 1,
@@ -75,13 +83,17 @@ export default function Testimonial() {
     >
       <div className="max-w-4xl mx-auto px-5 md:px-10 text-center">
         
-        <span className="text-[10px] md:text-xs font-semibold tracking-[0.3em] text-brand-wine uppercase block mb-3">
-          {brandConfig.testimonial.eyebrow}
-        </span>
+        {eyebrow && (
+          <span className="text-[10px] md:text-xs font-semibold tracking-[0.3em] text-brand-wine uppercase block mb-3">
+            {eyebrow}
+          </span>
+        )}
         
-        <h2 className="text-2xl md:text-3xl lg:text-4xl font-light text-brand-text tracking-tight font-serif mb-10 md:mb-14">
-          {brandConfig.testimonial.title}
-        </h2>
+        {title && (
+          <h2 className="text-2xl md:text-3xl lg:text-4xl font-light text-brand-text tracking-tight font-serif mb-10 md:mb-14">
+            {title}
+          </h2>
+        )}
 
         {/* Carousel Container com botões de navegação lateral */}
         <div 

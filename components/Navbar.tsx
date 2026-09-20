@@ -25,9 +25,9 @@ export default function Navbar() {
   const navLinks = [
     { name: 'Início', href: '/' },
     { name: 'Portfólio', href: '/portfolio' },
+    { name: 'Corporativo', href: '/corporativo' },
     { name: 'Casamentos', href: '/casamentos' },
     { name: 'Eventos', href: '/eventos' },
-    { name: 'Corporativo', href: '/corporativo' },
     { name: 'Personalizado', href: '/personalizado' },
     { name: 'Depoimentos', href: '/depoimentos' },
   ];

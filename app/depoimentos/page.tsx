@@ -18,19 +18,16 @@ export default function DepoimentosPage() {
       <Navbar />
       
       <div className="py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto text-center">
-        <span className="text-xs uppercase tracking-[0.25em] text-brand-wine font-medium">
-          Histórias Reais
-        </span>
         <h1 className="font-serif text-4xl md:text-5xl lg:text-6xl text-brand-text mt-3 mb-4">
-          Quem já viveu essa experiência
+          Inspire-se com as experiências dos nossos clientes.
         </h1>
         <p className="max-w-2xl mx-auto text-brand-text-soft text-sm md:text-base">
-          A maior recompensa do nosso trabalho é ver a emoção de cada cliente ao reviver seus momentos mais preciosos.
+          A maior recompensa do nosso trabalho é ver a emoção de cada cliente ao reviver seus momentos mais preciosos, e ajudar profissionais e empresas a se posicionarem com autoridade na internet.
         </p>
       </div>
 
-      <Portfolio />
-      <Testimonial />
+      <Portfolio eyebrow="Conheça histórias de quem confiou em nós." title="" />
+      <Testimonial title="Inspire-se com as experiências dos nossos clientes." />
       <FinalCTA />
       <Footer />
       <FloatingWhatsApp />

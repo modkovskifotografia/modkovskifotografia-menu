@@ -45,18 +45,18 @@ export default function BioLinksPage() {
           Fotografia e produção de vídeos
         </p>
 
-        {/* Social Icons Header: WhatsApp with plus, Instagram, and Globe with cursor - all standardized size */}
-        <div className="mb-8 flex items-center justify-center gap-3">
+        {/* Social Icons Header: WhatsApp, Instagram, and Website - dynamic hover effects with subtle rotation and scaling */}
+        <div className="mb-8 flex items-center justify-center gap-3.5">
           {/* WhatsApp Icon */}
           <a
             href={brandConfig.whatsApp.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center justify-center w-11 h-11 rounded-full bg-brand-wine text-white shadow-md hover:bg-brand-wine-dark hover:scale-110 transition-all duration-300"
+            className="group relative inline-flex items-center justify-center w-12 h-12 rounded-full bg-brand-wine text-white shadow-md hover:bg-brand-wine-dark hover:scale-110 hover:-translate-y-1 hover:shadow-[0_8px_20px_rgba(78,0,0,0.3)] transition-all duration-300 ease-out cursor-pointer"
             aria-label="WhatsApp da Modkovski Fotografia"
             title="Fale no WhatsApp"
           >
-            <MessageCircle className="w-5 h-5 text-white" />
+            <MessageCircle className="w-5 h-5 text-white transition-transform duration-300 ease-out group-hover:scale-115 group-hover:rotate-12" />
           </a>
 
           {/* Instagram Icon */}
@@ -64,11 +64,11 @@ export default function BioLinksPage() {
             href={brandConfig.instagram.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center justify-center w-11 h-11 rounded-full bg-brand-wine text-white shadow-md hover:bg-brand-wine-dark hover:scale-110 transition-all duration-300"
+            className="group relative inline-flex items-center justify-center w-12 h-12 rounded-full bg-brand-wine text-white shadow-md hover:bg-brand-wine-dark hover:scale-110 hover:-translate-y-1 hover:shadow-[0_8px_20px_rgba(78,0,0,0.3)] transition-all duration-300 ease-out cursor-pointer"
             aria-label="Instagram da Modkovski Fotografia"
             title="Visite o Instagram"
           >
-            <Instagram className="w-5 h-5 text-white" />
+            <Instagram className="w-5 h-5 text-white transition-transform duration-300 ease-out group-hover:scale-115 group-hover:-rotate-12" />
           </a>
 
           {/* Website Globe with Cursor Icon */}
@@ -76,12 +76,12 @@ export default function BioLinksPage() {
             href="https://www.modkovskifotografia.com.br"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center justify-center w-11 h-11 rounded-full bg-brand-wine text-white shadow-md hover:bg-brand-wine-dark hover:scale-110 transition-all duration-300 relative group"
+            className="group relative inline-flex items-center justify-center w-12 h-12 rounded-full bg-brand-wine text-white shadow-md hover:bg-brand-wine-dark hover:scale-110 hover:-translate-y-1 hover:shadow-[0_8px_20px_rgba(78,0,0,0.3)] transition-all duration-300 ease-out cursor-pointer"
             title="Visitar site oficial www.modkovskifotografia.com.br"
             aria-label="Visitar site oficial"
           >
-            <Globe className="w-5 h-5 text-white" />
-            <span className="absolute bottom-1 right-1 text-[10px] select-none bg-brand-wine rounded-full p-0.5">🖱️</span>
+            <Globe className="w-5 h-5 text-white transition-transform duration-300 ease-out group-hover:scale-115 group-hover:rotate-[18deg]" />
+            <span className="absolute bottom-1 right-1 text-[10px] select-none bg-brand-wine rounded-full p-0.5 transition-transform duration-300 ease-out group-hover:scale-110 group-hover:translate-x-0.5">🖱️</span>
           </a>
         </div>
 
