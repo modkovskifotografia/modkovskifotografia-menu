@@ -73,7 +73,22 @@ export async function fetchProposalBySlug(
     } catch {}
   }
 
-  return null;
+  // Fallback: Always return a valid personalized proposal based on template if not found in DB/localStorage
+  const template = STANDARD_TEMPLATES[cleanCategory as ProposalCategory] || STANDARD_TEMPLATES['individual'];
+  const formattedName = cleanSlug
+    .split('-')
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+
+  return {
+    ...template,
+    id: `dynamic-${cleanCategory}-${cleanSlug}`,
+    category: (cleanCategory as ProposalCategory) || 'individual',
+    clientName: formattedName || 'Cliente',
+    clientSlug: cleanSlug,
+    isTemplate: false,
+    welcomeMessage: `Olá ${formattedName || 'Cliente'}! Foi um prazer conversar com você. Esta proposta foi desenhada especialmente para registrar os seus momentos com sensibilidade e elegância.`,
+  };
 }
 
 export async function saveProposalAction(proposal: Proposal): Promise<Proposal> {
@@ -100,20 +115,25 @@ export async function saveProposalAction(proposal: Proposal): Promise<Proposal> 
   return proposal;
 }
 
-export async function deleteProposalAction(id: string): Promise<boolean> {
+export async function deleteProposalAction(id: string, category?: string, clientSlug?: string): Promise<boolean> {
   try {
-    const res = await fetch(`/api/propostas?id=${id}`, {
+    const query = new URLSearchParams();
+    if (id) query.set('id', id);
+    if (category) query.set('category', category);
+    if (clientSlug) query.set('slug', clientSlug);
+
+    const res = await fetch(`/api/propostas?${query.toString()}`, {
       method: 'DELETE',
     });
     if (res.ok) {
-      deleteFromLocalCache(id);
+      deleteFromLocalCache(id, category, clientSlug);
       return true;
     }
   } catch (err) {
     console.warn('Error deleting proposal from API:', err);
   }
 
-  deleteFromLocalCache(id);
+  deleteFromLocalCache(id, category, clientSlug);
   return true;
 }
 
@@ -132,13 +152,17 @@ function updateLocalCache(proposal: Proposal) {
   } catch {}
 }
 
-function deleteFromLocalCache(id: string) {
+function deleteFromLocalCache(id: string, category?: string, clientSlug?: string) {
   if (typeof window === 'undefined') return;
   try {
     const cached = localStorage.getItem(STORAGE_KEY);
     if (cached) {
       let list: Proposal[] = JSON.parse(cached);
-      list = list.filter((p) => p.id !== id);
+      list = list.filter((p) => {
+        if (p.id === id) return false;
+        if (category && clientSlug && p.category === category && p.clientSlug.toLowerCase() === clientSlug.toLowerCase()) return false;
+        return true;
+      });
       localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
     }
   } catch {}

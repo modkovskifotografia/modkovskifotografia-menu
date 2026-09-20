@@ -361,13 +361,13 @@ export default function ProposalManager() {
   };
 
   // Delete proposal
-  const handleDeleteProposal = async (id: string, clientName: string) => {
+  const handleDeleteProposal = async (id: string, category: string, clientSlug: string, clientName: string) => {
     const confirmed = window.confirm(
       `Deseja realmente apagar a proposta de "${clientName}"?\n\nApós apagar, o link deixará de existir imediatamente para o cliente.`
     );
     if (confirmed) {
-      await deleteProposalAction(id);
-      setProposals((prev) => prev.filter((p) => p.id !== id));
+      await deleteProposalAction(id, category, clientSlug);
+      setProposals((prev) => prev.filter((p) => p.id !== id && !(p.category === category && p.clientSlug === clientSlug)));
     }
   };
 
@@ -847,7 +847,7 @@ export default function ProposalManager() {
 
                       {/* Excluir */}
                       <button
-                        onClick={() => handleDeleteProposal(p.id, p.clientName)}
+                        onClick={() => handleDeleteProposal(p.id, p.category, p.clientSlug, p.clientName)}
                         className="p-1.5 rounded-xl border border-red-200 text-red-600 hover:bg-red-50 transition-colors"
                         title="Apagar proposta (não aparecerá mais para o cliente)"
                       >

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
-import { Proposal, STANDARD_TEMPLATES } from '@/lib/propostas';
+import { Proposal, ProposalCategory, STANDARD_TEMPLATES } from '@/lib/propostas';
 
 const DATA_FILE = path.join(process.cwd(), 'data', 'propostas.json');
 
@@ -57,13 +57,37 @@ export async function GET(req: NextRequest) {
 
   if (category && slug) {
     const cleanSlug = slug.toLowerCase().trim();
-    const found = list.find(
+    let found = list.find(
       (p) => p.category === category && p.clientSlug.toLowerCase() === cleanSlug
     );
+    if (!found) {
+      // try partial match or startsWith
+      found = list.find(
+        (p) => p.category === category && (p.clientSlug.toLowerCase().includes(cleanSlug) || cleanSlug.includes(p.clientSlug.toLowerCase()))
+      );
+    }
     if (found) {
       return NextResponse.json({ success: true, proposal: found });
     }
-    return NextResponse.json({ success: false, message: 'Proposta não encontrada' }, { status: 404 });
+    
+    // Fallback: Return a dynamic proposal based on STANDARD_TEMPLATES
+    const template = (STANDARD_TEMPLATES as Record<string, Proposal>)[category] || STANDARD_TEMPLATES['individual'];
+    const formattedName = cleanSlug
+      .split('-')
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+
+    const dynamicProposal: Proposal = {
+      ...template,
+      id: `dynamic-${category}-${cleanSlug}`,
+      category: (category as ProposalCategory) || 'individual',
+      clientName: formattedName || 'Cliente',
+      clientSlug: cleanSlug,
+      isTemplate: false,
+      welcomeMessage: `Olá ${formattedName || 'Cliente'}! Foi um prazer conversar com você. Esta proposta foi desenhada especialmente para registrar os seus momentos com sensibilidade e elegância.`,
+    };
+
+    return NextResponse.json({ success: true, proposal: dynamicProposal });
   }
 
   return NextResponse.json({ success: true, proposals: list });
@@ -120,12 +144,12 @@ export async function DELETE(req: NextRequest) {
 
     let list = ensureDataFile();
 
-    if (id) {
-      list = list.filter((p) => p.id !== id);
-    } else if (category && slug) {
-      list = list.filter(
-        (p) => !(p.category === category && p.clientSlug.toLowerCase() === slug.toLowerCase())
-      );
+    if (id || (category && slug)) {
+      list = list.filter((p) => {
+        if (id && p.id === id) return false;
+        if (category && slug && p.category === category && p.clientSlug.toLowerCase() === slug.toLowerCase()) return false;
+        return true;
+      });
     } else {
       return NextResponse.json(
         { success: false, message: 'Informe o ID ou a Categoria e o Slug para excluir' },
