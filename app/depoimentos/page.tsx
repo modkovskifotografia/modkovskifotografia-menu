@@ -2,6 +2,7 @@ import React from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import FloatingWhatsApp from '@/components/FloatingWhatsApp';
+import Portfolio from '@/components/Portfolio';
 import Testimonial from '@/components/Testimonial';
 import FinalCTA from '@/components/FinalCTA';
 import { brandConfig } from '@/lib/config';
@@ -28,6 +29,7 @@ export default function DepoimentosPage() {
         </p>
       </div>
 
+      <Portfolio />
       <Testimonial />
       <FinalCTA />
       <Footer />
