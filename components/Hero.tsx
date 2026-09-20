@@ -7,7 +7,17 @@ import { Camera, Video } from 'lucide-react';
 import { brandConfig } from '@/lib/config';
 import Logo from './Logo';
 
-export default function Hero() {
+interface HeroProps {
+  fotoTargetId?: string;
+  videoTargetId?: string;
+  videoButtonWine?: boolean;
+}
+
+export default function Hero({
+  fotoTargetId = 'experiencias-sec-1',
+  videoTargetId = 'experiencias-sec-2',
+  videoButtonWine = false,
+}: HeroProps = {}) {
   const [imageSrc, setImageSrc] = useState(brandConfig.hero.image);
 
   const handleImageError = () => {
@@ -15,7 +25,14 @@ export default function Hero() {
   };
 
   const scrollToSection = (id: string) => {
-    const el = document.getElementById(id);
+    let el = document.getElementById(id);
+    if (!el) {
+      if (id === 'experiencias-sec-1' || id === 'ensaio-fotografico') {
+        el = document.getElementById('ensaio-fotografico') || document.getElementById('orcamento-personalizado') || document.getElementById('experiencias-sec-1');
+      } else if (id === 'experiencias-sec-2' || id === 'producao-de-video') {
+        el = document.getElementById('producao-de-video') || document.getElementById('experiencias-sec-2');
+      }
+    }
     if (el) {
       el.scrollIntoView({ behavior: 'smooth' });
     }
@@ -69,7 +86,7 @@ export default function Hero() {
             >
               <motion.button
                 whileTap={{ scale: 0.98 }}
-                onClick={() => scrollToSection('experiencias-sec-1')}
+                onClick={() => scrollToSection(fotoTargetId)}
                 className="flex items-center justify-center gap-2 bg-brand-wine text-white hover:bg-brand-wine-dark py-4 px-6 rounded-full text-xs font-semibold tracking-[0.15em] uppercase transition-all duration-300 shadow-sm cursor-pointer active:scale-[0.98]"
                 id="hero-btn-prop-foto"
               >
@@ -79,8 +96,12 @@ export default function Hero() {
 
               <motion.button
                 whileTap={{ scale: 0.98 }}
-                onClick={() => scrollToSection('experiencias-sec-2')}
-                className="flex items-center justify-center gap-2 bg-white text-brand-wine border border-brand-wine/20 hover:bg-brand-wine hover:text-white py-4 px-6 rounded-full text-xs font-semibold tracking-[0.15em] uppercase transition-all duration-300 shadow-sm cursor-pointer active:scale-[0.98]"
+                onClick={() => scrollToSection(videoTargetId)}
+                className={`flex items-center justify-center gap-2 py-4 px-6 rounded-full text-xs font-semibold tracking-[0.15em] uppercase transition-all duration-300 shadow-sm cursor-pointer active:scale-[0.98] ${
+                  videoButtonWine
+                    ? 'bg-brand-wine text-white hover:bg-brand-wine-dark'
+                    : 'bg-white text-brand-wine border border-brand-wine/20 hover:bg-brand-wine hover:text-white'
+                }`}
                 id="hero-btn-prop-video"
               >
                 <Video className="w-4 h-4 shrink-0" strokeWidth={1.8} />

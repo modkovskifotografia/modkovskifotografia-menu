@@ -1,9 +1,10 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
+import Link from 'next/link';
 import { motion, AnimatePresence } from 'motion/react';
 import { brandConfig } from '@/lib/config';
-import { Quote, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Quote, ChevronLeft, ChevronRight, ArrowRight } from 'lucide-react';
 
 const slideVariants = {
   enter: (direction: number) => ({
@@ -23,11 +24,15 @@ const slideVariants = {
 interface TestimonialProps {
   eyebrow?: string;
   title?: string;
+  showMoreButton?: boolean;
+  buttonWine?: boolean;
 }
 
 export default function Testimonial({
   eyebrow = brandConfig.testimonial.eyebrow,
   title = brandConfig.testimonial.title,
+  showMoreButton = true,
+  buttonWine = true,
 }: TestimonialProps = {}) {
   const testimonials = brandConfig.testimonial.items || [
     {
@@ -210,6 +215,24 @@ export default function Testimonial({
         <div className="mt-3 text-[10px] tracking-[0.2em] uppercase font-semibold text-brand-wine/60">
           0{currentIndex + 1} / 0{total}
         </div>
+
+        {/* Botão Veja mais Depoimentos */}
+        {showMoreButton && (
+          <div className="mt-8 pt-4 flex justify-center">
+            <Link
+              href="/depoimentos"
+              className={`inline-flex items-center gap-2.5 px-7 py-3.5 rounded-full transition-all duration-300 text-xs font-semibold tracking-widest uppercase shadow-xs hover:shadow-md cursor-pointer hover:-translate-y-0.5 active:scale-[0.98] ${
+                buttonWine
+                  ? 'bg-brand-wine text-white hover:bg-brand-wine-dark'
+                  : 'border border-brand-wine/30 bg-white/60 hover:bg-brand-wine text-brand-wine hover:text-white'
+              }`}
+              id="btn-veja-mais-depoimentos"
+            >
+              <span>Veja mais Depoimentos</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+          </div>
+        )}
 
       </div>
     </section>

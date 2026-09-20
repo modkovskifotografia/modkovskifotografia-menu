@@ -12,7 +12,7 @@ interface AuthConfig {
 
 const DEFAULT_AUTH: AuthConfig = {
   username: 'alessandra',
-  passwordHash: 'alessandra',
+  passwordHash: 'modkovski2026',
   allowedEmails: ['alemodkovskifotografia@gmail.com', 'alessandra'],
 };
 

@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { motion } from 'motion/react';
 import { brandConfig } from '@/lib/config';
 import {
@@ -479,11 +480,15 @@ function ReelVideoCard({
 interface PortfolioProps {
   eyebrow?: string;
   title?: string;
+  limitSlots?: number;
+  showViewMoreButton?: boolean;
 }
 
 export default function Portfolio({
   eyebrow = brandConfig.portfolio.eyebrow,
   title = brandConfig.portfolio.title,
+  limitSlots,
+  showViewMoreButton = false,
 }: PortfolioProps = {}) {
   const [slots, setSlots] = useState<SlotItem[]>(initialSlots);
 
@@ -575,9 +580,9 @@ export default function Portfolio({
           </motion.div>
         </div>
 
-        {/* Portfolio Grid: 6 items in Instagram Reels ratio 9:16 (3 columns on desktop, 2 rows) */}
+        {/* Portfolio Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-center justify-center">
-          {slots.map((slot, index) =>
+          {(limitSlots ? slots.slice(0, limitSlots) : slots).map((slot, index) =>
             slot.type === 'video' ? (
               <ReelVideoCard
                 key={slot.id}
@@ -613,6 +618,19 @@ export default function Portfolio({
             )
           )}
         </div>
+
+        {/* Botão Veja mais do meu trabalho para /portfolio */}
+        {showViewMoreButton && (
+          <div className="mt-12 md:mt-16 text-center">
+            <Link
+              href="/portfolio"
+              className="inline-flex items-center justify-center gap-2.5 px-8 py-4 rounded-full bg-brand-wine text-white text-xs font-semibold uppercase tracking-widest hover:bg-brand-wine-dark transition-all duration-300 shadow-md hover:shadow-lg hover:-translate-y-0.5"
+              id="portfolio-view-more-work"
+            >
+              <span>veja mais do meu trabalho</span>
+            </Link>
+          </div>
+        )}
       </div>
     </section>
   );

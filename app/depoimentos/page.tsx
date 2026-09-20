@@ -27,7 +27,7 @@ export default function DepoimentosPage() {
       </div>
 
       <Portfolio eyebrow="Conheça histórias de quem confiou em nós." title="" />
-      <Testimonial title="Inspire-se com as experiências dos nossos clientes." />
+      <Testimonial title="Inspire-se com as experiências dos nossos clientes." showMoreButton={false} />
       <FinalCTA />
       <Footer />
       <FloatingWhatsApp />

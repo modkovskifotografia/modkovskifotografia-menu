@@ -27,7 +27,9 @@ import {
   Eye,
   EyeOff,
   LogOut,
-  User
+  User,
+  Camera,
+  Video
 } from 'lucide-react';
 import { 
   Proposal, 
@@ -156,6 +158,126 @@ export default function ProposalManager() {
     }
   };
 
+  const renderChangePasswordModal = () => (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/50 backdrop-blur-sm">
+      <div className="bg-white w-full max-w-md rounded-3xl p-6 sm:p-8 shadow-2xl border border-brand-wine/20 text-left">
+        
+        <div className="flex items-center justify-between pb-3 mb-5 border-b border-brand-wine/10">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-full bg-brand-wine/10 text-brand-wine flex items-center justify-center">
+              <KeyRound className="w-4 h-4" />
+            </div>
+            <h3 className="font-serif text-xl text-brand-text font-bold">
+              Alterar Senha de Acesso
+            </h3>
+          </div>
+          <button
+            onClick={() => {
+              setIsChangePasswordOpen(false);
+              setChangePasswordError('');
+              setChangePasswordSuccess('');
+            }}
+            className="text-brand-text-soft hover:text-brand-wine text-sm font-semibold p-1"
+          >
+            ✕
+          </button>
+        </div>
+
+        <form onSubmit={handleChangePassword} className="space-y-4">
+          <div>
+            <label className="block text-xs font-bold uppercase tracking-wider text-brand-text mb-1">
+              Senha Atual *
+            </label>
+            <input
+              type="password"
+              required
+              placeholder="Digite a senha atual"
+              value={currentPassword}
+              onChange={(e) => {
+                setCurrentPassword(e.target.value);
+                setChangePasswordError('');
+              }}
+              className="w-full px-4 py-2.5 rounded-xl border border-brand-wine/20 text-sm focus:outline-none focus:ring-2 focus:ring-brand-wine/30"
+            />
+            <p className="text-[10px] text-brand-text-soft mt-1">
+              Dica: a senha atual é <span className="font-mono text-brand-wine font-semibold">modkovski2026</span> (ou <span className="font-mono text-brand-wine font-semibold">alessandra</span>)
+            </p>
+          </div>
+
+          <div>
+            <label className="block text-xs font-bold uppercase tracking-wider text-brand-text mb-1">
+              Nova Senha * (mínimo 4 caracteres)
+            </label>
+            <input
+              type="password"
+              required
+              minLength={4}
+              placeholder="Digite a nova senha"
+              value={newPassword}
+              onChange={(e) => {
+                setNewPassword(e.target.value);
+                setChangePasswordError('');
+              }}
+              className="w-full px-4 py-2.5 rounded-xl border border-brand-wine/20 text-sm focus:outline-none focus:ring-2 focus:ring-brand-wine/30"
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs font-bold uppercase tracking-wider text-brand-text mb-1">
+              Confirmar Nova Senha *
+            </label>
+            <input
+              type="password"
+              required
+              placeholder="Repita a nova senha"
+              value={confirmPassword}
+              onChange={(e) => {
+                setConfirmPassword(e.target.value);
+                setChangePasswordError('');
+              }}
+              className="w-full px-4 py-2.5 rounded-xl border border-brand-wine/20 text-sm focus:outline-none focus:ring-2 focus:ring-brand-wine/30"
+            />
+          </div>
+
+          {changePasswordError && (
+            <div className="bg-red-50 border border-red-200 text-red-700 text-xs px-3.5 py-2.5 rounded-xl flex items-center gap-2">
+              <AlertCircle className="w-4 h-4 shrink-0 text-red-500" />
+              <span>{changePasswordError}</span>
+            </div>
+          )}
+
+          {changePasswordSuccess && (
+            <div className="bg-green-50 border border-green-200 text-green-800 text-xs px-3.5 py-2.5 rounded-xl flex items-center gap-2">
+              <CheckCircle2 className="w-4 h-4 shrink-0 text-green-600" />
+              <span>{changePasswordSuccess}</span>
+            </div>
+          )}
+
+          <div className="pt-3 border-t border-brand-wine/10 flex items-center justify-end gap-3">
+            <button
+              type="button"
+              onClick={() => setIsChangePasswordOpen(false)}
+              className="px-4 py-2 rounded-full border border-brand-wine/20 text-xs font-medium text-brand-text hover:bg-brand-wine/5"
+            >
+              Cancelar
+            </button>
+
+            <button
+              type="submit"
+              disabled={changePasswordLoading}
+              className="px-5 py-2 rounded-full bg-brand-wine text-white text-xs font-semibold uppercase tracking-wider hover:bg-brand-wine-dark transition-all shadow-md flex items-center gap-2 disabled:opacity-50"
+            >
+              <KeyRound className="w-3.5 h-3.5" />
+              {changePasswordLoading ? 'Salvando...' : 'Salvar Nova Senha'}
+            </button>
+          </div>
+
+        </form>
+
+      </div>
+    </div>
+  );
+
   const handleChangePassword = async (e: React.FormEvent) => {
     e.preventDefault();
     setChangePasswordError('');
@@ -186,13 +308,14 @@ export default function ProposalManager() {
       const data = await res.json();
       if (res.ok && data.success) {
         setChangePasswordSuccess('Senha alterada com sucesso!');
+        setLoginPassword(newPassword);
         setCurrentPassword('');
         setNewPassword('');
         setConfirmPassword('');
         setTimeout(() => {
           setIsChangePasswordOpen(false);
           setChangePasswordSuccess('');
-        }, 2000);
+        }, 1800);
       } else {
         setChangePasswordError(data.message || 'Erro ao alterar a senha.');
       }
@@ -214,14 +337,26 @@ export default function ProposalManager() {
       createdAt: new Date().toISOString(),
       isTemplate: false,
       packages: JSON.parse(JSON.stringify(template.packages)), // deep clone
+      videoPackages: template.videoPackages 
+        ? JSON.parse(JSON.stringify(template.videoPackages))
+        : (cat === 'individual' && STANDARD_TEMPLATES.individual.videoPackages
+            ? JSON.parse(JSON.stringify(STANDARD_TEMPLATES.individual.videoPackages))
+            : undefined),
     };
+    if (cat === 'individual') {
+      newProposal.welcomeMessage = 'Meu objetivo é transformar o nosso ensaio em um momento leve e divertido. Vou te guiar em cada passo para que a timidez vá embora e você se sinta em casa logo no primeiro clique.';
+    }
     setEditingProposal(newProposal);
     setIsModalOpen(true);
   };
 
   // Open edit modal for existing proposal
   const handleEditProposal = (p: Proposal) => {
-    setEditingProposal(JSON.parse(JSON.stringify(p)));
+    const cloned: Proposal = JSON.parse(JSON.stringify(p));
+    if (cloned.category === 'individual' && (!cloned.videoPackages || cloned.videoPackages.length === 0)) {
+      cloned.videoPackages = JSON.parse(JSON.stringify(STANDARD_TEMPLATES.individual.videoPackages || []));
+    }
+    setEditingProposal(cloned);
     setIsModalOpen(true);
   };
 
@@ -239,7 +374,7 @@ export default function ProposalManager() {
   // Copy full URL to clipboard
   const handleCopyLink = (p: Proposal) => {
     if (typeof window === 'undefined') return;
-    const origin = window.location.origin;
+    const origin = 'https://www.modkovskifotografia.com.br';
     const fullUrl = `${origin}/${p.category}/${p.clientSlug}`;
     navigator.clipboard.writeText(fullUrl);
     setCopiedId(p.id);
@@ -248,7 +383,7 @@ export default function ProposalManager() {
 
   // Generate WhatsApp sending URL
   const getWhatsAppSendUrl = (p: Proposal) => {
-    const origin = typeof window !== 'undefined' ? window.location.origin : 'https://www.modkovskifotografia.com.br';
+    const origin = 'https://www.modkovskifotografia.com.br';
     const fullUrl = `${origin}/${p.category}/${p.clientSlug}`;
     const text = `Olá ${p.clientName}! Preparei a sua proposta personalizada com muito carinho. Você pode conferir os detalhes e opções de investimento neste link exclusivo:\n\n${fullUrl}\n\nFique à vontade para olhar e tirar qualquer dúvida comigo! ✨`;
     return `https://wa.me/?text=${encodeURIComponent(text)}`;
@@ -384,15 +519,33 @@ export default function ProposalManager() {
             </button>
           </form>
 
-          <div className="mt-6 pt-4 border-t border-brand-wine/10 text-center flex flex-col gap-2">
-            <span className="text-[11px] text-brand-text-soft">
-              Senha padrão inicial: <span className="font-mono font-bold text-brand-wine">alessandra</span>
-            </span>
-            <Link href="/" className="text-xs text-brand-wine hover:underline">
-              ← Voltar para a Página Inicial
+          <div className="mt-5 pt-4 border-t border-brand-wine/10 flex items-center justify-between gap-2">
+            <button
+              type="button"
+              onClick={() => {
+                setIsChangePasswordOpen(true);
+                setChangePasswordError('');
+                setChangePasswordSuccess('');
+              }}
+              className="inline-flex items-center gap-1.5 text-xs text-brand-wine hover:text-brand-wine-dark font-medium transition-colors"
+            >
+              <KeyRound className="w-3.5 h-3.5" />
+              <span>Alterar Senha</span>
+            </button>
+            <Link href="/" className="text-xs text-brand-text-soft hover:text-brand-wine transition-colors">
+              ← Página Inicial
             </Link>
           </div>
+
+          <div className="mt-3 text-center">
+            <span className="text-[11px] text-brand-text-soft">
+              Senha atual do painel: <span className="font-mono font-bold text-brand-wine">modkovski2026</span>
+            </span>
+          </div>
         </div>
+
+        {/* Modal para alterar senha na tela de login */}
+        {isChangePasswordOpen && renderChangePasswordModal()}
       </main>
     );
   }
@@ -527,7 +680,11 @@ export default function ProposalManager() {
 
                     <div className="text-[11px] text-brand-text-soft/80 mb-5 flex items-center gap-1.5">
                       <Sparkles className="w-3.5 h-3.5 text-brand-wine" />
-                      <span>{tmpl.packages.length} pacote(s) configurado(s)</span>
+                      <span>
+                        {tmpl.videoPackages && tmpl.videoPackages.length > 0
+                          ? `${tmpl.packages.length} opções foto + ${tmpl.videoPackages.length} opções vídeo`
+                          : `${tmpl.packages.length} pacote(s) configurado(s)`}
+                      </span>
                     </div>
                   </div>
 
@@ -809,82 +966,502 @@ export default function ProposalManager() {
                 </div>
               </div>
 
-              {/* Packages Section */}
-              <div className="pt-4 border-t border-brand-wine/10">
-                <div className="flex items-center justify-between mb-4">
-                  <div>
-                    <h4 className="font-serif text-lg text-brand-text font-semibold">
-                      Pacotes de Investimento
-                    </h4>
-                    <p className="text-xs text-brand-text-soft">
-                      Ajuste os valores, condições e itens que serão exibidos nesta proposta.
-                    </p>
+              {/* Packages Section: Organized exclusively for Individual Proposal, or generic for others */}
+              {editingProposal.category === 'individual' ? (
+                <>
+                  {/* 1. Opções de Ensaio Fotográfico */}
+                  <div className="pt-4 border-t border-brand-wine/10" id="section-modal-foto">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <Camera className="w-4 h-4 text-brand-wine" />
+                          <h4 className="font-serif text-lg text-brand-text font-semibold">
+                            1. Ensaio Fotográfico (Proposta Fotográfica)
+                          </h4>
+                          <span className="text-[10px] bg-brand-wine/10 text-brand-wine px-2 py-0.5 rounded-full font-bold">
+                            {editingProposal.packages.length} opções
+                          </span>
+                        </div>
+                        <p className="text-xs text-brand-text-soft mt-0.5">
+                          4 opções de ensaio fotográfico (Essencial, Clássico, Especial e Completo). Você pode editar valores, itens, adicionar mais opções ou excluir.
+                        </p>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setEditingProposal((prev) => {
+                            if (!prev) return null;
+                            const nextNum = prev.packages.length + 1;
+                            const newPkg: ProposalPackage = {
+                              id: `ind-foto-${Date.now()}`,
+                              name: `Ensaio Opção 0${nextNum}`,
+                              price: 'R$ 450',
+                              paymentMethod: 'Pix',
+                              duration: 'Duração de até 01 hora',
+                              features: [
+                                '20 fotos selecionadas e tratadas',
+                                '01 vídeo brinde Making Of',
+                                'Galeria online privada para download',
+                                'Prazo de entrega em até 15 dias úteis',
+                                'Foto extra R$ 20,00'
+                              ],
+                              highlight: false,
+                            };
+                            return {
+                              ...prev,
+                              packages: [...prev.packages, newPkg]
+                            };
+                          });
+                        }}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-brand-wine/10 text-brand-wine text-xs font-semibold hover:bg-brand-wine hover:text-white transition-colors self-start sm:self-auto shrink-0 cursor-pointer"
+                        id="btn-add-foto-option"
+                      >
+                        <Plus className="w-3.5 h-3.5" /> Adicionar Opção de Foto
+                      </button>
+                    </div>
+
+                    <div className="space-y-4">
+                      {editingProposal.packages.map((pkg, pIdx) => (
+                        <div
+                          key={pkg.id || pIdx}
+                          className="bg-brand-cream/30 p-4 rounded-2xl border border-brand-wine/15 space-y-3"
+                          id={`modal-foto-pkg-${pIdx}`}
+                        >
+                          <div className="flex items-center justify-between gap-3 flex-wrap sm:flex-nowrap">
+                            <div className="flex items-center gap-2 shrink-0">
+                              <span className="text-[11px] font-mono font-bold px-2 py-1 rounded-md bg-brand-wine text-white">
+                                Opção 0{pIdx + 1}
+                              </span>
+                            </div>
+
+                            <div className="flex items-center gap-3 flex-1 min-w-[200px]">
+                              <input
+                                type="text"
+                                value={pkg.name}
+                                onChange={(e) => {
+                                  const val = e.target.value;
+                                  setEditingProposal((prev) => {
+                                    if (!prev) return null;
+                                    const pkgs = [...prev.packages];
+                                    pkgs[pIdx].name = val;
+                                    return { ...prev, packages: pkgs };
+                                  });
+                                }}
+                                className="font-serif font-bold text-base text-brand-text bg-white px-3 py-1.5 rounded-lg border border-brand-wine/20 flex-1"
+                                placeholder="Nome do Ensaio"
+                              />
+
+                              <input
+                                type="text"
+                                value={pkg.price}
+                                onChange={(e) => {
+                                  const val = e.target.value;
+                                  setEditingProposal((prev) => {
+                                    if (!prev) return null;
+                                    const pkgs = [...prev.packages];
+                                    pkgs[pIdx].price = val;
+                                    return { ...prev, packages: pkgs };
+                                  });
+                                }}
+                                className="font-bold text-brand-wine text-sm bg-white px-3 py-1.5 rounded-lg border border-brand-wine/20 w-32"
+                                placeholder="Preço (Ex: R$ 350)"
+                              />
+                            </div>
+
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setEditingProposal((prev) => {
+                                  if (!prev) return null;
+                                  return {
+                                    ...prev,
+                                    packages: prev.packages.filter((_, i) => i !== pIdx)
+                                  };
+                                });
+                              }}
+                              className="text-red-500 hover:text-red-700 p-1.5 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
+                              title="Excluir opção de foto"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </div>
+
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div>
+                              <label className="block text-[10px] uppercase font-bold text-brand-text-soft mb-1">
+                                Duração / Horas
+                              </label>
+                              <input
+                                type="text"
+                                value={pkg.duration}
+                                onChange={(e) => {
+                                  const val = e.target.value;
+                                  setEditingProposal((prev) => {
+                                    if (!prev) return null;
+                                    const pkgs = [...prev.packages];
+                                    pkgs[pIdx].duration = val;
+                                    return { ...prev, packages: pkgs };
+                                  });
+                                }}
+                                className="w-full text-xs bg-white px-3 py-1.5 rounded-lg border border-brand-wine/20"
+                                placeholder="Ex: Duração de até 01 hora"
+                              />
+                            </div>
+
+                            <div>
+                              <label className="block text-[10px] uppercase font-bold text-brand-text-soft mb-1">
+                                Forma de Pagamento
+                              </label>
+                              <input
+                                type="text"
+                                value={pkg.paymentMethod}
+                                onChange={(e) => {
+                                  const val = e.target.value;
+                                  setEditingProposal((prev) => {
+                                    if (!prev) return null;
+                                    const pkgs = [...prev.packages];
+                                    pkgs[pIdx].paymentMethod = val;
+                                    return { ...prev, packages: pkgs };
+                                  });
+                                }}
+                                className="w-full text-xs bg-white px-3 py-1.5 rounded-lg border border-brand-wine/20"
+                                placeholder="Ex: Pix ou Cartão em até 12x"
+                              />
+                            </div>
+                          </div>
+
+                          {/* Features list */}
+                          <div>
+                            <label className="block text-[10px] uppercase font-bold text-brand-text-soft mb-1">
+                              Itens Inclusos (um por linha)
+                            </label>
+                            <textarea
+                              rows={3}
+                              value={pkg.features.join('\n')}
+                              onChange={(e) => {
+                                const lines = e.target.value.split('\n');
+                                setEditingProposal((prev) => {
+                                  if (!prev) return null;
+                                  const pkgs = [...prev.packages];
+                                  pkgs[pIdx].features = lines;
+                                  return { ...prev, packages: pkgs };
+                                });
+                              }}
+                              className="w-full text-xs bg-white px-3 py-2 rounded-lg border border-brand-wine/20 font-sans leading-relaxed"
+                              placeholder="Digite um item por linha"
+                            />
+                          </div>
+
+                          <div className="flex items-center gap-2">
+                            <label className="flex items-center gap-2 text-xs text-brand-text cursor-pointer">
+                              <input
+                                type="checkbox"
+                                checked={pkg.highlight || false}
+                                onChange={(e) => {
+                                  const isHigh = e.target.checked;
+                                  setEditingProposal((prev) => {
+                                    if (!prev) return null;
+                                    const pkgs = [...prev.packages];
+                                    pkgs[pIdx].highlight = isHigh;
+                                    return { ...prev, packages: pkgs };
+                                  });
+                                }}
+                                className="rounded text-brand-wine focus:ring-brand-wine"
+                              />
+                              <span>Destacar como &ldquo;Mais Escolhido / Recomendado&rdquo;</span>
+                            </label>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
                   </div>
 
-                  <button
-                    type="button"
-                    onClick={() => {
-                      const newPkg: ProposalPackage = {
-                        id: `pkg-${Date.now()}`,
-                        name: 'Novo Pacote',
-                        price: 'R$ 400',
-                        paymentMethod: 'Pix ou Cartão',
-                        duration: 'Até 1h de sessão',
-                        features: ['15 fotos tratadas em alta resolução', 'Galeria online privada'],
-                      };
-                      setEditingProposal((prev) => prev ? {
-                        ...prev,
-                        packages: [...prev.packages, newPkg]
-                      } : null);
-                    }}
-                    className="inline-flex items-center gap-1 text-xs text-brand-wine font-semibold hover:underline"
-                  >
-                    <Plus className="w-3.5 h-3.5" /> Adicionar Pacote
-                  </button>
-                </div>
-
-                <div className="space-y-4">
-                  {editingProposal.packages.map((pkg, pIdx) => (
-                    <div
-                      key={pkg.id || pIdx}
-                      className="bg-brand-cream/30 p-4 rounded-2xl border border-brand-wine/15 space-y-3"
-                    >
-                      <div className="flex items-center justify-between gap-3">
-                        <div className="flex items-center gap-3 flex-1">
-                          <input
-                            type="text"
-                            value={pkg.name}
-                            onChange={(e) => {
-                              const val = e.target.value;
-                              setEditingProposal((prev) => {
-                                if (!prev) return null;
-                                const pkgs = [...prev.packages];
-                                pkgs[pIdx].name = val;
-                                return { ...prev, packages: pkgs };
-                              });
-                            }}
-                            className="font-serif font-bold text-base text-brand-text bg-white px-3 py-1.5 rounded-lg border border-brand-wine/20 flex-1"
-                            placeholder="Nome do Pacote"
-                          />
-
-                          <input
-                            type="text"
-                            value={pkg.price}
-                            onChange={(e) => {
-                              const val = e.target.value;
-                              setEditingProposal((prev) => {
-                                if (!prev) return null;
-                                const pkgs = [...prev.packages];
-                                pkgs[pIdx].price = val;
-                                return { ...prev, packages: pkgs };
-                              });
-                            }}
-                            className="font-bold text-brand-wine text-sm bg-white px-3 py-1.5 rounded-lg border border-brand-wine/20 w-32"
-                            placeholder="Preço (Ex: R$ 350)"
-                          />
+                  {/* 2. Opções de Produção de Vídeo */}
+                  <div className="pt-6 border-t border-brand-wine/10" id="section-modal-video">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <Video className="w-4 h-4 text-brand-wine" />
+                          <h4 className="font-serif text-lg text-brand-text font-semibold">
+                            2. Produção de Vídeo (Proposta de Vídeos)
+                          </h4>
+                          <span className="text-[10px] bg-brand-wine text-white px-2 py-0.5 rounded-full font-bold">
+                            {(editingProposal.videoPackages || []).length} opções
+                          </span>
                         </div>
+                        <p className="text-xs text-brand-text-soft mt-0.5">
+                          4 formatos de produção de vídeo (Prático, Essencial, Presença e Autoridade). Você pode editar valores, itens, adicionar mais opções ou excluir.
+                        </p>
+                      </div>
 
-                        {editingProposal.packages.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setEditingProposal((prev) => {
+                            if (!prev) return null;
+                            const currentVideos = prev.videoPackages || [];
+                            const nextNum = currentVideos.length + 1;
+                            const newVideo: ProposalPackage = {
+                              id: `ind-video-${Date.now()}`,
+                              name: `Formato de Vídeo 0${nextNum}`,
+                              price: 'R$ 350',
+                              paymentMethod: 'Pix',
+                              duration: '02 vídeos até 1:30seg',
+                              features: [
+                                '02 vídeos até 1:30seg',
+                                '02 capas pra vídeo',
+                                'Roteirização, direção e posicionamento',
+                                'Edição dinâmica, cortes essenciais, legenda e trilha sonora'
+                              ],
+                              highlight: false,
+                            };
+                            return {
+                              ...prev,
+                              videoPackages: [...currentVideos, newVideo]
+                            };
+                          });
+                        }}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-brand-wine text-white text-xs font-semibold hover:bg-brand-wine-dark transition-colors self-start sm:self-auto shrink-0 cursor-pointer shadow-xs"
+                        id="btn-add-video-option"
+                      >
+                        <Plus className="w-3.5 h-3.5" /> Adicionar Opção de Vídeo
+                      </button>
+                    </div>
+
+                    <div className="space-y-4">
+                      {(editingProposal.videoPackages || []).map((vPkg, vIdx) => (
+                        <div
+                          key={vPkg.id || vIdx}
+                          className="bg-brand-cream/30 p-4 rounded-2xl border border-brand-wine/15 space-y-3"
+                          id={`modal-video-pkg-${vIdx}`}
+                        >
+                          <div className="flex items-center justify-between gap-3 flex-wrap sm:flex-nowrap">
+                            <div className="flex items-center gap-2 shrink-0">
+                              <span className="text-[11px] font-mono font-bold px-2 py-1 rounded-md bg-brand-wine text-white">
+                                Opção de Vídeo 0{vIdx + 1}
+                              </span>
+                            </div>
+
+                            <div className="flex items-center gap-3 flex-1 min-w-[200px]">
+                              <input
+                                type="text"
+                                value={vPkg.name}
+                                onChange={(e) => {
+                                  const val = e.target.value;
+                                  setEditingProposal((prev) => {
+                                    if (!prev) return null;
+                                    const vPkgs = [...(prev.videoPackages || [])];
+                                    vPkgs[vIdx].name = val;
+                                    return { ...prev, videoPackages: vPkgs };
+                                  });
+                                }}
+                                className="font-serif font-bold text-base text-brand-text bg-white px-3 py-1.5 rounded-lg border border-brand-wine/20 flex-1"
+                                placeholder="Nome do Formato de Vídeo"
+                              />
+
+                              <input
+                                type="text"
+                                value={vPkg.price}
+                                onChange={(e) => {
+                                  const val = e.target.value;
+                                  setEditingProposal((prev) => {
+                                    if (!prev) return null;
+                                    const vPkgs = [...(prev.videoPackages || [])];
+                                    vPkgs[vIdx].price = val;
+                                    return { ...prev, videoPackages: vPkgs };
+                                  });
+                                }}
+                                className="font-bold text-brand-wine text-sm bg-white px-3 py-1.5 rounded-lg border border-brand-wine/20 w-32"
+                                placeholder="Preço (Ex: R$ 560)"
+                              />
+                            </div>
+
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setEditingProposal((prev) => {
+                                  if (!prev) return null;
+                                  const vPkgs = prev.videoPackages || [];
+                                  return {
+                                    ...prev,
+                                    videoPackages: vPkgs.filter((_, i) => i !== vIdx)
+                                  };
+                                });
+                              }}
+                              className="text-red-500 hover:text-red-700 p-1.5 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
+                              title="Excluir opção de vídeo"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </div>
+
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div>
+                              <label className="block text-[10px] uppercase font-bold text-brand-text-soft mb-1">
+                                Formato / Quantidade de Vídeos
+                              </label>
+                              <input
+                                type="text"
+                                value={vPkg.duration}
+                                onChange={(e) => {
+                                  const val = e.target.value;
+                                  setEditingProposal((prev) => {
+                                    if (!prev) return null;
+                                    const vPkgs = [...(prev.videoPackages || [])];
+                                    vPkgs[vIdx].duration = val;
+                                    return { ...prev, videoPackages: vPkgs };
+                                  });
+                                }}
+                                className="w-full text-xs bg-white px-3 py-1.5 rounded-lg border border-brand-wine/20"
+                                placeholder="Ex: 02 vídeos até 1:30seg"
+                              />
+                            </div>
+
+                            <div>
+                              <label className="block text-[10px] uppercase font-bold text-brand-text-soft mb-1">
+                                Forma de Pagamento
+                              </label>
+                              <input
+                                type="text"
+                                value={vPkg.paymentMethod}
+                                onChange={(e) => {
+                                  const val = e.target.value;
+                                  setEditingProposal((prev) => {
+                                    if (!prev) return null;
+                                    const vPkgs = [...(prev.videoPackages || [])];
+                                    vPkgs[vIdx].paymentMethod = val;
+                                    return { ...prev, videoPackages: vPkgs };
+                                  });
+                                }}
+                                className="w-full text-xs bg-white px-3 py-1.5 rounded-lg border border-brand-wine/20"
+                                placeholder="Ex: Pix ou Cartão em até 12x"
+                              />
+                            </div>
+                          </div>
+
+                          {/* Features list */}
+                          <div>
+                            <label className="block text-[10px] uppercase font-bold text-brand-text-soft mb-1">
+                              Itens Inclusos (um por linha)
+                            </label>
+                            <textarea
+                              rows={3}
+                              value={vPkg.features.join('\n')}
+                              onChange={(e) => {
+                                const lines = e.target.value.split('\n');
+                                setEditingProposal((prev) => {
+                                  if (!prev) return null;
+                                  const vPkgs = [...(prev.videoPackages || [])];
+                                  vPkgs[vIdx].features = lines;
+                                  return { ...prev, videoPackages: vPkgs };
+                                });
+                              }}
+                              className="w-full text-xs bg-white px-3 py-2 rounded-lg border border-brand-wine/20 font-sans leading-relaxed"
+                              placeholder="Digite um item por linha"
+                            />
+                          </div>
+
+                          <div className="flex items-center gap-2">
+                            <label className="flex items-center gap-2 text-xs text-brand-text cursor-pointer">
+                              <input
+                                type="checkbox"
+                                checked={vPkg.highlight || false}
+                                onChange={(e) => {
+                                  const isHigh = e.target.checked;
+                                  setEditingProposal((prev) => {
+                                    if (!prev) return null;
+                                    const vPkgs = [...(prev.videoPackages || [])];
+                                    vPkgs[vIdx].highlight = isHigh;
+                                    return { ...prev, videoPackages: vPkgs };
+                                  });
+                                }}
+                                className="rounded text-brand-wine focus:ring-brand-wine"
+                              />
+                              <span>Destacar como &ldquo;Mais Escolhido / Recomendado&rdquo;</span>
+                            </label>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </>
+              ) : (
+                /* Packages Section for other categories */
+                <div className="pt-4 border-t border-brand-wine/10">
+                  <div className="flex items-center justify-between mb-4">
+                    <div>
+                      <h4 className="font-serif text-lg text-brand-text font-semibold">
+                        Pacotes de Investimento
+                      </h4>
+                      <p className="text-xs text-brand-text-soft">
+                        Ajuste os valores, condições e itens que serão exibidos nesta proposta.
+                      </p>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const newPkg: ProposalPackage = {
+                          id: `pkg-${Date.now()}`,
+                          name: 'Novo Pacote',
+                          price: 'R$ 400',
+                          paymentMethod: 'Pix ou Cartão',
+                          duration: 'Até 1h de sessão',
+                          features: ['15 fotos tratadas em alta resolução', 'Galeria online privada'],
+                        };
+                        setEditingProposal((prev) => prev ? {
+                          ...prev,
+                          packages: [...prev.packages, newPkg]
+                        } : null);
+                      }}
+                      className="inline-flex items-center gap-1 text-xs text-brand-wine font-semibold hover:underline cursor-pointer"
+                    >
+                      <Plus className="w-3.5 h-3.5" /> Adicionar Pacote
+                    </button>
+                  </div>
+
+                  <div className="space-y-4">
+                    {editingProposal.packages.map((pkg, pIdx) => (
+                      <div
+                        key={pkg.id || pIdx}
+                        className="bg-brand-cream/30 p-4 rounded-2xl border border-brand-wine/15 space-y-3"
+                      >
+                        <div className="flex items-center justify-between gap-3">
+                          <div className="flex items-center gap-3 flex-1">
+                            <input
+                              type="text"
+                              value={pkg.name}
+                              onChange={(e) => {
+                                const val = e.target.value;
+                                setEditingProposal((prev) => {
+                                  if (!prev) return null;
+                                  const pkgs = [...prev.packages];
+                                  pkgs[pIdx].name = val;
+                                  return { ...prev, packages: pkgs };
+                                });
+                              }}
+                              className="font-serif font-bold text-base text-brand-text bg-white px-3 py-1.5 rounded-lg border border-brand-wine/20 flex-1"
+                              placeholder="Nome do Pacote"
+                            />
+
+                            <input
+                              type="text"
+                              value={pkg.price}
+                              onChange={(e) => {
+                                const val = e.target.value;
+                                setEditingProposal((prev) => {
+                                  if (!prev) return null;
+                                  const pkgs = [...prev.packages];
+                                  pkgs[pIdx].price = val;
+                                  return { ...prev, packages: pkgs };
+                                });
+                              }}
+                              className="font-bold text-brand-wine text-sm bg-white px-3 py-1.5 rounded-lg border border-brand-wine/20 w-32"
+                              placeholder="Preço (Ex: R$ 350)"
+                            />
+                          </div>
+
                           <button
                             type="button"
                             onClick={() => {
@@ -896,103 +1473,103 @@ export default function ProposalManager() {
                                 };
                               });
                             }}
-                            className="text-red-500 hover:text-red-700 p-1.5"
+                            className="text-red-500 hover:text-red-700 p-1.5 cursor-pointer"
                             title="Remover pacote"
                           >
                             <Trash2 className="w-4 h-4" />
                           </button>
-                        )}
-                      </div>
+                        </div>
 
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          <div>
+                            <label className="block text-[10px] uppercase font-bold text-brand-text-soft mb-1">
+                              Duração / Horas
+                            </label>
+                            <input
+                              type="text"
+                              value={pkg.duration}
+                              onChange={(e) => {
+                                const val = e.target.value;
+                                setEditingProposal((prev) => {
+                                  if (!prev) return null;
+                                  const pkgs = [...prev.packages];
+                                  pkgs[pIdx].duration = val;
+                                  return { ...prev, packages: pkgs };
+                                });
+                              }}
+                              className="w-full text-xs bg-white px-3 py-1.5 rounded-lg border border-brand-wine/20"
+                              placeholder="Ex: Até 01h30 de ensaio"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="block text-[10px] uppercase font-bold text-brand-text-soft mb-1">
+                              Forma de Pagamento
+                            </label>
+                            <input
+                              type="text"
+                              value={pkg.paymentMethod}
+                              onChange={(e) => {
+                                const val = e.target.value;
+                                setEditingProposal((prev) => {
+                                  if (!prev) return null;
+                                  const pkgs = [...prev.packages];
+                                  pkgs[pIdx].paymentMethod = val;
+                                  return { ...prev, packages: pkgs };
+                                });
+                              }}
+                              className="w-full text-xs bg-white px-3 py-1.5 rounded-lg border border-brand-wine/20"
+                              placeholder="Ex: Pix à vista ou Cartão"
+                            />
+                          </div>
+                        </div>
+
+                        {/* Features list */}
                         <div>
                           <label className="block text-[10px] uppercase font-bold text-brand-text-soft mb-1">
-                            Duração / Horas
+                            Itens Inclusos (um por linha)
                           </label>
-                          <input
-                            type="text"
-                            value={pkg.duration}
+                          <textarea
+                            rows={3}
+                            value={pkg.features.join('\n')}
                             onChange={(e) => {
-                              const val = e.target.value;
+                              const lines = e.target.value.split('\n');
                               setEditingProposal((prev) => {
                                 if (!prev) return null;
                                 const pkgs = [...prev.packages];
-                                pkgs[pIdx].duration = val;
+                                pkgs[pIdx].features = lines;
                                 return { ...prev, packages: pkgs };
                               });
                             }}
-                            className="w-full text-xs bg-white px-3 py-1.5 rounded-lg border border-brand-wine/20"
-                            placeholder="Ex: Até 01h30 de ensaio"
+                            className="w-full text-xs bg-white px-3 py-2 rounded-lg border border-brand-wine/20 font-sans leading-relaxed"
+                            placeholder="Digite um item por linha"
                           />
                         </div>
 
-                        <div>
-                          <label className="block text-[10px] uppercase font-bold text-brand-text-soft mb-1">
-                            Forma de Pagamento
+                        <div className="flex items-center gap-2">
+                          <label className="flex items-center gap-2 text-xs text-brand-text cursor-pointer">
+                            <input
+                              type="checkbox"
+                              checked={pkg.highlight || false}
+                              onChange={(e) => {
+                                const isHigh = e.target.checked;
+                                setEditingProposal((prev) => {
+                                  if (!prev) return null;
+                                  const pkgs = [...prev.packages];
+                                  pkgs[pIdx].highlight = isHigh;
+                                  return { ...prev, packages: pkgs };
+                                });
+                              }}
+                              className="rounded text-brand-wine focus:ring-brand-wine"
+                            />
+                            <span>Destacar como &ldquo;Mais Escolhido / Recomendado&rdquo;</span>
                           </label>
-                          <input
-                            type="text"
-                            value={pkg.paymentMethod}
-                            onChange={(e) => {
-                              const val = e.target.value;
-                              setEditingProposal((prev) => {
-                                if (!prev) return null;
-                                const pkgs = [...prev.packages];
-                                pkgs[pIdx].paymentMethod = val;
-                                return { ...prev, packages: pkgs };
-                              });
-                            }}
-                            className="w-full text-xs bg-white px-3 py-1.5 rounded-lg border border-brand-wine/20"
-                            placeholder="Ex: Pix à vista ou Cartão"
-                          />
                         </div>
                       </div>
-
-                      {/* Features list */}
-                      <div>
-                        <label className="block text-[10px] uppercase font-bold text-brand-text-soft mb-1">
-                          Itens Inclusos (um por linha)
-                        </label>
-                        <textarea
-                          rows={3}
-                          value={pkg.features.join('\n')}
-                          onChange={(e) => {
-                            const lines = e.target.value.split('\n');
-                            setEditingProposal((prev) => {
-                              if (!prev) return null;
-                              const pkgs = [...prev.packages];
-                              pkgs[pIdx].features = lines;
-                              return { ...prev, packages: pkgs };
-                            });
-                          }}
-                          className="w-full text-xs bg-white px-3 py-2 rounded-lg border border-brand-wine/20 font-sans leading-relaxed"
-                          placeholder="Digite um item por linha"
-                        />
-                      </div>
-
-                      <div className="flex items-center gap-2">
-                        <label className="flex items-center gap-2 text-xs text-brand-text cursor-pointer">
-                          <input
-                            type="checkbox"
-                            checked={pkg.highlight || false}
-                            onChange={(e) => {
-                              const isHigh = e.target.checked;
-                              setEditingProposal((prev) => {
-                                if (!prev) return null;
-                                const pkgs = [...prev.packages];
-                                pkgs[pIdx].highlight = isHigh;
-                                return { ...prev, packages: pkgs };
-                              });
-                            }}
-                            className="rounded text-brand-wine focus:ring-brand-wine"
-                          />
-                          <span>Destacar como &ldquo;Mais Escolhido / Recomendado&rdquo;</span>
-                        </label>
-                      </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
 
               {/* Commercial Conditions Note */}
               <div className="pt-2">
@@ -1036,122 +1613,7 @@ export default function ProposalManager() {
       )}
 
       {/* MODAL: Alterar Senha */}
-      {isChangePasswordOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/50 backdrop-blur-sm">
-          <div className="bg-white w-full max-w-md rounded-3xl p-6 sm:p-8 shadow-2xl border border-brand-wine/20">
-            
-            <div className="flex items-center justify-between pb-3 mb-5 border-b border-brand-wine/10">
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-full bg-brand-wine/10 text-brand-wine flex items-center justify-center">
-                  <KeyRound className="w-4 h-4" />
-                </div>
-                <h3 className="font-serif text-xl text-brand-text font-bold">
-                  Alterar Senha de Acesso
-                </h3>
-              </div>
-              <button
-                onClick={() => {
-                  setIsChangePasswordOpen(false);
-                  setChangePasswordError('');
-                  setChangePasswordSuccess('');
-                }}
-                className="text-brand-text-soft hover:text-brand-wine text-sm font-semibold p-1"
-              >
-                ✕
-              </button>
-            </div>
-
-            <form onSubmit={handleChangePassword} className="space-y-4">
-              <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-brand-text mb-1">
-                  Senha Atual *
-                </label>
-                <input
-                  type="password"
-                  required
-                  placeholder="Digite a senha atual"
-                  value={currentPassword}
-                  onChange={(e) => {
-                    setCurrentPassword(e.target.value);
-                    setChangePasswordError('');
-                  }}
-                  className="w-full px-4 py-2.5 rounded-xl border border-brand-wine/20 text-sm focus:outline-none focus:ring-2 focus:ring-brand-wine/30"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-brand-text mb-1">
-                  Nova Senha * (mínimo 4 caracteres)
-                </label>
-                <input
-                  type="password"
-                  required
-                  minLength={4}
-                  placeholder="Digite a nova senha"
-                  value={newPassword}
-                  onChange={(e) => {
-                    setNewPassword(e.target.value);
-                    setChangePasswordError('');
-                  }}
-                  className="w-full px-4 py-2.5 rounded-xl border border-brand-wine/20 text-sm focus:outline-none focus:ring-2 focus:ring-brand-wine/30"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-brand-text mb-1">
-                  Confirmar Nova Senha *
-                </label>
-                <input
-                  type="password"
-                  required
-                  placeholder="Repita a nova senha"
-                  value={confirmPassword}
-                  onChange={(e) => {
-                    setConfirmPassword(e.target.value);
-                    setChangePasswordError('');
-                  }}
-                  className="w-full px-4 py-2.5 rounded-xl border border-brand-wine/20 text-sm focus:outline-none focus:ring-2 focus:ring-brand-wine/30"
-                />
-              </div>
-
-              {changePasswordError && (
-                <div className="bg-red-50 border border-red-200 text-red-700 text-xs px-3.5 py-2.5 rounded-xl flex items-center gap-2">
-                  <AlertCircle className="w-4 h-4 shrink-0 text-red-500" />
-                  <span>{changePasswordError}</span>
-                </div>
-              )}
-
-              {changePasswordSuccess && (
-                <div className="bg-green-50 border border-green-200 text-green-800 text-xs px-3.5 py-2.5 rounded-xl flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 shrink-0 text-green-600" />
-                  <span>{changePasswordSuccess}</span>
-                </div>
-              )}
-
-              <div className="pt-3 border-t border-brand-wine/10 flex items-center justify-end gap-3">
-                <button
-                  type="button"
-                  onClick={() => setIsChangePasswordOpen(false)}
-                  className="px-4 py-2 rounded-full border border-brand-wine/20 text-xs font-medium text-brand-text hover:bg-brand-wine/5"
-                >
-                  Cancelar
-                </button>
-
-                <button
-                  type="submit"
-                  disabled={changePasswordLoading}
-                  className="px-5 py-2 rounded-full bg-brand-wine text-white text-xs font-semibold uppercase tracking-wider hover:bg-brand-wine-dark transition-all shadow-md flex items-center gap-2 disabled:opacity-50"
-                >
-                  <KeyRound className="w-3.5 h-3.5" />
-                  {changePasswordLoading ? 'Salvando...' : 'Salvar Nova Senha'}
-                </button>
-              </div>
-
-            </form>
-
-          </div>
-        </div>
-      )}
+      {isChangePasswordOpen && renderChangePasswordModal()}
 
     </div>
   );
