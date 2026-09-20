@@ -112,20 +112,7 @@ export const STANDARD_TEMPLATES: Record<ProposalCategory, Proposal> = {
           'Prazo de entrega de até 10 dias',
           'Foto extra R$ 25,00 (desconto a partir de 13 extras)'
         ],
-        installments: [
-          { times: '1x', value: 'R$ 260,96' },
-          { times: '2x', value: 'R$ 133,11 (R$ 266,22)' },
-          { times: '3x', value: 'R$ 89,62 (R$ 268,85)' },
-          { times: '4x', value: 'R$ 67,87 (R$ 271,48)' },
-          { times: '5x', value: 'R$ 54,83 (R$ 274,13)' },
-          { times: '6x', value: 'R$ 46,13 (R$ 276,77)' },
-          { times: '7x', value: 'R$ 40,86 (R$ 286,01)' },
-          { times: '8x', value: 'R$ 36,09 (R$ 288,75)' },
-          { times: '9x', value: 'R$ 32,39 (R$ 291,55)' },
-          { times: '10x', value: 'R$ 29,43 (R$ 294,33)' },
-          { times: '11x', value: 'R$ 27,01 (R$ 297,16)' },
-          { times: '12x', value: 'R$ 25,00 (R$ 299,98)' }
-        ]
+        installments: calculateDefaultInstallments('R$ 250')
       },
       {
         id: 'ind-02',
@@ -140,20 +127,7 @@ export const STANDARD_TEMPLATES: Record<ProposalCategory, Proposal> = {
           'Prazo de entrega de até 15 dias',
           'Foto extra R$ 23,00 (desconto a partir de 13 extras)'
         ],
-        installments: [
-          { times: '1x', value: 'R$ 365,34' },
-          { times: '2x', value: 'R$ 186,35 (R$ 372,70)' },
-          { times: '3x', value: 'R$ 125,47 (R$ 376,42)' },
-          { times: '4x', value: 'R$ 95,01 (R$ 380,05)' },
-          { times: '5x', value: 'R$ 76,76 (R$ 383,82)' },
-          { times: '6x', value: 'R$ 64,59 (R$ 387,55)' },
-          { times: '7x', value: 'R$ 57,21 (R$ 400,47)' },
-          { times: '8x', value: 'R$ 50,53 (R$ 404,24)' },
-          { times: '9x', value: 'R$ 45,35 (R$ 408,18)' },
-          { times: '10x', value: 'R$ 41,20 (R$ 412,04)' },
-          { times: '11x', value: 'R$ 37,82 (R$ 416,04)' },
-          { times: '12x', value: 'R$ 35,00 (R$ 420,00)' }
-        ]
+        installments: calculateDefaultInstallments('R$ 350')
       },
       {
         id: 'ind-03',
@@ -168,20 +142,7 @@ export const STANDARD_TEMPLATES: Record<ProposalCategory, Proposal> = {
           'Prazo de entrega de até 15 dias',
           'Foto extra R$ 22,00 (desconto a partir de 13 extras)'
         ],
-        installments: [
-          { times: '1x', value: 'R$ 469,73' },
-          { times: '2x', value: 'R$ 239,59 (R$ 479,19)' },
-          { times: '3x', value: 'R$ 161,31 (R$ 483,93)' },
-          { times: '4x', value: 'R$ 122,17 (R$ 488,66)' },
-          { times: '5x', value: 'R$ 98,69 (R$ 493,43)' },
-          { times: '6x', value: 'R$ 83,03 (R$ 498,18)' },
-          { times: '7x', value: 'R$ 73,55 (R$ 514,82)' },
-          { times: '8x', value: 'R$ 64,97 (R$ 519,75)' },
-          { times: '9x', value: 'R$ 58,31 (R$ 524,79)' },
-          { times: '10x', value: 'R$ 52,98 (R$ 529,79)' },
-          { times: '11x', value: 'R$ 48,63 (R$ 534,89)' },
-          { times: '12x', value: 'R$ 45,00 (R$ 539,96)' }
-        ]
+        installments: calculateDefaultInstallments('R$ 450')
       },
       {
         id: 'ind-04',
@@ -196,20 +157,7 @@ export const STANDARD_TEMPLATES: Record<ProposalCategory, Proposal> = {
           'Prazo de entrega de até 20 dias',
           'Foto extra R$ 19,00 (desconto a partir de 13 extras)'
         ],
-        installments: [
-          { times: '1x', value: 'R$ 574,12' },
-          { times: '2x', value: 'R$ 292,83 (R$ 585,67)' },
-          { times: '3x', value: 'R$ 197,16 (R$ 591,47)' },
-          { times: '4x', value: 'R$ 149,31 (R$ 597,25)' },
-          { times: '5x', value: 'R$ 120,61 (R$ 603,07)' },
-          { times: '6x', value: 'R$ 101,48 (R$ 608,88)' },
-          { times: '7x', value: 'R$ 89,89 (R$ 629,22)' },
-          { times: '8x', value: 'R$ 79,41 (R$ 635,25)' },
-          { times: '9x', value: 'R$ 71,27 (R$ 641,40)' },
-          { times: '10x', value: 'R$ 64,75 (R$ 647,52)' },
-          { times: '11x', value: 'R$ 59,43 (R$ 653,75)' },
-          { times: '12x', value: 'R$ 55,00 (R$ 659,95)' }
-        ]
+        installments: calculateDefaultInstallments('R$ 550')
       }
     ],
     videoPackages: [
@@ -227,20 +175,7 @@ export const STANDARD_TEMPLATES: Record<ProposalCategory, Proposal> = {
           'Edição dinâmica, cortes essenciais, legenda e trilha sonora',
           'Prazo de entrega de até 72 horas'
         ],
-        installments: [
-          { times: '1x', value: 'R$ 156,58' },
-          { times: '2x', value: 'R$ 79,87 (R$ 159,74)' },
-          { times: '3x', value: 'R$ 53,77 (R$ 161,31)' },
-          { times: '4x', value: 'R$ 40,72 (R$ 162,88)' },
-          { times: '5x', value: 'R$ 32,90 (R$ 164,50)' },
-          { times: '6x', value: 'R$ 27,68 (R$ 166,08)' },
-          { times: '7x', value: 'R$ 24,52 (R$ 171,64)' },
-          { times: '8x', value: 'R$ 21,65 (R$ 173,20)' },
-          { times: '9x', value: 'R$ 19,43 (R$ 174,87)' },
-          { times: '10x', value: 'R$ 17,66 (R$ 176,60)' },
-          { times: '11x', value: 'R$ 16,21 (R$ 178,31)' },
-          { times: '12x', value: 'R$ 15,00 (R$ 180,00)' }
-        ]
+        installments: calculateDefaultInstallments('R$ 150')
       },
       {
         id: 'vid-02',
@@ -257,20 +192,7 @@ export const STANDARD_TEMPLATES: Record<ProposalCategory, Proposal> = {
           '02 vídeos brindes curtos até 15seg',
           'Prazo de entrega de até 10 dias'
         ],
-        installments: [
-          { times: '1x', value: 'R$ 584,56' },
-          { times: '2x', value: 'R$ 298,05 (R$ 596,10)' },
-          { times: '3x', value: 'R$ 200,74 (R$ 602,22)' },
-          { times: '4x', value: 'R$ 152,02 (R$ 608,08)' },
-          { times: '5x', value: 'R$ 122,79 (R$ 613,95)' },
-          { times: '6x', value: 'R$ 103,32 (R$ 619,92)' },
-          { times: '7x', value: 'R$ 91,52 (R$ 640,64)' },
-          { times: '8x', value: 'R$ 80,85 (R$ 646,80)' },
-          { times: '9x', value: 'R$ 72,56 (R$ 653,04)' },
-          { times: '10x', value: 'R$ 65,92 (R$ 659,20)' },
-          { times: '11x', value: 'R$ 60,50 (R$ 665,50)' },
-          { times: '12x', value: 'R$ 56,00 (R$ 672,00)' }
-        ]
+        installments: calculateDefaultInstallments('R$ 560')
       },
       {
         id: 'vid-03',
@@ -287,20 +209,7 @@ export const STANDARD_TEMPLATES: Record<ProposalCategory, Proposal> = {
           '04 vídeos brindes curtos até 15seg',
           'Prazo de entrega de até 15 dias'
         ],
-        installments: [
-          { times: '1x', value: 'R$ 1.085,60' },
-          { times: '2x', value: 'R$ 553,68 (R$ 1.107,36)' },
-          { times: '3x', value: 'R$ 372,97 (R$ 1.118,91)' },
-          { times: '4x', value: 'R$ 282,53 (R$ 1.130,12)' },
-          { times: '5x', value: 'R$ 228,29 (R$ 1.141,45)' },
-          { times: '6x', value: 'R$ 192,10 (R$ 1.152,60)' },
-          { times: '7x', value: 'R$ 170,16 (R$ 1.191,12)' },
-          { times: '8x', value: 'R$ 150,33 (R$ 1.202,64)' },
-          { times: '9x', value: 'R$ 134,93 (R$ 1.214,37)' },
-          { times: '10x', value: 'R$ 122,63 (R$ 1.226,30)' },
-          { times: '11x', value: 'R$ 112,54 (R$ 1.237,94)' },
-          { times: '12x', value: 'R$ 104,00 (R$ 1.248,00)' }
-        ]
+        installments: calculateDefaultInstallments('R$ 1.040')
       },
       {
         id: 'vid-04',
@@ -317,20 +226,7 @@ export const STANDARD_TEMPLATES: Record<ProposalCategory, Proposal> = {
           '06 vídeos brindes curtos até 15seg',
           'Prazo de entrega de até 20 dias'
         ],
-        installments: [
-          { times: '1x', value: 'R$ 1.502,40' },
-          { times: '2x', value: 'R$ 766,22 (R$ 1.532,44)' },
-          { times: '3x', value: 'R$ 516,19 (R$ 1.548,57)' },
-          { times: '4x', value: 'R$ 391,13 (R$ 1.564,52)' },
-          { times: '5x', value: 'R$ 316,06 (R$ 1.580,30)' },
-          { times: '6x', value: 'R$ 265,95 (R$ 1.595,70)' },
-          { times: '7x', value: 'R$ 235,53 (R$ 1.648,71)' },
-          { times: '8x', value: 'R$ 208,09 (R$ 1.664,72)' },
-          { times: '9x', value: 'R$ 186,78 (R$ 1.681,02)' },
-          { times: '10x', value: 'R$ 169,76 (R$ 1.697,60)' },
-          { times: '11x', value: 'R$ 155,80 (R$ 1.713,80)' },
-          { times: '12x', value: 'R$ 144,00 (R$ 1.728,00)' }
-        ]
+        installments: calculateDefaultInstallments('R$ 1.440')
       }
     ]
   },
@@ -345,49 +241,137 @@ export const STANDARD_TEMPLATES: Record<ProposalCategory, Proposal> = {
     welcomeMessage: 'Fotografar casais é capturar o afeto nos pequenos gestos e olhares espontâneos. Esta proposta foi pensada para criar uma lembrança inesquecível da conexão de vocês.',
     validityDays: 10,
     createdAt: new Date().toISOString(),
-    investmentNote: 'Reserva confirmada mediante sinal de 30% e o restante no dia do ensaio, ou valor integral parcelado no cartão.',
+    investmentNote: 'Reserva confirmada mediante sinal de 30% e o restante no dia do ensaio, ou valor integral parcelado em até 12x no cartão de crédito.',
     isTemplate: true,
     packages: [
       {
         id: 'casal-01',
-        name: 'Ensaio Afetivo',
+        name: 'Ensaio Essencial',
         highlight: false,
-        price: 'R$ 380',
-        paymentMethod: 'Pix à vista ou cartão',
-        duration: 'Até 01h15 de ensaio',
+        price: 'R$ 250',
+        paymentMethod: 'Pix',
+        duration: 'Duração de até 01 hora',
         features: [
-          '15 fotos selecionadas e tratadas',
-          '01 vídeo Making Of com trilha sonora afetiva',
-          'Locação externa à escolha do casal (parque, praia ou urbana)',
-          'Prazo de entrega em até 12 dias'
+          '10 fotos selecionadas',
+          '01 vídeo brinde Making Of',
+          'Prazo de entrega de até 10 dias',
+          'Foto extra R$ 25,00 (desconto a partir de 13 extras)'
         ],
-        installments: [
-          { times: '1x', value: 'R$ 396,65' },
-          { times: '3x', value: 'R$ 136,22' },
-          { times: '6x', value: 'R$ 70,11' },
-          { times: '12x', value: 'R$ 38,00' }
-        ]
+        installments: calculateDefaultInstallments('R$ 250')
       },
       {
         id: 'casal-02',
-        name: 'Ensaio Pré-Wedding Completo',
+        name: 'Ensaio Clássico',
+        highlight: false,
+        price: 'R$ 350',
+        paymentMethod: 'Pix',
+        duration: 'Duração de até 01 hora',
+        features: [
+          '15 fotos selecionadas',
+          '01 vídeo brinde Making Of',
+          'Prazo de entrega de até 15 dias',
+          'Foto extra R$ 23,00 (desconto a partir de 13 extras)'
+        ],
+        installments: calculateDefaultInstallments('R$ 350')
+      },
+      {
+        id: 'casal-03',
+        name: 'Ensaio Especial',
+        highlight: false,
+        price: 'R$ 450',
+        paymentMethod: 'Pix',
+        duration: 'Duração de até 02 horas',
+        features: [
+          '20 fotos selecionadas',
+          '01 vídeo brinde Making Of',
+          'Prazo de entrega de até 15 dias',
+          'Foto extra R$ 22,00 (desconto a partir de 13 extras)'
+        ],
+        installments: calculateDefaultInstallments('R$ 450')
+      },
+      {
+        id: 'casal-04',
+        name: 'Ensaio Completo',
         highlight: true,
         price: 'R$ 550',
-        paymentMethod: 'Pix à vista ou cartão',
-        duration: 'Até 02 horas de ensaio',
+        paymentMethod: 'Pix',
+        duration: 'Duração de até 02 horas',
         features: [
-          '30 fotos selecionadas e tratadas em alta resolução',
-          '01 vídeo cinematográfico (Reels) editado para o casal',
-          '01 vídeo Making Of espontâneo',
-          'Direção leve e descontraída sem poses engessadas',
+          '30 fotos selecionadas',
+          '01 vídeo brinde Making Of',
+          'Prazo de entrega de até 20 dias',
+          'Foto extra R$ 19,00 (desconto a partir de 13 extras)'
+        ],
+        installments: calculateDefaultInstallments('R$ 550')
+      }
+    ],
+    videoPackages: [
+      {
+        id: 'vid-c-01',
+        name: 'Prático',
+        highlight: false,
+        price: 'R$ 150',
+        paymentMethod: 'Pix',
+        duration: '01 vídeo até 1:30seg',
+        features: [
+          '01 vídeo até 1:30seg',
+          '01 capa pra vídeo',
+          'Roteirização, direção e posicionamento',
+          'Edição dinâmica, cortes essenciais, legenda e trilha sonora',
+          'Prazo de entrega de até 72 horas'
+        ],
+        installments: calculateDefaultInstallments('R$ 150')
+      },
+      {
+        id: 'vid-c-02',
+        name: 'Essencial',
+        highlight: false,
+        price: 'R$ 560',
+        paymentMethod: 'Pix',
+        duration: '04 vídeos até 1:30seg',
+        features: [
+          '04 vídeos até 1:30seg',
+          '04 capas pra vídeo',
+          'Roteirização, direção e posicionamento',
+          'Edição dinâmica, cortes essenciais, legenda e trilha sonora',
+          '02 vídeos brindes curtos até 15seg',
+          'Prazo de entrega de até 10 dias'
+        ],
+        installments: calculateDefaultInstallments('R$ 560')
+      },
+      {
+        id: 'vid-c-03',
+        name: 'Presença',
+        highlight: false,
+        price: 'R$ 1.040',
+        paymentMethod: 'Pix',
+        duration: '08 vídeos até 1:30seg',
+        features: [
+          '08 vídeos até 1:30seg',
+          '08 capas pra vídeo',
+          'Roteirização, direção e posicionamento',
+          'Edição dinâmica, cortes essenciais, legenda e trilha sonora',
+          '04 vídeos brindes curtos até 15seg',
           'Prazo de entrega de até 15 dias'
         ],
-        installments: [
-          { times: '1x', value: 'R$ 574,10' },
-          { times: '3x', value: 'R$ 197,16' },
-          { times: '6x', value: 'R$ 101,48' },
-          { times: '12x', value: 'R$ 55,00' }
-        ]
+        installments: calculateDefaultInstallments('R$ 1.040')
+      },
+      {
+        id: 'vid-c-04',
+        name: 'Autoridade',
+        highlight: true,
+        price: 'R$ 1.440',
+        paymentMethod: 'Pix',
+        duration: '12 vídeos até 1:30seg',
+        features: [
+          '12 vídeos até 1:30seg',
+          '12 capas pra vídeo',
+          'Roteirização, direção e posicionamento',
+          'Edição dinâmica, cortes essenciais, legenda e trilha sonora',
+          '06 vídeos brindes curtos até 15seg',
+          'Prazo de entrega de até 20 dias'
+        ],
+        installments: calculateDefaultInstallments('R$ 1.440')
       }
     ]
   },
@@ -407,63 +391,132 @@ export const STANDARD_TEMPLATES: Record<ProposalCategory, Proposal> = {
     packages: [
       {
         id: 'corp-01',
-        name: 'Retratos Profissionais de Autoridade',
+        name: 'Ensaio Essencial',
         highlight: false,
-        price: 'R$ 350',
-        paymentMethod: 'Pix / Boleto / Cartão',
-        duration: 'Até 01 hora de sessão',
+        price: 'R$ 250',
+        paymentMethod: 'Pix',
+        duration: 'Duração de até 01 hora',
         features: [
-          '10 fotos tratadas com retoque fino de pele e alta frequência',
-          'Direção de postura e expressão focada no seu nicho',
-          'Arquivos em alta resolução para site e redes sociais',
-          'Entrega em até 5 dias úteis'
+          '10 fotos selecionadas',
+          '01 vídeo brinde Making Of',
+          'Prazo de entrega de até 10 dias',
+          'Foto extra R$ 25,00 (desconto a partir de 13 extras)'
         ],
-        installments: [
-          { times: '1x', value: 'R$ 365,34' },
-          { times: '3x', value: 'R$ 125,47' },
-          { times: '6x', value: 'R$ 64,58' }
-        ]
+        installments: calculateDefaultInstallments('R$ 250')
       },
       {
         id: 'corp-02',
-        name: 'Produção de Vídeos Estratégicos (Reels)',
-        highlight: true,
-        price: 'R$ 560',
-        paymentMethod: 'Pix / Boleto / Cartão',
-        duration: 'Sessão de gravação até 02 horas',
+        name: 'Ensaio Clássico',
+        highlight: false,
+        price: 'R$ 350',
+        paymentMethod: 'Pix',
+        duration: 'Duração de até 01 hora',
         features: [
-          '04 vídeos gravados e editados de até 1:30 min cada',
-          'Roteirização prévia, direcionamento de fala e iluminação profissional',
-          'Edição dinâmica com legendas sincronizadas e trilha sonora',
-          '02 vídeos curtos de brinde para stories',
-          'Prazo de entrega em até 7 dias úteis'
+          '15 fotos selecionadas',
+          '01 vídeo brinde Making Of',
+          'Prazo de entrega de até 15 dias',
+          'Foto extra R$ 23,00 (desconto a partir de 13 extras)'
         ],
-        installments: [
-          { times: '1x', value: 'R$ 584,50' },
-          { times: '3x', value: 'R$ 200,74' },
-          { times: '6x', value: 'R$ 103,32' }
-        ]
+        installments: calculateDefaultInstallments('R$ 350')
       },
       {
         id: 'corp-03',
-        name: 'Combo Imagem Total (Fotos + Vídeos)',
+        name: 'Ensaio Especial',
         highlight: false,
-        price: 'R$ 850',
-        paymentMethod: 'Pix / Boleto / Cartão',
-        duration: 'Sessão completa de até 03 horas',
+        price: 'R$ 450',
+        paymentMethod: 'Pix',
+        duration: 'Duração de até 02 horas',
         features: [
-          '15 retratos profissionais com edição avançada',
-          '04 vídeos para Reels com legendas e identidade visual',
-          'Fotos em ação/trabalho no seu ambiente ou consultório',
-          'Capas personalizadas para cada vídeo',
-          'Entrega prioritária em até 7 dias'
+          '20 fotos selecionadas',
+          '01 vídeo brinde Making Of',
+          'Prazo de entrega de até 15 dias',
+          'Foto extra R$ 22,00 (desconto a partir de 13 extras)'
         ],
-        installments: [
-          { times: '1x', value: 'R$ 887,26' },
-          { times: '3x', value: 'R$ 304,70' },
-          { times: '6x', value: 'R$ 156,86' },
-          { times: '12x', value: 'R$ 85,00' }
-        ]
+        installments: calculateDefaultInstallments('R$ 450')
+      },
+      {
+        id: 'corp-04',
+        name: 'Ensaio Completo',
+        highlight: true,
+        price: 'R$ 550',
+        paymentMethod: 'Pix',
+        duration: 'Duração de até 02 horas',
+        features: [
+          '30 fotos selecionadas',
+          '01 vídeo brinde Making Of',
+          'Prazo de entrega de até 20 dias',
+          'Foto extra R$ 19,00 (desconto a partir de 13 extras)'
+        ],
+        installments: calculateDefaultInstallments('R$ 550')
+      }
+    ],
+    videoPackages: [
+      {
+        id: 'vid-co-01',
+        name: 'Prático',
+        highlight: false,
+        price: 'R$ 150',
+        paymentMethod: 'Pix',
+        duration: '01 vídeo até 1:30seg',
+        features: [
+          '01 vídeo até 1:30seg',
+          '01 capa pra vídeo',
+          'Roteirização, direção e posicionamento',
+          'Edição dinâmica, cortes essenciais, legenda e trilha sonora',
+          'Prazo de entrega de até 72 horas'
+        ],
+        installments: calculateDefaultInstallments('R$ 150')
+      },
+      {
+        id: 'vid-co-02',
+        name: 'Essencial',
+        highlight: false,
+        price: 'R$ 560',
+        paymentMethod: 'Pix',
+        duration: '04 vídeos até 1:30seg',
+        features: [
+          '04 vídeos até 1:30seg',
+          '04 capas pra vídeo',
+          'Roteirização, direção e posicionamento',
+          'Edição dinâmica, cortes essenciais, legenda e trilha sonora',
+          '02 vídeos brindes curtos até 15seg',
+          'Prazo de entrega de até 10 dias'
+        ],
+        installments: calculateDefaultInstallments('R$ 560')
+      },
+      {
+        id: 'vid-co-03',
+        name: 'Presença',
+        highlight: false,
+        price: 'R$ 1.040',
+        paymentMethod: 'Pix',
+        duration: '08 vídeos até 1:30seg',
+        features: [
+          '08 vídeos até 1:30seg',
+          '08 capas pra vídeo',
+          'Roteirização, direção e posicionamento',
+          'Edição dinâmica, cortes essenciais, legenda e trilha sonora',
+          '04 vídeos brindes curtos até 15seg',
+          'Prazo de entrega de até 15 dias'
+        ],
+        installments: calculateDefaultInstallments('R$ 1.040')
+      },
+      {
+        id: 'vid-co-04',
+        name: 'Autoridade',
+        highlight: true,
+        price: 'R$ 1.440',
+        paymentMethod: 'Pix',
+        duration: '12 vídeos até 1:30seg',
+        features: [
+          '12 vídeos até 1:30seg',
+          '12 capas pra vídeo',
+          'Roteirização, direção e posicionamento',
+          'Edição dinâmica, cortes essenciais, legenda e trilha sonora',
+          '06 vídeos brindes curtos até 15seg',
+          'Prazo de entrega de até 20 dias'
+        ],
+        installments: calculateDefaultInstallments('R$ 1.440')
       }
     ]
   },
@@ -483,50 +536,132 @@ export const STANDARD_TEMPLATES: Record<ProposalCategory, Proposal> = {
     packages: [
       {
         id: 'cas-01',
-        name: 'Cerimônia Civil & Intimista',
+        name: 'Ensaio Essencial',
         highlight: false,
-        price: 'R$ 890',
-        paymentMethod: 'Pix ou Cartão até 12x',
-        duration: 'Até 02 horas de cobertura',
+        price: 'R$ 250',
+        paymentMethod: 'Pix',
+        duration: 'Duração de até 01 hora',
         features: [
-          'Cobertura fotográfica da cerimônia civil e cumprimentos',
-          'Mini ensaio fotográfico dos noivos logo após a cerimônia',
-          'Todas as melhores fotos tratadas em alta resolução (mínimo de 80 fotos)',
-          'Galeria online privada para download e compartilhamento com familiares',
-          'Prazo de entrega de até 20 dias'
-        ]
+          '10 fotos selecionadas',
+          '01 vídeo brinde Making Of',
+          'Prazo de entrega de até 10 dias',
+          'Foto extra R$ 25,00 (desconto a partir de 13 extras)'
+        ],
+        installments: calculateDefaultInstallments('R$ 250')
       },
       {
         id: 'cas-02',
-        name: 'Casamento Clássico',
-        highlight: true,
-        price: 'R$ 1.800',
-        paymentMethod: 'Pix ou Cartão até 12x',
-        duration: 'Até 05 horas de cobertura',
+        name: 'Ensaio Clássico',
+        highlight: false,
+        price: 'R$ 350',
+        paymentMethod: 'Pix',
+        duration: 'Duração de até 01 hora',
         features: [
-          'Making Of da Noiva ou Noivo',
-          'Cobertura completa da Cerimônia religiosa ou celebração',
-          'Ensaio exclusivo do casal após a cerimônia',
-          'Cobertura dos brindes e início da recepção',
-          'Mínimo de 200 fotos tratadas e entregues em alta resolução',
-          '01 Teaser em vídeo em formato Reels para redes sociais'
-        ]
+          '15 fotos selecionadas',
+          '01 vídeo brinde Making Of',
+          'Prazo de entrega de até 15 dias',
+          'Foto extra R$ 23,00 (desconto a partir de 13 extras)'
+        ],
+        installments: calculateDefaultInstallments('R$ 350')
       },
       {
         id: 'cas-03',
-        name: 'Cobertura Completa dos Sonhos',
+        name: 'Ensaio Especial',
         highlight: false,
-        price: 'R$ 2.600',
-        paymentMethod: 'Pix ou Cartão até 12x',
-        duration: 'Até 08 horas de cobertura',
+        price: 'R$ 450',
+        paymentMethod: 'Pix',
+        duration: 'Duração de até 02 horas',
         features: [
-          'Ensaio Pré-Wedding incluso antes do casamento',
-          'Making Of da Noiva e do Noivo',
-          'Cerimônia + Recepção e Festa até o final',
-          'Mínimo de 350 fotos tratadas',
-          '02 Vídeos em formato Reels entregues em até 48h para postar',
-          'Galeria online premium com acesso vitalício'
-        ]
+          '20 fotos selecionadas',
+          '01 vídeo brinde Making Of',
+          'Prazo de entrega de até 15 dias',
+          'Foto extra R$ 22,00 (desconto a partir de 13 extras)'
+        ],
+        installments: calculateDefaultInstallments('R$ 450')
+      },
+      {
+        id: 'cas-04',
+        name: 'Ensaio Completo',
+        highlight: true,
+        price: 'R$ 550',
+        paymentMethod: 'Pix',
+        duration: 'Duração de até 02 horas',
+        features: [
+          '30 fotos selecionadas',
+          '01 vídeo brinde Making Of',
+          'Prazo de entrega de até 20 dias',
+          'Foto extra R$ 19,00 (desconto a partir de 13 extras)'
+        ],
+        installments: calculateDefaultInstallments('R$ 550')
+      }
+    ],
+    videoPackages: [
+      {
+        id: 'vid-ca-01',
+        name: 'Prático',
+        highlight: false,
+        price: 'R$ 150',
+        paymentMethod: 'Pix',
+        duration: '01 vídeo até 1:30seg',
+        features: [
+          '01 vídeo até 1:30seg',
+          '01 capa pra vídeo',
+          'Roteirização, direção e posicionamento',
+          'Edição dinâmica, cortes essenciais, legenda e trilha sonora',
+          'Prazo de entrega de até 72 horas'
+        ],
+        installments: calculateDefaultInstallments('R$ 150')
+      },
+      {
+        id: 'vid-ca-02',
+        name: 'Essencial',
+        highlight: false,
+        price: 'R$ 560',
+        paymentMethod: 'Pix',
+        duration: '04 vídeos até 1:30seg',
+        features: [
+          '04 vídeos até 1:30seg',
+          '04 capas pra vídeo',
+          'Roteirização, direção e posicionamento',
+          'Edição dinâmica, cortes essenciais, legenda e trilha sonora',
+          '02 vídeos brindes curtos até 15seg',
+          'Prazo de entrega de até 10 dias'
+        ],
+        installments: calculateDefaultInstallments('R$ 560')
+      },
+      {
+        id: 'vid-ca-03',
+        name: 'Presença',
+        highlight: false,
+        price: 'R$ 1.040',
+        paymentMethod: 'Pix',
+        duration: '08 vídeos até 1:30seg',
+        features: [
+          '08 vídeos até 1:30seg',
+          '08 capas pra vídeo',
+          'Roteirização, direção e posicionamento',
+          'Edição dinâmica, cortes essenciais, legenda e trilha sonora',
+          '04 vídeos brindes curtos até 15seg',
+          'Prazo de entrega de até 15 dias'
+        ],
+        installments: calculateDefaultInstallments('R$ 1.040')
+      },
+      {
+        id: 'vid-ca-04',
+        name: 'Autoridade',
+        highlight: true,
+        price: 'R$ 1.440',
+        paymentMethod: 'Pix',
+        duration: '12 vídeos até 1:30seg',
+        features: [
+          '12 vídeos até 1:30seg',
+          '12 capas pra vídeo',
+          'Roteirização, direção e posicionamento',
+          'Edição dinâmica, cortes essenciais, legenda e trilha sonora',
+          '06 vídeos brindes curtos até 15seg',
+          'Prazo de entrega de até 20 dias'
+        ],
+        installments: calculateDefaultInstallments('R$ 1.440')
       }
     ]
   },
@@ -546,32 +681,132 @@ export const STANDARD_TEMPLATES: Record<ProposalCategory, Proposal> = {
     packages: [
       {
         id: 'evt-01',
-        name: 'Cobertura Essencial',
+        name: 'Ensaio Essencial',
         highlight: false,
-        price: 'R$ 450',
-        paymentMethod: 'Pix ou Cartão',
-        duration: 'Até 02 horas de evento',
+        price: 'R$ 250',
+        paymentMethod: 'Pix',
+        duration: 'Duração de até 01 hora',
         features: [
-          'Registro da decoração, família, convidados e momentos principais',
-          'Mínimo de 70 fotos tratadas em alta resolução',
-          'Galeria online para download fácil',
-          'Prazo de entrega em até 10 dias úteis'
-        ]
+          '10 fotos selecionadas',
+          '01 vídeo brinde Making Of',
+          'Prazo de entrega de até 10 dias',
+          'Foto extra R$ 25,00 (desconto a partir de 13 extras)'
+        ],
+        installments: calculateDefaultInstallments('R$ 250')
       },
       {
         id: 'evt-02',
-        name: 'Cobertura Completa & Dinâmica',
-        highlight: true,
-        price: 'R$ 750',
-        paymentMethod: 'Pix ou Cartão',
-        duration: 'Até 04 horas de evento',
+        name: 'Ensaio Clássico',
+        highlight: false,
+        price: 'R$ 350',
+        paymentMethod: 'Pix',
+        duration: 'Duração de até 01 hora',
         features: [
-          'Cobertura fotográfica do início ao fim da festa',
-          'Mínimo de 150 fotos tratadas em alta resolução',
-          '01 vídeo resumo (Reels) com os melhores momentos do evento',
-          'Prazo de entrega em até 12 dias úteis',
-          'Prioridade no envio das primeiras fotos em 48 horas'
-        ]
+          '15 fotos selecionadas',
+          '01 vídeo brinde Making Of',
+          'Prazo de entrega de até 15 dias',
+          'Foto extra R$ 23,00 (desconto a partir de 13 extras)'
+        ],
+        installments: calculateDefaultInstallments('R$ 350')
+      },
+      {
+        id: 'evt-03',
+        name: 'Ensaio Especial',
+        highlight: false,
+        price: 'R$ 450',
+        paymentMethod: 'Pix',
+        duration: 'Duração de até 02 horas',
+        features: [
+          '20 fotos selecionadas',
+          '01 vídeo brinde Making Of',
+          'Prazo de entrega de até 15 dias',
+          'Foto extra R$ 22,00 (desconto a partir de 13 extras)'
+        ],
+        installments: calculateDefaultInstallments('R$ 450')
+      },
+      {
+        id: 'evt-04',
+        name: 'Ensaio Completo',
+        highlight: true,
+        price: 'R$ 550',
+        paymentMethod: 'Pix',
+        duration: 'Duração de até 02 horas',
+        features: [
+          '30 fotos selecionadas',
+          '01 vídeo brinde Making Of',
+          'Prazo de entrega de até 20 dias',
+          'Foto extra R$ 19,00 (desconto a partir de 13 extras)'
+        ],
+        installments: calculateDefaultInstallments('R$ 550')
+      }
+    ],
+    videoPackages: [
+      {
+        id: 'vid-e-01',
+        name: 'Prático',
+        highlight: false,
+        price: 'R$ 150',
+        paymentMethod: 'Pix',
+        duration: '01 vídeo até 1:30seg',
+        features: [
+          '01 vídeo até 1:30seg',
+          '01 capa pra vídeo',
+          'Roteirização, direção e posicionamento',
+          'Edição dinâmica, cortes essenciais, legenda e trilha sonora',
+          'Prazo de entrega de até 72 horas'
+        ],
+        installments: calculateDefaultInstallments('R$ 150')
+      },
+      {
+        id: 'vid-e-02',
+        name: 'Essencial',
+        highlight: false,
+        price: 'R$ 560',
+        paymentMethod: 'Pix',
+        duration: '04 vídeos até 1:30seg',
+        features: [
+          '04 vídeos até 1:30seg',
+          '04 capas pra vídeo',
+          'Roteirização, direção e posicionamento',
+          'Edição dinâmica, cortes essenciais, legenda e trilha sonora',
+          '02 vídeos brindes curtos até 15seg',
+          'Prazo de entrega de até 10 dias'
+        ],
+        installments: calculateDefaultInstallments('R$ 560')
+      },
+      {
+        id: 'vid-e-03',
+        name: 'Presença',
+        highlight: false,
+        price: 'R$ 1.040',
+        paymentMethod: 'Pix',
+        duration: '08 vídeos até 1:30seg',
+        features: [
+          '08 vídeos até 1:30seg',
+          '08 capas pra vídeo',
+          'Roteirização, direção e posicionamento',
+          'Edição dinâmica, cortes essenciais, legenda e trilha sonora',
+          '04 vídeos brindes curtos até 15seg',
+          'Prazo de entrega de até 15 dias'
+        ],
+        installments: calculateDefaultInstallments('R$ 1.040')
+      },
+      {
+        id: 'vid-e-04',
+        name: 'Autoridade',
+        highlight: true,
+        price: 'R$ 1.440',
+        paymentMethod: 'Pix',
+        duration: '12 vídeos até 1:30seg',
+        features: [
+          '12 vídeos até 1:30seg',
+          '12 capas pra vídeo',
+          'Roteirização, direção e posicionamento',
+          'Edição dinâmica, cortes essenciais, legenda e trilha sonora',
+          '06 vídeos brindes curtos até 15seg',
+          'Prazo de entrega de até 20 dias'
+        ],
+        installments: calculateDefaultInstallments('R$ 1.440')
       }
     ]
   },
@@ -591,17 +826,132 @@ export const STANDARD_TEMPLATES: Record<ProposalCategory, Proposal> = {
     packages: [
       {
         id: 'pers-01',
-        name: 'Pacote Customizado Exclusivo',
-        highlight: true,
-        price: 'R$ 600',
-        paymentMethod: 'Pix / Cartão até 12x',
-        duration: 'Duração sob demanda',
+        name: 'Ensaio Essencial',
+        highlight: false,
+        price: 'R$ 250',
+        paymentMethod: 'Pix',
+        duration: 'Duração de até 01 hora',
         features: [
-          'Escopo definido sob medida para o seu projeto',
-          'Captação de fotos e/ou vídeos de acordo com alinhamento prévio',
-          'Tratamento profissional e curadoria dos materiais',
-          'Galeria privada online com entrega no prazo acordado'
-        ]
+          '10 fotos selecionadas',
+          '01 vídeo brinde Making Of',
+          'Prazo de entrega de até 10 dias',
+          'Foto extra R$ 25,00 (desconto a partir de 13 extras)'
+        ],
+        installments: calculateDefaultInstallments('R$ 250')
+      },
+      {
+        id: 'pers-02',
+        name: 'Ensaio Clássico',
+        highlight: false,
+        price: 'R$ 350',
+        paymentMethod: 'Pix',
+        duration: 'Duração de até 01 hora',
+        features: [
+          '15 fotos selecionadas',
+          '01 vídeo brinde Making Of',
+          'Prazo de entrega de até 15 dias',
+          'Foto extra R$ 23,00 (desconto a partir de 13 extras)'
+        ],
+        installments: calculateDefaultInstallments('R$ 350')
+      },
+      {
+        id: 'pers-03',
+        name: 'Ensaio Especial',
+        highlight: false,
+        price: 'R$ 450',
+        paymentMethod: 'Pix',
+        duration: 'Duração de até 02 horas',
+        features: [
+          '20 fotos selecionadas',
+          '01 vídeo brinde Making Of',
+          'Prazo de entrega de até 15 dias',
+          'Foto extra R$ 22,00 (desconto a partir de 13 extras)'
+        ],
+        installments: calculateDefaultInstallments('R$ 450')
+      },
+      {
+        id: 'pers-04',
+        name: 'Ensaio Completo',
+        highlight: true,
+        price: 'R$ 550',
+        paymentMethod: 'Pix',
+        duration: 'Duração de até 02 horas',
+        features: [
+          '30 fotos selecionadas',
+          '01 vídeo brinde Making Of',
+          'Prazo de entrega de até 20 dias',
+          'Foto extra R$ 19,00 (desconto a partir de 13 extras)'
+        ],
+        installments: calculateDefaultInstallments('R$ 550')
+      }
+    ],
+    videoPackages: [
+      {
+        id: 'vid-p-01',
+        name: 'Prático',
+        highlight: false,
+        price: 'R$ 150',
+        paymentMethod: 'Pix',
+        duration: '01 vídeo até 1:30seg',
+        features: [
+          '01 vídeo até 1:30seg',
+          '01 capa pra vídeo',
+          'Roteirização, direção e posicionamento',
+          'Edição dinâmica, cortes essenciais, legenda e trilha sonora',
+          'Prazo de entrega de até 72 horas'
+        ],
+        installments: calculateDefaultInstallments('R$ 150')
+      },
+      {
+        id: 'vid-p-02',
+        name: 'Essencial',
+        highlight: false,
+        price: 'R$ 560',
+        paymentMethod: 'Pix',
+        duration: '04 vídeos até 1:30seg',
+        features: [
+          '04 vídeos até 1:30seg',
+          '04 capas pra vídeo',
+          'Roteirização, direção e posicionamento',
+          'Edição dinâmica, cortes essenciais, legenda e trilha sonora',
+          '02 vídeos brindes curtos até 15seg',
+          'Prazo de entrega de até 10 dias'
+        ],
+        installments: calculateDefaultInstallments('R$ 560')
+      },
+      {
+        id: 'vid-p-03',
+        name: 'Presença',
+        highlight: false,
+        price: 'R$ 1.040',
+        paymentMethod: 'Pix',
+        duration: '08 vídeos até 1:30seg',
+        features: [
+          '08 vídeos até 1:30seg',
+          '08 capas pra vídeo',
+          'Roteirização, direção e posicionamento',
+          'Edição dinâmica, cortes essenciais, legenda e trilha sonora',
+          '04 vídeos brindes curtos até 15seg',
+          'Prazo de entrega de até 15 dias'
+        ],
+        installments: calculateDefaultInstallments('R$ 1.040')
+      },
+      {
+        id: 'vid-p-04',
+        name: 'Autoridade',
+        highlight: true,
+        price: 'R$ 1.440',
+        paymentMethod: 'Pix',
+        duration: '12 vídeos até 1:30seg',
+        features: [
+          '12 vídeos até 1:30seg',
+          '12 capas pra vídeo',
+          'Roteirização, direção e posicionamento',
+          'Edição dinâmica, cortes essenciais, legenda e trilha sonora',
+          '06 vídeos brindes curtos até 15seg',
+          'Prazo de entrega de até 20 dias'
+        ],
+        installments: calculateDefaultInstallments('R$ 1.440')
       }
     ]
   }

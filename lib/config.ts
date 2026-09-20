@@ -50,7 +50,7 @@ export const brandConfig = {
     paragraphs: [
       "Sou Alessandra Modkovski, fotógrafa, videomaker e produtora de conteúdo, atuando há mais de dois anos.",
       "Meu trabalho une um olhar atento aos detalhes, sensibilidade e direção cuidadosa para transformar momentos reais em registros que tenham significado.",
-      "Mais do que simplesmente fotografar ou filmar, busco registrar a essência de cada história com naturalidade, profissionalismo e olhar artístico.",
+      "Busco registrar a essência de cada história com naturalidade e profissionalismo.",
       "Para que, ao rever essas imagens, você não apenas lembre do que aconteceu, mas sinta novamente como aquele momento foi vivido."
     ],
     image: "/images/fotografa.jpg",
