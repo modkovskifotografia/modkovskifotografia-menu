@@ -25,11 +25,12 @@ export default function Navbar() {
   const navLinks = [
     { name: 'Início', href: '/' },
     { name: 'Portfólio', href: '/portfolio' },
+    { name: 'Depoimentos', href: '/depoimentos' },
+    { name: 'Individuais e Casais', href: '/individuais-e-casais' },
     { name: 'Corporativo', href: '/corporativo' },
     { name: 'Casamentos', href: '/casamentos' },
     { name: 'Eventos', href: '/eventos' },
-    { name: 'Personalizado', href: '/personalizado' },
-    { name: 'Depoimentos', href: '/depoimentos' },
+    { name: 'Personalize seu orçamento', href: '/personalizado' },
   ];
 
   const whatsappUrl = `https://wa.me/${brandConfig.whatsApp.number}?text=${encodeURIComponent(
@@ -57,12 +58,12 @@ export default function Navbar() {
         </Link>
 
         {/* Desktop Nav */}
-        <nav className="hidden lg:flex items-center gap-6 xl:gap-8">
+        <nav className="hidden lg:flex items-center gap-3.5 xl:gap-5 2xl:gap-6">
           {navLinks.map((link) => (
             <Link
               key={link.href}
               href={link.href}
-              className="text-xs xl:text-sm font-medium tracking-wide text-brand-text hover:text-brand-wine transition-colors duration-200 py-1 relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[1.5px] after:bg-brand-wine hover:after:w-full after:transition-all after:duration-300"
+              className="text-xs xl:text-[13px] font-medium tracking-wide text-brand-text hover:text-brand-wine transition-colors duration-200 py-1 relative whitespace-nowrap after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[1.5px] after:bg-brand-wine hover:after:w-full after:transition-all after:duration-300"
             >
               {link.name}
             </Link>
