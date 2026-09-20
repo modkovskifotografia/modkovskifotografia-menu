@@ -70,11 +70,6 @@ export default function ProposalView({ category, slug }: ProposalViewProps) {
     };
   }, [category, slug]);
 
-  // Se for proposta padrão / template padrão de OUTRA categoria: DUPLICA EXATAMENTE A PÁGINA INÍCIO COMPLETA SEM ALTERAR NADA
-  if ((slug.toLowerCase() === 'padrao' || proposal?.isTemplate || proposal?.clientSlug?.toLowerCase() === 'padrao') && category !== 'individual') {
-    return <HomeView />;
-  }
-
   const handleCopyLink = () => {
     if (typeof window !== 'undefined') {
       const origin = 'https://www.modkovskifotografia.com.br';
@@ -108,12 +103,13 @@ export default function ProposalView({ category, slug }: ProposalViewProps) {
     price: string,
     selectedInst?: InstallmentOption | null
   ) => {
-    const client = proposal?.clientName || 'Ensaio Individual';
+    const propTitle = proposal?.title || 'Proposta';
+    const client = proposal?.clientName || '';
     let text = '';
     if (selectedInst) {
-      text = `Olá Alessandra! Vi a proposta de Ensaio Fotográfico Individual${proposal?.clientSlug !== 'padrao' ? ` para ${client}` : ''} e quero reservar a minha data para a ${expNumber}: ${pkgName} com a opção de parcelamento em ${selectedInst.times} de ${selectedInst.value} no cartão de crédito.`;
+      text = `Olá Alessandra! Vi a ${propTitle}${proposal?.clientSlug !== 'padrao' && client ? ` para ${client}` : ''} e quero reservar a minha data para a ${expNumber}: ${pkgName} com a opção de parcelamento em ${selectedInst.times} de ${selectedInst.value} no cartão de crédito.`;
     } else {
-      text = `Olá Alessandra! Vi a proposta de Ensaio Fotográfico Individual${proposal?.clientSlug !== 'padrao' ? ` para ${client}` : ''} e quero reservar a minha data para a ${expNumber}: ${pkgName} (${price} via Pix).`;
+      text = `Olá Alessandra! Vi a ${propTitle}${proposal?.clientSlug !== 'padrao' && client ? ` para ${client}` : ''} e quero reservar a minha data para a ${expNumber}: ${pkgName} (${price} via Pix).`;
     }
     return `https://wa.me/${brandConfig.whatsApp.number}?text=${encodeURIComponent(text)}`;
   };
@@ -141,12 +137,13 @@ export default function ProposalView({ category, slug }: ProposalViewProps) {
     price: string,
     selectedInst?: InstallmentOption | null
   ) => {
-    const client = proposal?.clientName || 'Ensaio Individual';
+    const propTitle = proposal?.title || 'Proposta';
+    const client = proposal?.clientName || '';
     let text = '';
     if (selectedInst) {
-      text = `Olá Alessandra! Vi a proposta de Ensaio Fotográfico Individual${proposal?.clientSlug !== 'padrao' ? ` para ${client}` : ''} e quero reservar a minha data para a Produção de vídeo (${expNumber}: ${pkgName}) com a opção de parcelamento em ${selectedInst.times} de ${selectedInst.value} no cartão de crédito.`;
+      text = `Olá Alessandra! Vi a ${propTitle}${proposal?.clientSlug !== 'padrao' && client ? ` para ${client}` : ''} e quero reservar a minha data para a Produção de vídeo (${expNumber}: ${pkgName}) com a opção de parcelamento em ${selectedInst.times} de ${selectedInst.value} no cartão de crédito.`;
     } else {
-      text = `Olá Alessandra! Vi a proposta de Ensaio Fotográfico Individual${proposal?.clientSlug !== 'padrao' ? ` para ${client}` : ''} e quero reservar a minha data para a Produção de vídeo (${expNumber}: ${pkgName} - ${price} via Pix).`;
+      text = `Olá Alessandra! Vi a ${propTitle}${proposal?.clientSlug !== 'padrao' && client ? ` para ${client}` : ''} e quero reservar a minha data para a Produção de vídeo (${expNumber}: ${pkgName} - ${price} via Pix).`;
     }
     return `https://wa.me/${brandConfig.whatsApp.number}?text=${encodeURIComponent(text)}`;
   };
@@ -379,283 +376,184 @@ export default function ProposalView({ category, slug }: ProposalViewProps) {
               const currentSelectedInst = selectedInstallments[pkg.id];
               const isFeatured = pkg.highlight;
 
-              // EXCLUSIVAMENTE NA PROPOSTA DE ENSAIO FOTOGRÁFICO INDIVIDUAL:
-              // Layout do card da Imagem 2.jpg com as bordas levemente arredondadas da Imagem 1.jpg
-              if (proposal.category === 'individual') {
-                const individualWhatsAppUrl = getIndividualWhatsAppUrl(
-                  pkg.name,
-                  expNumber,
-                  pkg.price,
-                  currentSelectedInst
-                );
+              const individualWhatsAppUrl = getIndividualWhatsAppUrl(
+                pkg.name,
+                expNumber,
+                pkg.price,
+                currentSelectedInst
+              );
 
-                return (
-                  <div
-                    key={pkg.id}
-                    className={`rounded-3xl flex flex-col justify-between transition-all duration-300 relative bg-white ${
-                      isFeatured
-                        ? 'border-2 border-brand-wine shadow-[0_16px_45px_rgba(78,0,0,0.12)] scale-[1.02] p-6 sm:p-7'
-                        : 'border border-brand-wine/15 shadow-[0_8px_30px_rgba(78,0,0,0.05)] p-6 sm:p-7 hover:shadow-xl hover:border-brand-wine/30'
-                    }`}
-                    id={`package-card-${pkg.id}`}
-                  >
-                    {/* Tag de destaque */}
-                    {isFeatured && (
-                      <div className="absolute -top-3 right-6 bg-brand-wine text-white text-[9px] font-bold tracking-[0.2em] uppercase px-3 py-1 rounded-full shadow-sm">
-                        EXPERIÊNCIA COMPLETA
-                      </div>
-                    )}
-
-                    <div>
-                      {/* EXPERIÊNCIA 0X */}
-                      <span className="text-[10px] font-bold tracking-[0.25em] text-brand-wine uppercase block mb-1.5">
-                        {expNumber}
-                      </span>
-
-                      {/* Nome do Ensaio */}
-                      <h3 className="text-2xl font-serif text-brand-text font-normal mb-1">
-                        {pkg.name}
-                      </h3>
-
-                      {/* Duração */}
-                      {pkg.duration && (
-                        <span className="text-xs sm:text-sm text-brand-text-soft font-light block pb-4 border-b border-brand-wine/10">
-                          {pkg.duration}
-                        </span>
-                      )}
-
-                      {/* Lista de Itens Inclusos / Features (acima do investimento, conforme Imagem 2.jpg) */}
-                      <ul className="mt-4 space-y-2.5 text-xs text-brand-text-soft font-light">
-                        {pkg.features.map((feature, fIndex) => (
-                          <li key={fIndex} className="flex items-start gap-2 leading-relaxed">
-                            <Check className="w-3.5 h-3.5 text-brand-wine mt-0.5 shrink-0" strokeWidth={2} />
-                            <span>{feature}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-
-                    {/* Bloco de Investimento e Parcelamento */}
-                    <div className="mt-6 pt-4 border-t border-brand-wine/10">
-                      <span className="text-[9.5px] uppercase tracking-widest text-brand-text-soft font-semibold block mb-1">
-                        Investimento
-                      </span>
-                      <div className="flex items-baseline gap-1.5 mb-1">
-                        <span className="text-3xl sm:text-4xl font-light text-brand-wine font-serif">
-                          {pkg.price}
-                        </span>
-                        <span className="text-[11px] font-medium text-brand-text-soft uppercase tracking-wider">
-                          NO PIX
-                        </span>
-                      </div>
-
-                      <div className="flex items-center gap-1.5 text-[11px] text-brand-text-soft mb-2.5">
-                        <CreditCard className="w-3.5 h-3.5 text-brand-wine/60" />
-                        <span>Reserva via sinal de 30%</span>
-                      </div>
-
-                      {/* Linha divisória */}
-                      <div className="w-full h-[1px] bg-brand-wine/10 my-2.5" />
-
-                      {/* Accordion de Parcelamento */}
-                      {pkg.installments && pkg.installments.length > 0 && (
-                        <div className="mb-3">
-                          <button
-                            type="button"
-                            onClick={() => toggleInstallments(pkg.id)}
-                            className={`w-full flex items-center justify-between py-2 px-3 rounded-xl border transition-all duration-200 cursor-pointer ${
-                              isInstallmentOpen || currentSelectedInst
-                                ? 'bg-brand-cream border-brand-wine/30 text-brand-wine font-medium'
-                                : 'bg-brand-cream/60 hover:bg-brand-cream border-brand-wine/15 text-[11px] text-brand-wine font-medium'
-                            }`}
-                            id={`btn-parcelamento-${pkg.id}`}
-                            aria-expanded={isInstallmentOpen}
-                          >
-                            <span className="tracking-wider uppercase font-semibold text-[10.5px]">
-                              {currentSelectedInst ? `Parcelado (${currentSelectedInst.times})` : 'PARCELAMENTO'}
-                            </span>
-                            <ChevronDown
-                              className={`w-3.5 h-3.5 text-brand-wine transition-transform duration-300 ${
-                                isInstallmentOpen ? 'rotate-180' : ''
-                              }`}
-                            />
-                          </button>
-
-                          {isInstallmentOpen && (
-                            <div className="overflow-hidden border-x border-b border-brand-wine/15 rounded-b-xl bg-brand-cream/40 p-2.5 animate-in fade-in duration-200">
-                              <p className="text-[9.5px] text-brand-text-soft font-light mb-2 text-center italic">
-                                Selecione a opção desejada:
-                              </p>
-                              <div className="grid grid-cols-2 gap-1.5 text-[10px]">
-                                {pkg.installments.map((inst, iIdx) => {
-                                  const isSelected = currentSelectedInst?.times === inst.times;
-                                  return (
-                                    <button
-                                      type="button"
-                                      key={iIdx}
-                                      onClick={() => handleSelectInstallment(pkg.id, inst)}
-                                      className={`flex items-center justify-between py-1.5 px-2 rounded-lg text-left border transition-all cursor-pointer ${
-                                        isSelected
-                                          ? 'bg-brand-wine text-white border-brand-wine shadow-xs'
-                                          : 'bg-white/80 hover:bg-white border-brand-wine/10 text-brand-text hover:border-brand-wine/30'
-                                      }`}
-                                      id={`pkg-${pkg.id}-opt-${inst.times}`}
-                                    >
-                                      <span className={`text-[10px] font-semibold ${isSelected ? 'text-white' : 'text-brand-wine'}`}>
-                                        {inst.times}:
-                                      </span>
-                                      <span className="text-[10px] font-medium">
-                                        {inst.value}
-                                      </span>
-                                    </button>
-                                  );
-                                })}
-                              </div>
-
-                              {currentSelectedInst && (
-                                <button
-                                  type="button"
-                                  onClick={() => setSelectedInstallments((prev) => ({ ...prev, [pkg.id]: null }))}
-                                  className="w-full text-center text-[10px] text-brand-wine hover:underline mt-2 pt-1.5 border-t border-brand-wine/10 font-medium cursor-pointer"
-                                >
-                                  Voltar para valor à vista (Pix)
-                                </button>
-                              )}
-
-                              <span className="text-[9px] text-brand-text-soft/70 block mt-1.5 text-center font-light">
-                                Cartão de crédito
-                              </span>
-                            </div>
-                          )}
-                        </div>
-                      )}
-
-                      {/* Indicador de Opção Selecionada */}
-                      <div className="mb-3 text-center">
-                        {currentSelectedInst ? (
-                          <div className="inline-flex items-center gap-1.5 text-[10.5px] text-brand-wine bg-brand-cream/80 px-2.5 py-1 rounded-full border border-brand-wine/20">
-                            <CheckCircle2 className="w-3.5 h-3.5 text-brand-wine" />
-                            <span>Opção: <strong>{currentSelectedInst.times} de {currentSelectedInst.value}</strong></span>
-                          </div>
-                        ) : (
-                          <span className="text-[10px] text-brand-text-soft/70 block font-light">
-                            Opção: À vista ({pkg.price} no Pix)
-                          </span>
-                        )}
-                      </div>
-
-                      {/* Botão RESERVAR DATA */}
-                      <a
-                        href={individualWhatsAppUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className={`w-full py-3.5 px-4 rounded-full text-xs font-semibold tracking-widest uppercase transition-all duration-300 flex items-center justify-center gap-2 shadow-sm ${
-                          isFeatured
-                            ? 'bg-brand-wine text-white hover:bg-brand-wine-dark hover:shadow-md hover:-translate-y-0.5'
-                            : 'bg-brand-cream border border-brand-wine/25 text-brand-wine hover:bg-brand-wine hover:text-white hover:-translate-y-0.5'
-                        }`}
-                        id={`package-cta-${pkg.id}`}
-                      >
-                        <MessageCircle className="w-4 h-4 text-inherit shrink-0" strokeWidth={1.5} />
-                        <span>RESERVAR DATA</span>
-                      </a>
-                    </div>
-                  </div>
-                );
-              }
-
-              // Fallback para outras categorias de propostas
               return (
                 <div
                   key={pkg.id}
-                  className={`rounded-3xl flex flex-col justify-between transition-all duration-300 relative ${
-                    pkg.highlight
-                      ? 'bg-brand-cream/30 border-2 border-brand-wine shadow-[0_16px_45px_rgba(78,0,0,0.12)] scale-[1.02] p-7 sm:p-8'
-                      : 'bg-white border border-brand-wine/15 shadow-[0_8px_30px_rgba(78,0,0,0.05)] p-6 sm:p-7 hover:shadow-lg'
+                  className={`rounded-3xl flex flex-col justify-between transition-all duration-300 relative bg-white ${
+                    isFeatured
+                      ? 'border-2 border-brand-wine shadow-[0_16px_45px_rgba(78,0,0,0.12)] scale-[1.02] p-6 sm:p-7'
+                      : 'border border-brand-wine/15 shadow-[0_8px_30px_rgba(78,0,0,0.05)] p-6 sm:p-7 hover:shadow-xl hover:border-brand-wine/30'
                   }`}
+                  id={`package-card-${pkg.id}`}
                 >
-                  {pkg.highlight && (
-                    <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-brand-wine text-white text-[10px] uppercase tracking-widest font-semibold py-1 px-4 rounded-full shadow-md">
-                      Mais Escolhido
+                  {/* Tag de destaque */}
+                  {isFeatured && (
+                    <div className="absolute -top-3 right-6 bg-brand-wine text-white text-[9px] font-bold tracking-[0.2em] uppercase px-3 py-1 rounded-full shadow-sm">
+                      EXPERIÊNCIA COMPLETA
                     </div>
                   )}
 
                   <div>
-                    {/* Informações de Título e Preço */}
-                    <div className="border-b border-brand-wine/10 pb-5 mb-5">
-                      <h3 className="font-serif text-2xl text-brand-text font-medium mb-1">
-                        {pkg.name}
-                      </h3>
-                      <p className="text-xs text-brand-wine font-medium flex items-center gap-1.5 mb-4">
-                        <Clock className="w-3.5 h-3.5" />
+                    {/* EXPERIÊNCIA 0X */}
+                    <span className="text-[10px] font-bold tracking-[0.25em] text-brand-wine uppercase block mb-1.5">
+                      {expNumber}
+                    </span>
+
+                    {/* Nome do Ensaio */}
+                    <h3 className="text-2xl font-serif text-brand-text font-normal mb-1">
+                      {pkg.name}
+                    </h3>
+
+                    {/* Duração */}
+                    {pkg.duration && (
+                      <span className="text-xs sm:text-sm text-brand-text-soft font-light block pb-4 border-b border-brand-wine/10">
                         {pkg.duration}
-                      </p>
+                      </span>
+                    )}
 
-                      <div className="flex items-baseline gap-2">
-                        <span className="font-serif text-3xl sm:text-4xl text-brand-wine font-bold">
-                          {pkg.price}
-                        </span>
-                        <span className="text-xs text-brand-text-soft">
-                          {pkg.paymentMethod || 'à vista no Pix'}
-                        </span>
-                      </div>
-
-                      {/* Botão de Ver Parcelamento */}
-                      {pkg.installments && pkg.installments.length > 0 && (
-                        <div className="mt-4 pt-3 border-t border-dashed border-brand-wine/15">
-                          <button
-                            type="button"
-                            onClick={() => toggleInstallments(pkg.id)}
-                            className="w-full flex items-center justify-between text-xs text-brand-wine hover:text-brand-wine-dark font-medium transition-colors py-1"
-                          >
-                            <span className="flex items-center gap-1.5">
-                              <CreditCard className="w-3.5 h-3.5" />
-                              <span>Ver opções de parcelamento (até 12x)</span>
-                            </span>
-                            <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${openInstallments[pkg.id] ? 'rotate-180' : ''}`} />
-                          </button>
-
-                          {openInstallments[pkg.id] && (
-                            <div className="mt-2.5 p-3 rounded-xl bg-brand-cream/60 border border-brand-wine/10 space-y-1.5 text-xs text-brand-text-soft animate-in fade-in duration-200">
-                              {pkg.installments.map((inst, i) => (
-                                <div key={i} className="flex justify-between items-center py-0.5 border-b border-brand-wine/5 last:border-0">
-                                  <span>{inst.times} no cartão</span>
-                                  <span className="font-semibold text-brand-text">{inst.value}</span>
-                                </div>
-                              ))}
-                            </div>
-                          )}
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Lista de Itens Inclusos */}
-                    <ul className="space-y-3 mb-8">
-                      {pkg.features.map((feature, i) => (
-                        <li key={i} className="flex items-start gap-2.5 text-xs sm:text-sm text-brand-text-soft leading-relaxed">
-                          <div className="w-4 h-4 rounded-full bg-brand-wine/10 text-brand-wine flex items-center justify-center shrink-0 mt-0.5">
-                            <Check className="w-2.5 h-2.5" />
-                          </div>
+                    {/* Lista de Itens Inclusos / Features */}
+                    <ul className="mt-4 space-y-2.5 text-xs text-brand-text-soft font-light">
+                      {pkg.features.map((feature, fIndex) => (
+                        <li key={fIndex} className="flex items-start gap-2 leading-relaxed">
+                          <Check className="w-3.5 h-3.5 text-brand-wine mt-0.5 shrink-0" strokeWidth={2} />
                           <span>{feature}</span>
                         </li>
                       ))}
                     </ul>
                   </div>
 
-                  {/* Botão de Escolher este Pacote */}
-                  <a
-                    href={getWhatsAppMessageUrl(pkg.name)}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={`w-full py-3.5 px-5 rounded-full text-xs font-semibold tracking-wider uppercase text-center transition-all flex items-center justify-center gap-2 shadow-sm ${
-                      pkg.highlight
-                        ? 'bg-brand-wine text-white hover:bg-brand-wine-dark hover:shadow-md'
-                        : 'bg-brand-cream text-brand-wine border border-brand-wine/25 hover:bg-brand-wine hover:text-white'
-                    }`}
-                  >
-                    <MessageCircle className="w-4 h-4 fill-current" />
-                    <span>Escolher este Pacote</span>
-                  </a>
+                  {/* Bloco de Investimento e Parcelamento */}
+                  <div className="mt-6 pt-4 border-t border-brand-wine/10">
+                    <span className="text-[9.5px] uppercase tracking-widest text-brand-text-soft font-semibold block mb-1">
+                      Investimento
+                    </span>
+                    <div className="flex items-baseline gap-1.5 mb-1">
+                      <span className="text-3xl sm:text-4xl font-light text-brand-wine font-serif">
+                        {pkg.price}
+                      </span>
+                      <span className="text-[11px] font-medium text-brand-text-soft uppercase tracking-wider">
+                        NO PIX
+                      </span>
+                    </div>
+
+                    <div className="flex items-center gap-1.5 text-[11px] text-brand-text-soft mb-2.5">
+                      <CreditCard className="w-3.5 h-3.5 text-brand-wine/60" />
+                      <span>Reserva via sinal de 30%</span>
+                    </div>
+
+                    {/* Linha divisória */}
+                    <div className="w-full h-[1px] bg-brand-wine/10 my-2.5" />
+
+                    {/* Accordion de Parcelamento */}
+                    {pkg.installments && pkg.installments.length > 0 && (
+                      <div className="mb-3">
+                        <button
+                          type="button"
+                          onClick={() => toggleInstallments(pkg.id)}
+                          className={`w-full flex items-center justify-between py-2 px-3 rounded-xl border transition-all duration-200 cursor-pointer ${
+                            isInstallmentOpen || currentSelectedInst
+                              ? 'bg-brand-cream border-brand-wine/30 text-brand-wine font-medium'
+                              : 'bg-brand-cream/60 hover:bg-brand-cream border-brand-wine/15 text-[11px] text-brand-wine font-medium'
+                          }`}
+                          id={`btn-parcelamento-${pkg.id}`}
+                          aria-expanded={isInstallmentOpen}
+                        >
+                          <span className="tracking-wider uppercase font-semibold text-[10.5px]">
+                            {currentSelectedInst ? `Parcelado (${currentSelectedInst.times})` : 'PARCELAMENTO'}
+                          </span>
+                          <ChevronDown
+                            className={`w-3.5 h-3.5 text-brand-wine transition-transform duration-300 ${
+                              isInstallmentOpen ? 'rotate-180' : ''
+                            }`}
+                          />
+                        </button>
+
+                        {isInstallmentOpen && (
+                          <div className="overflow-hidden border-x border-b border-brand-wine/15 rounded-b-xl bg-brand-cream/40 p-2.5 animate-in fade-in duration-200">
+                            <p className="text-[9.5px] text-brand-text-soft font-light mb-2 text-center italic">
+                              Selecione a opção desejada:
+                            </p>
+                            <div className="grid grid-cols-2 gap-1.5 text-[10px]">
+                              {pkg.installments.map((inst, iIdx) => {
+                                const isSelected = currentSelectedInst?.times === inst.times;
+                                return (
+                                  <button
+                                    type="button"
+                                    key={iIdx}
+                                    onClick={() => handleSelectInstallment(pkg.id, inst)}
+                                    className={`flex items-center justify-between py-1.5 px-2 rounded-lg text-left border transition-all cursor-pointer ${
+                                      isSelected
+                                        ? 'bg-brand-wine text-white border-brand-wine shadow-xs'
+                                        : 'bg-white/80 hover:bg-white border-brand-wine/10 text-brand-text hover:border-brand-wine/30'
+                                    }`}
+                                    id={`pkg-${pkg.id}-opt-${inst.times}`}
+                                  >
+                                    <span className={`text-[10px] font-semibold ${isSelected ? 'text-white' : 'text-brand-wine'}`}>
+                                      {inst.times}:
+                                    </span>
+                                    <span className="text-[10px] font-medium">
+                                      {inst.value}
+                                    </span>
+                                  </button>
+                                );
+                              })}
+                            </div>
+
+                            {currentSelectedInst && (
+                              <button
+                                type="button"
+                                onClick={() => setSelectedInstallments((prev) => ({ ...prev, [pkg.id]: null }))}
+                                className="w-full text-center text-[10px] text-brand-wine hover:underline mt-2 pt-1.5 border-t border-brand-wine/10 font-medium cursor-pointer"
+                              >
+                                Voltar para valor à vista (Pix)
+                              </button>
+                            )}
+
+                            <span className="text-[9px] text-brand-text-soft/70 block mt-1.5 text-center font-light">
+                              Cartão de crédito
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    {/* Indicador de Opção Selecionada */}
+                    <div className="mb-3 text-center">
+                      {currentSelectedInst ? (
+                        <div className="inline-flex items-center gap-1.5 text-[10.5px] text-brand-wine bg-brand-cream/80 px-2.5 py-1 rounded-full border border-brand-wine/20">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-brand-wine" />
+                          <span>Opção: <strong>{currentSelectedInst.times} de {currentSelectedInst.value}</strong></span>
+                        </div>
+                      ) : (
+                        <span className="text-[10px] text-brand-text-soft/70 block font-light">
+                          Opção: À vista ({pkg.price} no Pix)
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Botão RESERVAR DATA */}
+                    <a
+                      href={individualWhatsAppUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={`w-full py-3.5 px-4 rounded-full text-xs font-semibold tracking-widest uppercase transition-all duration-300 flex items-center justify-center gap-2 shadow-sm ${
+                        isFeatured
+                          ? 'bg-brand-wine text-white hover:bg-brand-wine-dark hover:shadow-md hover:-translate-y-0.5'
+                          : 'bg-brand-cream border border-brand-wine/25 text-brand-wine hover:bg-brand-wine hover:text-white hover:-translate-y-0.5'
+                      }`}
+                      id={`package-cta-${pkg.id}`}
+                    >
+                      <MessageCircle className="w-4 h-4 text-inherit shrink-0" strokeWidth={1.5} />
+                      <span>RESERVAR DATA</span>
+                    </a>
+                  </div>
                 </div>
               );
             })}
@@ -692,14 +590,11 @@ export default function ProposalView({ category, slug }: ProposalViewProps) {
         </div>
       </section>
 
-      {/* Exclusivo para Proposta de Ensaio Fotográfico Individual: Antes e Depois da Edição e Produção de vídeo */}
-      {proposal.category === 'individual' && (
-        <>
-          {/* Campo Antes e Depois da Edição */}
-          <BeforeAfterSlider />
+      {/* Campo Antes e Depois da Edição */}
+      <BeforeAfterSlider />
 
-          {/* Campo Produção de vídeo */}
-          {(() => {
+      {/* Campo Produção de vídeo */}
+      {(() => {
             const videoList = proposal.videoPackages !== undefined 
               ? proposal.videoPackages 
               : (videoSection?.packages || []);
@@ -931,14 +826,12 @@ export default function ProposalView({ category, slug }: ProposalViewProps) {
               </section>
             );
           })()}
-        </>
-      )}
 
       {/* 8. Processo de Contratação (Como funciona - Igual à página Início) */}
       <Process />
       
       {/* 9. Depoimentos das Clientes (Igual à página Início) */}
-      <Testimonial buttonWine={proposal.category === 'individual'} />
+      <Testimonial buttonWine={true} />
       
       {/* 10. Chamada Final para Contratação via WhatsApp (Igual à página Início) */}
       <FinalCTA />
