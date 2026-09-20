@@ -1,8 +1,9 @@
 'use client';
 
 import React from 'react';
+import Link from 'next/link';
 import { brandConfig } from '@/lib/config';
-import { Instagram, Camera, Heart } from 'lucide-react';
+import { Instagram, Camera, Heart, Lock } from 'lucide-react';
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
@@ -49,11 +50,22 @@ export default function Footer() {
           <p>
             &copy; {currentYear} {brandConfig.name}. Todos os direitos reservados.
           </p>
-          <p className="flex items-center justify-center gap-1 opacity-75 pt-2">
-            <span>Desenvolvido com</span>
-            <Heart className="w-2.5 h-2.5 text-brand-wine fill-brand-wine inline" />
-            <span>para registrar histórias reais.</span>
-          </p>
+          <div className="pt-2 flex items-center justify-center gap-3">
+            <p className="flex items-center justify-center gap-1 opacity-75">
+              <span>Desenvolvido com</span>
+              <Heart className="w-2.5 h-2.5 text-brand-wine fill-brand-wine inline" />
+              <span>para registrar histórias reais.</span>
+            </p>
+            <span>•</span>
+            <Link 
+              href="/propostas" 
+              className="hover:text-white/80 transition-colors inline-flex items-center gap-1 opacity-40 hover:opacity-100"
+              title="Gestão de Propostas e Orçamentos"
+            >
+              <Lock className="w-2.5 h-2.5" />
+              <span>Painel</span>
+            </Link>
+          </div>
         </div>
 
       </div>

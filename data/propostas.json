@@ -1,0 +1,107 @@
+[
+  {
+    "id": "sample-corp-01",
+    "category": "corporativo",
+    "clientName": "Dra. Camila Santos",
+    "clientSlug": "dra-camila-santos",
+    "title": "Proposta de Posicionamento de Imagem & Conteúdo Corporativo",
+    "subtitle": "Fotografia e vídeos estratégicos para elevar a percepção de autoridade e credibilidade da sua marca.",
+    "welcomeMessage": "Olá Dra. Camila! Foi um prazer conversar com você. Esta proposta foi desenhada especialmente para elevar o posicionamento digital da sua clínica com fotos de autoridade e vídeos estratégicos.",
+    "validityDays": 10,
+    "createdAt": "2026-09-20T07:48:43.900Z",
+    "investmentNote": "Condições comerciais: 30% na reserva e 70% na entrega das fotos, ou faturamento em até 12x no cartão de crédito. Emissão de Nota Fiscal.",
+    "isTemplate": false,
+    "packages": [
+      {
+        "id": "corp-01",
+        "name": "Retratos Profissionais de Autoridade",
+        "highlight": false,
+        "price": "R$ 350",
+        "paymentMethod": "Pix / Boleto / Cartão",
+        "duration": "Até 01 hora de sessão",
+        "features": [
+          "10 fotos tratadas com retoque fino de pele e alta frequência",
+          "Direção de postura e expressão focada no seu nicho",
+          "Arquivos em alta resolução para site e redes sociais",
+          "Entrega em até 5 dias úteis"
+        ],
+        "installments": [
+          {
+            "times": "1x",
+            "value": "R$ 365,34"
+          },
+          {
+            "times": "3x",
+            "value": "R$ 125,47"
+          },
+          {
+            "times": "6x",
+            "value": "R$ 64,58"
+          }
+        ]
+      },
+      {
+        "id": "corp-02",
+        "name": "Produção de Vídeos Estratégicos (Reels)",
+        "highlight": true,
+        "price": "R$ 560",
+        "paymentMethod": "Pix / Boleto / Cartão",
+        "duration": "Sessão de gravação até 02 horas",
+        "features": [
+          "04 vídeos gravados e editados de até 1:30 min cada",
+          "Roteirização prévia, direcionamento de fala e iluminação profissional",
+          "Edição dinâmica com legendas sincronizadas e trilha sonora",
+          "02 vídeos curtos de brinde para stories",
+          "Prazo de entrega em até 7 dias úteis"
+        ],
+        "installments": [
+          {
+            "times": "1x",
+            "value": "R$ 584,50"
+          },
+          {
+            "times": "3x",
+            "value": "R$ 200,74"
+          },
+          {
+            "times": "6x",
+            "value": "R$ 103,32"
+          }
+        ]
+      },
+      {
+        "id": "corp-03",
+        "name": "Combo Imagem Total (Fotos + Vídeos)",
+        "highlight": false,
+        "price": "R$ 850",
+        "paymentMethod": "Pix / Boleto / Cartão",
+        "duration": "Sessão completa de até 03 horas",
+        "features": [
+          "15 retratos profissionais com edição avançada",
+          "04 vídeos para Reels com legendas e identidade visual",
+          "Fotos em ação/trabalho no seu ambiente ou consultório",
+          "Capas personalizadas para cada vídeo",
+          "Entrega prioritária em até 7 dias"
+        ],
+        "installments": [
+          {
+            "times": "1x",
+            "value": "R$ 887,26"
+          },
+          {
+            "times": "3x",
+            "value": "R$ 304,70"
+          },
+          {
+            "times": "6x",
+            "value": "R$ 156,86"
+          },
+          {
+            "times": "12x",
+            "value": "R$ 85,00"
+          }
+        ]
+      }
+    ]
+  }
+]
