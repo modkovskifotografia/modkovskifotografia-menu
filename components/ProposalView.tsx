@@ -73,7 +73,7 @@ export default function ProposalView({ category, slug }: ProposalViewProps) {
   const handleCopyLink = () => {
     if (typeof window !== 'undefined') {
       const origin = 'https://www.modkovskifotografia.com.br';
-      const fullUrl = `${origin}/${category}/${slug}`;
+      const fullUrl = `${origin}/propostas/${category}/${slug}`;
       navigator.clipboard.writeText(fullUrl);
       setCopied(true);
       setTimeout(() => setCopied(false), 2500);

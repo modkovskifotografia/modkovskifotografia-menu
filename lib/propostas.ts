@@ -33,6 +33,7 @@ export interface Proposal {
   videoPackages?: ProposalPackage[];
   customObservations?: string;
   isTemplate?: boolean;
+  status?: 'pendente' | 'fechado' | 'desistiu';
 }
 
 export const CATEGORY_LABELS: Record<ProposalCategory, string> = {

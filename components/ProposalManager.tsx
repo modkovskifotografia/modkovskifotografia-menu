@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import { 
   Plus, 
   Copy, 
@@ -368,14 +369,24 @@ export default function ProposalManager() {
     if (confirmed) {
       await deleteProposalAction(id, category, clientSlug);
       setProposals((prev) => prev.filter((p) => p.id !== id && !(p.category === category && p.clientSlug === clientSlug)));
+      loadProposals();
     }
+  };
+
+  // Update proposal status
+  const handleUpdateStatus = async (p: Proposal, newStatus: 'pendente' | 'fechado' | 'desistiu') => {
+    const updated: Proposal = { ...p, status: newStatus };
+    await saveProposalAction(updated);
+    setProposals((prev) =>
+      prev.map((item) => (item.id === p.id || (item.category === p.category && item.clientSlug === p.clientSlug) ? updated : item))
+    );
   };
 
   // Copy full URL to clipboard
   const handleCopyLink = (p: Proposal) => {
     if (typeof window === 'undefined') return;
     const origin = 'https://www.modkovskifotografia.com.br';
-    const fullUrl = `${origin}/${p.category}/${p.clientSlug}`;
+    const fullUrl = `${origin}/propostas/${p.category}/${p.clientSlug}`;
     navigator.clipboard.writeText(fullUrl);
     setCopiedId(p.id);
     setTimeout(() => setCopiedId(null), 2500);
@@ -384,7 +395,7 @@ export default function ProposalManager() {
   // Generate WhatsApp sending URL
   const getWhatsAppSendUrl = (p: Proposal) => {
     const origin = 'https://www.modkovskifotografia.com.br';
-    const fullUrl = `${origin}/${p.category}/${p.clientSlug}`;
+    const fullUrl = `${origin}/propostas/${p.category}/${p.clientSlug}`;
     const text = `Olá ${p.clientName}! Preparei a sua proposta personalizada com muito carinho. Você pode conferir os detalhes e opções de investimento neste link exclusivo:\n\n${fullUrl}\n\nFique à vontade para olhar e tirar qualquer dúvida comigo! ✨`;
     return `https://wa.me/?text=${encodeURIComponent(text)}`;
   };
@@ -698,7 +709,7 @@ export default function ProposalManager() {
                     </button>
                     
                     <Link
-                      href={`/${cat}/padrao`}
+                      href={`/propostas/${cat}/padrao`}
                       target="_blank"
                       className="p-2.5 rounded-xl border border-brand-wine/20 text-brand-text hover:bg-brand-wine/5 transition-colors"
                       title="Pré-visualizar modelo padrão"
@@ -710,6 +721,98 @@ export default function ProposalManager() {
               );
             })}
           </div>
+        </section>
+
+        {/* Section: Resumo e Gráfico dos Últimos 30 Dias */}
+        <section className="mb-14 bg-white rounded-3xl p-6 sm:p-8 border border-brand-wine/15 shadow-sm">
+          {(() => {
+            const thirtyDaysAgo = new Date();
+            thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+            const last30DaysProposals = proposals.filter((p) => {
+              const d = new Date(p.createdAt || Date.now());
+              return d >= thirtyDaysAgo;
+            });
+
+            const chartData = Object.keys(CATEGORY_LABELS).map((catKey) => {
+              const count = last30DaysProposals.filter((p) => p.category === catKey).length;
+              return {
+                name: CATEGORY_LABELS[catKey as ProposalCategory],
+                key: catKey,
+                count,
+              };
+            });
+
+            const categoryColors: Record<string, string> = {
+              individual: '#4A1525',   // Wine
+              casal: '#8C2D43',        // Deep Rose
+              corporativo: '#D4AF37',  // Gold
+              casamento: '#B8860B',    // Dark Gold
+              evento: '#6B4226',       // Bronze
+              personalizado: '#9E7B66' // Taupe
+            };
+
+            return (
+              <>
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                  <div>
+                    <h2 className="font-serif text-xl sm:text-2xl text-brand-text font-medium">
+                      Resumo por Categoria (Últimos 30 Dias)
+                    </h2>
+                    <p className="text-xs text-brand-text-soft">
+                      Quantidade de propostas geradas recentemente divididas por segmento.
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2 bg-brand-wine/5 px-3 py-1.5 rounded-xl border border-brand-wine/10 text-xs text-brand-wine font-medium">
+                    <Sparkles className="w-4 h-4" />
+                    <span>Total no período: {last30DaysProposals.length} propostas</span>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-center">
+                  {/* Chart */}
+                  <div className="lg:col-span-2 h-64 w-full">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                        <XAxis dataKey="name" tick={{ fontSize: 11, fill: '#6B4226' }} stroke="#D4AF37" />
+                        <YAxis allowDecimals={false} tick={{ fontSize: 11, fill: '#6B4226' }} stroke="#D4AF37" />
+                        <Tooltip 
+                          contentStyle={{ backgroundColor: '#fff', borderColor: '#4A1525', borderRadius: '12px', fontSize: '12px' }}
+                          formatter={(value: any) => [`${value} propostas`, 'Quantidade']}
+                        />
+                        <Bar dataKey="count" radius={[8, 8, 0, 0]}>
+                          {chartData.map((entry) => (
+                            <Cell key={`cell-${entry.key}`} fill={categoryColors[entry.key] || '#4A1525'} />
+                          ))}
+                        </Bar>
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
+
+                  {/* Sums / Legend next to chart */}
+                  <div className="bg-brand-sand/30 rounded-2xl p-5 border border-brand-wine/10 space-y-3">
+                    <h3 className="font-serif text-sm font-bold text-brand-text uppercase tracking-wider mb-2 border-b border-brand-wine/10 pb-2">
+                      Soma por Categoria
+                    </h3>
+                    {chartData.map((item) => (
+                      <div key={item.key} className="flex items-center justify-between text-xs">
+                        <div className="flex items-center gap-2">
+                          <span 
+                            className="w-3 h-3 rounded-full shrink-0" 
+                            style={{ backgroundColor: categoryColors[item.key] }}
+                          />
+                          <span className="text-brand-text font-medium">{item.name}</span>
+                        </div>
+                        <span className="font-bold px-2 py-0.5 rounded-md bg-white border border-brand-wine/15 text-brand-wine">
+                          {item.count} {item.count === 1 ? 'proposta' : 'propostas'}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </>
+            );
+          })()}
         </section>
 
         {/* Section 2: Active Proposals List */}
@@ -768,7 +871,8 @@ export default function ProposalManager() {
               {filteredProposals.map((p) => {
                 const isCopied = copiedId === p.id;
                 const formattedDate = new Date(p.createdAt).toLocaleDateString('pt-BR');
-                const pathUrl = `/${p.category}/${p.clientSlug}`;
+                const pathUrl = `/propostas/${p.category}/${p.clientSlug}`;
+                const currentStatus = p.status || 'pendente';
 
                 return (
                   <div
@@ -784,6 +888,22 @@ export default function ProposalManager() {
                         <span className="text-xs font-semibold text-brand-text font-serif">
                           {p.clientName}
                         </span>
+                        
+                        {/* Status Badge */}
+                        {currentStatus === 'fechado' ? (
+                          <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-600 text-white flex items-center gap-1">
+                            <CheckCircle2 className="w-3 h-3" /> Fechado 🤝
+                          </span>
+                        ) : currentStatus === 'desistiu' ? (
+                          <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-rose-600 text-white flex items-center gap-1">
+                            <AlertCircle className="w-3 h-3" /> Desistiu ❌
+                          </span>
+                        ) : (
+                          <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-amber-500 text-white flex items-center gap-1">
+                            <Clock className="w-3 h-3" /> Pendente ⏳
+                          </span>
+                        )}
+
                         <span className="text-[11px] text-brand-text-soft font-mono bg-brand-cream/80 px-2 py-0.5 rounded border border-brand-wine/10">
                           {pathUrl}
                         </span>
@@ -800,6 +920,36 @@ export default function ProposalManager() {
 
                     {/* Right: Actions */}
                     <div className="flex items-center gap-2 flex-wrap shrink-0">
+                      {/* Status toggle buttons */}
+                      <div className="flex items-center gap-1 bg-brand-cream/60 p-1 rounded-xl border border-brand-wine/10">
+                        <button
+                          onClick={() => handleUpdateStatus(p, 'pendente')}
+                          className={`px-2 py-1 rounded-lg text-[10px] font-semibold transition-colors ${
+                            currentStatus === 'pendente' ? 'bg-amber-500 text-white shadow-sm' : 'text-brand-text-soft hover:text-brand-text'
+                          }`}
+                          title="Marcar como Pendente"
+                        >
+                          Pendente
+                        </button>
+                        <button
+                          onClick={() => handleUpdateStatus(p, 'fechado')}
+                          className={`px-2 py-1 rounded-lg text-[10px] font-semibold transition-colors ${
+                            currentStatus === 'fechado' ? 'bg-emerald-600 text-white shadow-sm' : 'text-brand-text-soft hover:text-brand-text'
+                          }`}
+                          title="Marcar como Fechado"
+                        >
+                          Fechado
+                        </button>
+                        <button
+                          onClick={() => handleUpdateStatus(p, 'desistiu')}
+                          className={`px-2 py-1 rounded-lg text-[10px] font-semibold transition-colors ${
+                            currentStatus === 'desistiu' ? 'bg-rose-600 text-white shadow-sm' : 'text-brand-text-soft hover:text-brand-text'
+                          }`}
+                          title="Marcar como Desistiu"
+                        >
+                          Desistiu
+                        </button>
+                      </div>
                       {/* Copiar Link */}
                       <button
                         onClick={() => handleCopyLink(p)}
