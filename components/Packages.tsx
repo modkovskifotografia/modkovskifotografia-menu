@@ -90,19 +90,21 @@ export default function Packages() {
                 return (
                   <motion.div
                     key={pkg.id}
-                    initial={{ opacity: 0, y: 30 }}
+                    initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
-                    whileTap={{ scale: 0.98 }}
                     viewport={{ once: true, margin: "-50px" }}
-                    transition={{ duration: 0.8, delay: index * 0.1, ease: [0.16, 1, 0.3, 1] }}
-                    className={`reveal-on-scroll animate-float relative flex flex-col justify-between p-6 md:p-7 bg-white transition-all duration-300 transform-gpu hover:-translate-y-2 hover:scale-[1.015] shadow-[0_8px_24px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.02)] hover:shadow-[0_20px_45px_rgba(78,0,0,0.12)] ${
-                      isFeatured 
-                        ? 'border-2 border-brand-wine scale-[1.02] lg:scale-[1.03] z-10 shadow-[0_15px_40px_rgba(96,0,0,0.12)] hover:scale-[1.035]' 
-                        : 'border border-brand-wine/10 hover:border-brand-wine/30'
-                    }`}
-                    style={{ animationDelay: `${index * 0.4}s`, animationDuration: `${5 + (index % 3)}s` }}
-                    id={`package-card-${pkg.id}`}
+                    transition={{ duration: 0.6, delay: index * 0.1, ease: [0.16, 1, 0.3, 1] }}
+                    className="h-full flex flex-col"
                   >
+                    <div
+                      className={`card-float relative flex flex-col justify-between p-6 md:p-7 bg-white h-full transition-all duration-300 transform-gpu hover:scale-[1.015] shadow-[0_8px_24px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.02)] hover:shadow-[0_20px_45px_rgba(78,0,0,0.12)] ${
+                        isFeatured 
+                          ? 'border-2 border-brand-wine scale-[1.02] lg:scale-[1.03] z-10 shadow-[0_15px_40px_rgba(96,0,0,0.12)] hover:scale-[1.035]' 
+                          : 'border border-brand-wine/10 hover:border-brand-wine/30'
+                      }`}
+                      style={{ animationDelay: `${(index % 4) * 0.7}s`, animationDuration: `${4.5 + (index % 3) * 0.5}s` }}
+                      id={`package-card-${pkg.id}`}
+                    >
                     {/* Highlight Badge */}
                     {isFeatured && pkg.badge && (
                       <div className="absolute top-0 right-6 -translate-y-1/2 bg-brand-wine text-white text-[8px] font-bold tracking-[0.2em] uppercase px-3 py-1 shadow-sm">
@@ -277,8 +279,9 @@ export default function Packages() {
                         <span>RESERVAR DATA</span>
                       </a>
                     </div>
-                  </motion.div>
-                );
+                  </div>
+                </motion.div>
+              );
               })}
             </div>
 

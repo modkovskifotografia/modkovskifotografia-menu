@@ -45,10 +45,7 @@ export default function Footer() {
         {/* Footer legalities & wedding proposal markers */}
         <div className="text-[9px] tracking-widest text-white/40 uppercase space-y-2 font-medium">
           <p>
-            Proposta válida por 10 dias
-          </p>
-          <p>
-            &copy; {currentYear} {brandConfig.name}. Todos os direitos reservados.
+            &copy; 2024 - {currentYear} {brandConfig.name} - CNPJ 61.329.311/0001-93. Todos os direitos reservados.
           </p>
           <div className="pt-2 flex items-center justify-center gap-3">
             <p className="flex items-center justify-center gap-1 opacity-75">

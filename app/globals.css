@@ -55,4 +55,38 @@
   animation: float 6s ease-in-out infinite;
 }
 
+@keyframes floatGentle {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+.card-float {
+  animation: floatGentle 4.8s ease-in-out infinite;
+  will-change: transform;
+}
+
+.card-float:hover {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card-float,
+  .animate-float {
+    animation: none !important;
+  }
+}
+
+@media print {
+  body {
+    background-color: white !important;
+  }
+  nav, footer, button, .no-print {
+    display: none !important;
+  }
+}
+
 

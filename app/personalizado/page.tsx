@@ -7,5 +7,5 @@ export const metadata = {
 };
 
 export default function PersonalizadoPage() {
-  return <HomeView />;
+  return <HomeView hidePackages={true} hideAbout={true} hideProcess={true} showPersonalizedCustomSection={true} />;
 }

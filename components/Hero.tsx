@@ -11,12 +11,18 @@ interface HeroProps {
   fotoTargetId?: string;
   videoTargetId?: string;
   videoButtonWine?: boolean;
+  fotoButtonText?: string;
+  hideVideoButton?: boolean;
+  hideProposalButtons?: boolean;
 }
 
 export default function Hero({
   fotoTargetId = 'experiencias-sec-1',
   videoTargetId = 'experiencias-sec-2',
   videoButtonWine = false,
+  fotoButtonText = 'VER PROPOSTA FOTOGRÁFICA',
+  hideVideoButton = false,
+  hideProposalButtons = false,
 }: HeroProps = {}) {
   const [imageSrc, setImageSrc] = useState(brandConfig.hero.image);
 
@@ -78,36 +84,40 @@ export default function Hero({
               &ldquo;{brandConfig.hero.quote}&rdquo;
             </motion.p>
 
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.7 }}
-              className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4"
-            >
-              <motion.button
-                whileTap={{ scale: 0.98 }}
-                onClick={() => scrollToSection(fotoTargetId)}
-                className="flex items-center justify-center gap-2 bg-brand-wine text-white hover:bg-brand-wine-dark py-4 px-6 rounded-full text-xs font-semibold tracking-[0.15em] uppercase transition-all duration-300 shadow-sm cursor-pointer active:scale-[0.98]"
-                id="hero-btn-prop-foto"
+            {!hideProposalButtons && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.7 }}
+                className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4"
               >
-                <Camera className="w-4 h-4 shrink-0" strokeWidth={1.8} />
-                <span>VER PROPOSTA FOTOGRÁFICA</span>
-              </motion.button>
+                <motion.button
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => scrollToSection(fotoTargetId)}
+                  className="flex items-center justify-center gap-2 bg-brand-wine text-white hover:bg-brand-wine-dark py-4 px-6 rounded-full text-xs font-semibold tracking-[0.15em] uppercase transition-all duration-300 shadow-sm cursor-pointer active:scale-[0.98]"
+                  id="hero-btn-prop-foto"
+                >
+                  <Camera className="w-4 h-4 shrink-0" strokeWidth={1.8} />
+                  <span>{fotoButtonText}</span>
+                </motion.button>
 
-              <motion.button
-                whileTap={{ scale: 0.98 }}
-                onClick={() => scrollToSection(videoTargetId)}
-                className={`flex items-center justify-center gap-2 py-4 px-6 rounded-full text-xs font-semibold tracking-[0.15em] uppercase transition-all duration-300 shadow-sm cursor-pointer active:scale-[0.98] ${
-                  videoButtonWine
-                    ? 'bg-brand-wine text-white hover:bg-brand-wine-dark'
-                    : 'bg-white text-brand-wine border border-brand-wine/20 hover:bg-brand-wine hover:text-white'
-                }`}
-                id="hero-btn-prop-video"
-              >
-                <Video className="w-4 h-4 shrink-0" strokeWidth={1.8} />
-                <span>VER PROPOSTA DE VÍDEOS</span>
-              </motion.button>
-            </motion.div>
+                {!hideVideoButton && (
+                  <motion.button
+                    whileTap={{ scale: 0.98 }}
+                    onClick={() => scrollToSection(videoTargetId)}
+                    className={`flex items-center justify-center gap-2 py-4 px-6 rounded-full text-xs font-semibold tracking-[0.15em] uppercase transition-all duration-300 shadow-sm cursor-pointer active:scale-[0.98] ${
+                      videoButtonWine
+                        ? 'bg-brand-wine text-white hover:bg-brand-wine-dark'
+                        : 'bg-white text-brand-wine border border-brand-wine/20 hover:bg-brand-wine hover:text-white'
+                    }`}
+                    id="hero-btn-prop-video"
+                  >
+                    <Video className="w-4 h-4 shrink-0" strokeWidth={1.8} />
+                    <span>VER PROPOSTA DE VÍDEOS</span>
+                  </motion.button>
+                )}
+              </motion.div>
+            )}
           </div>
 
           {/* Bottom Info Footer */}
@@ -118,8 +128,6 @@ export default function Hero({
             className="mt-16 lg:mt-12 text-[10px] tracking-widest uppercase text-brand-text-soft flex items-center gap-2 pt-4"
           >
             <span>{brandConfig.name}</span>
-            <span>·</span>
-            <span>Proposta válida por 10 dias</span>
           </motion.div>
         </div>
 

@@ -7,5 +7,5 @@ export const metadata = {
 };
 
 export default function EventoPage() {
-  return <HomeView />;
+  return <HomeView hidePackages={true} hideAbout={true} hideProcess={true} />;
 }

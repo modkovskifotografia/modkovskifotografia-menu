@@ -84,7 +84,9 @@ export async function GET(req: NextRequest) {
       clientName: formattedName || 'Cliente',
       clientSlug: cleanSlug,
       isTemplate: false,
-      welcomeMessage: `Olá ${formattedName || 'Cliente'}! Foi um prazer conversar com você. Esta proposta foi desenhada especialmente para registrar os seus momentos com sensibilidade e elegância.`,
+      welcomeMessage: category === 'casamento'
+        ? template.welcomeMessage
+        : `Olá ${formattedName || 'Cliente'}! Foi um prazer conversar com você. Esta proposta foi desenhada especialmente para registrar os seus momentos com sensibilidade e elegância.`,
     };
 
     return NextResponse.json({ success: true, proposal: dynamicProposal });

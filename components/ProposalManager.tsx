@@ -30,7 +30,8 @@ import {
   LogOut,
   User,
   Camera,
-  Video
+  Video,
+  Download
 } from 'lucide-react';
 import { 
   Proposal, 
@@ -346,6 +347,15 @@ export default function ProposalManager() {
     };
     if (cat === 'individual') {
       newProposal.welcomeMessage = 'Meu objetivo é transformar o nosso ensaio em um momento leve e divertido. Vou te guiar em cada passo para que a timidez vá embora e você se sinta em casa logo no primeiro clique.';
+    }
+    if (cat === 'casamento') {
+      newProposal.title = template.title;
+      newProposal.subtitle = template.subtitle;
+      newProposal.welcomeMessage = template.welcomeMessage;
+      newProposal.investmentNote = template.investmentNote;
+      newProposal.validityDays = template.validityDays || 10;
+      newProposal.packages = JSON.parse(JSON.stringify(template.packages));
+      newProposal.videoPackages = [];
     }
     setEditingProposal(newProposal);
     setIsModalOpen(true);
@@ -730,7 +740,7 @@ export default function ProposalManager() {
             thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
             const last30DaysProposals = proposals.filter((p) => {
-              const d = new Date(p.createdAt || Date.now());
+              const d = new Date(p.createdAt || new Date());
               return d >= thirtyDaysAgo;
             });
 
@@ -763,9 +773,19 @@ export default function ProposalManager() {
                       Quantidade de propostas geradas recentemente divididas por segmento.
                     </p>
                   </div>
-                  <div className="flex items-center gap-2 bg-brand-wine/5 px-3 py-1.5 rounded-xl border border-brand-wine/10 text-xs text-brand-wine font-medium">
-                    <Sparkles className="w-4 h-4" />
-                    <span>Total no período: {last30DaysProposals.length} propostas</span>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <div className="flex items-center gap-2 bg-brand-wine/5 px-3 py-1.5 rounded-xl border border-brand-wine/10 text-xs text-brand-wine font-medium">
+                      <Sparkles className="w-4 h-4" />
+                      <span>Total no período: {last30DaysProposals.length} propostas</span>
+                    </div>
+                    <button
+                      onClick={() => window.print()}
+                      className="inline-flex items-center gap-1.5 bg-brand-wine text-white px-3 py-1.5 rounded-xl text-xs font-semibold hover:bg-brand-wine-dark transition-all shadow-sm"
+                      title="Exportar ou imprimir relatório mensal em PDF"
+                    >
+                      <Download className="w-3.5 h-3.5" />
+                      <span>Exportar PDF</span>
+                    </button>
                   </div>
                 </div>
 
@@ -905,7 +925,7 @@ export default function ProposalManager() {
                         )}
 
                         <span className="text-[11px] text-brand-text-soft font-mono bg-brand-cream/80 px-2 py-0.5 rounded border border-brand-wine/10">
-                          {pathUrl}
+                          www.modkovskifotografia.com.br/propostas/{p.category}/{p.clientSlug}
                         </span>
                         <span className="text-[10px] text-brand-text-soft flex items-center gap-1">
                           <Clock className="w-3 h-3 text-brand-wine" />
@@ -976,15 +996,26 @@ export default function ProposalManager() {
                         <span>WhatsApp</span>
                       </a>
 
-                      {/* Visualizar */}
+                      {/* Visualizar Prévia Imediata */}
                       <Link
-                        href={pathUrl}
+                        href={`/propostas/${p.category}/${p.clientSlug}`}
                         target="_blank"
+                        className="p-1.5 rounded-xl border border-brand-wine/20 text-brand-wine hover:bg-brand-wine/10 transition-colors"
+                        title="Ver proposta atualizada em tempo real (neste ambiente)"
+                      >
+                        <Eye className="w-4 h-4" />
+                      </Link>
+
+                      {/* Abrir no Domínio Oficial */}
+                      <a
+                        href={`https://www.modkovskifotografia.com.br/propostas/${p.category}/${p.clientSlug}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
                         className="p-1.5 rounded-xl border border-brand-wine/20 text-brand-text hover:bg-brand-wine/5 transition-colors"
-                        title="Abrir proposta em nova aba"
+                        title="Abrir no domínio oficial www.modkovskifotografia.com.br"
                       >
                         <ExternalLink className="w-4 h-4" />
-                      </Link>
+                      </a>
 
                       {/* Editar */}
                       <button
@@ -1068,7 +1099,10 @@ export default function ProposalManager() {
                     Link da Proposta (URL)
                   </label>
                   <div className="flex items-center">
-                    <span className="text-xs text-brand-text-soft bg-brand-cream/80 px-2.5 py-2.5 rounded-l-xl border border-r-0 border-brand-wine/20 font-mono">
+                    <span className="text-[11px] text-brand-text-soft bg-brand-cream/80 px-2.5 py-2.5 rounded-l-xl border border-r-0 border-brand-wine/20 font-mono hidden sm:inline">
+                      www.modkovskifotografia.com.br/propostas/{editingProposal.category}/
+                    </span>
+                    <span className="text-xs text-brand-text-soft bg-brand-cream/80 px-2.5 py-2.5 rounded-l-xl border border-r-0 border-brand-wine/20 font-mono sm:hidden">
                       /{editingProposal.category}/
                     </span>
                     <input

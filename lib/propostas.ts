@@ -532,139 +532,77 @@ export const STANDARD_TEMPLATES: Record<ProposalCategory, Proposal> = {
     welcomeMessage: 'O casamento é o início de um novo capítulo. Estamos preparados para captar cada lágrima de alegria, abraço sincero e sorriso com máxima sensibilidade e atenção aos detalhes.',
     validityDays: 10,
     createdAt: new Date().toISOString(),
-    investmentNote: 'Contrato formal com garantia de data. Pagamento facilitado em até 12x no cartão ou entrada de 30% + parcelas até o mês do casamento.',
+    investmentNote: 'Contrato formal com garantia de data. Pagamento facilitado em até 12x no cartão ou entrada de 30% + parcelas.',
     isTemplate: true,
     packages: [
       {
         id: 'cas-01',
-        name: 'Ensaio Essencial',
+        name: 'Cobertura Essencial',
         highlight: false,
-        price: 'R$ 250',
+        price: 'R$ 4.500',
         paymentMethod: 'Pix',
-        duration: 'Duração de até 01 hora',
+        duration: '2 horas de cobertura',
         features: [
-          '10 fotos selecionadas',
-          '01 vídeo brinde Making Of',
+          '60 fotos selecionadas',
+          '1 vídeo de até 1min30',
+          'Registro dos principais momentos',
           'Prazo de entrega de até 10 dias',
-          'Foto extra R$ 25,00 (desconto a partir de 13 extras)'
+          'Foto extra R$ 25,00'
         ],
-        installments: calculateDefaultInstallments('R$ 250')
+        installments: calculateDefaultInstallments('R$ 4.500')
       },
       {
         id: 'cas-02',
-        name: 'Ensaio Clássico',
+        name: 'Cobertura Especial',
         highlight: false,
-        price: 'R$ 350',
+        price: 'R$ 4.600',
         paymentMethod: 'Pix',
-        duration: 'Duração de até 01 hora',
+        duration: '3 horas de cobertura',
         features: [
-          '15 fotos selecionadas',
-          '01 vídeo brinde Making Of',
+          '70 fotos selecionadas',
+          '2 vídeos de até 1min30',
+          'Cobertura ampliada da cerimônia',
           'Prazo de entrega de até 15 dias',
-          'Foto extra R$ 23,00 (desconto a partir de 13 extras)'
+          'Foto extra R$ 23,00'
         ],
-        installments: calculateDefaultInstallments('R$ 350')
+        installments: calculateDefaultInstallments('R$ 4.600')
       },
       {
         id: 'cas-03',
-        name: 'Ensaio Especial',
+        name: 'Cobertura Completa',
         highlight: false,
-        price: 'R$ 450',
+        price: 'R$ 4.750',
         paymentMethod: 'Pix',
-        duration: 'Duração de até 02 horas',
+        duration: '4 horas de cobertura',
         features: [
-          '20 fotos selecionadas',
-          '01 vídeo brinde Making Of',
-          'Prazo de entrega de até 15 dias',
-          'Foto extra R$ 22,00 (desconto a partir de 13 extras)'
+          '80 fotos selecionadas',
+          '3 vídeos de até 1min30',
+          'Maior tempo de cobertura',
+          'Prazo de entrega de até 20 dias',
+          'Foto extra R$ 20,00'
         ],
-        installments: calculateDefaultInstallments('R$ 450')
+        installments: calculateDefaultInstallments('R$ 4.750')
       },
       {
         id: 'cas-04',
-        name: 'Ensaio Completo',
+        name: 'Para guardar tudo.',
         highlight: true,
-        price: 'R$ 550',
+        price: 'R$ 5.000',
         paymentMethod: 'Pix',
-        duration: 'Duração de até 02 horas',
+        duration: '2 horas de Making Of da noiva + 4 horas de cobertura',
         features: [
-          '30 fotos selecionadas',
-          '01 vídeo brinde Making Of',
-          'Prazo de entrega de até 20 dias',
-          'Foto extra R$ 19,00 (desconto a partir de 13 extras)'
+          'Todas as fotos realizadas durante a cobertura',
+          'Média de aproximadamente 200 fotos',
+          'Making Of da noiva',
+          '3 vídeos de até 1min30',
+          'Cobertura completa do evento',
+          'Prazo de entrega de até 25 dias'
         ],
-        installments: calculateDefaultInstallments('R$ 550')
+        extraNote: 'Porque você não precisa escolher quais memórias merecem permanecer.',
+        installments: calculateDefaultInstallments('R$ 5.000')
       }
     ],
-    videoPackages: [
-      {
-        id: 'vid-ca-01',
-        name: 'Prático',
-        highlight: false,
-        price: 'R$ 150',
-        paymentMethod: 'Pix',
-        duration: '01 vídeo até 1:30seg',
-        features: [
-          '01 vídeo até 1:30seg',
-          '01 capa pra vídeo',
-          'Roteirização, direção e posicionamento',
-          'Edição dinâmica, cortes essenciais, legenda e trilha sonora',
-          'Prazo de entrega de até 72 horas'
-        ],
-        installments: calculateDefaultInstallments('R$ 150')
-      },
-      {
-        id: 'vid-ca-02',
-        name: 'Essencial',
-        highlight: false,
-        price: 'R$ 560',
-        paymentMethod: 'Pix',
-        duration: '04 vídeos até 1:30seg',
-        features: [
-          '04 vídeos até 1:30seg',
-          '04 capas pra vídeo',
-          'Roteirização, direção e posicionamento',
-          'Edição dinâmica, cortes essenciais, legenda e trilha sonora',
-          '02 vídeos brindes curtos até 15seg',
-          'Prazo de entrega de até 10 dias'
-        ],
-        installments: calculateDefaultInstallments('R$ 560')
-      },
-      {
-        id: 'vid-ca-03',
-        name: 'Presença',
-        highlight: false,
-        price: 'R$ 1.040',
-        paymentMethod: 'Pix',
-        duration: '08 vídeos até 1:30seg',
-        features: [
-          '08 vídeos até 1:30seg',
-          '08 capas pra vídeo',
-          'Roteirização, direção e posicionamento',
-          'Edição dinâmica, cortes essenciais, legenda e trilha sonora',
-          '04 vídeos brindes curtos até 15seg',
-          'Prazo de entrega de até 15 dias'
-        ],
-        installments: calculateDefaultInstallments('R$ 1.040')
-      },
-      {
-        id: 'vid-ca-04',
-        name: 'Autoridade',
-        highlight: true,
-        price: 'R$ 1.440',
-        paymentMethod: 'Pix',
-        duration: '12 vídeos até 1:30seg',
-        features: [
-          '12 vídeos até 1:30seg',
-          '12 capas pra vídeo',
-          'Roteirização, direção e posicionamento',
-          'Edição dinâmica, cortes essenciais, legenda e trilha sonora',
-          '06 vídeos brindes curtos até 15seg',
-          'Prazo de entrega de até 20 dias'
-        ],
-        installments: calculateDefaultInstallments('R$ 1.440')
-      }
-    ]
+    videoPackages: []
   },
 
   evento: {

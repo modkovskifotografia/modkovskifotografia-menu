@@ -7,5 +7,5 @@ export const metadata = {
 };
 
 export default function CasamentosPage() {
-  return <HomeView />;
+  return <HomeView hidePackages={true} />;
 }

@@ -57,7 +57,7 @@ export const brandConfig = {
     imageFallback: "/images/fotografa.jpeg",
   },
   portfolio: {
-    eyebrow: "Um pouco do meu trabalho",
+    eyebrow: "",
     title: "Histórias reais.",
     items: [
       { 

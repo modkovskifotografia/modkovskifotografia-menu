@@ -39,11 +39,14 @@ export async function fetchProposalBySlug(
 ): Promise<Proposal | null> {
   const cleanCategory = category.toLowerCase();
   const cleanSlug = slug.toLowerCase();
+  const template = STANDARD_TEMPLATES[cleanCategory as ProposalCategory] || STANDARD_TEMPLATES['individual'];
 
   // If asking for the standard template preview:
-  if (cleanSlug === 'padrao' && STANDARD_TEMPLATES[cleanCategory as ProposalCategory]) {
-    return STANDARD_TEMPLATES[cleanCategory as ProposalCategory];
+  if (cleanSlug === 'padrao' && template) {
+    return template;
   }
+
+  let foundProposal: Proposal | null = null;
 
   try {
     const res = await fetch(`/api/propostas?category=${cleanCategory}&slug=${cleanSlug}`, {
@@ -52,15 +55,15 @@ export async function fetchProposalBySlug(
     if (res.ok) {
       const data = await res.json();
       if (data.success && data.proposal) {
-        return data.proposal;
+        foundProposal = data.proposal;
       }
     }
   } catch (err) {
     console.warn('Could not fetch proposal by slug from API:', err);
   }
 
-  // Fallback to localStorage
-  if (typeof window !== 'undefined') {
+  // Fallback to localStorage if not found from API
+  if (!foundProposal && typeof window !== 'undefined') {
     try {
       const cached = localStorage.getItem(STORAGE_KEY);
       if (cached) {
@@ -68,18 +71,38 @@ export async function fetchProposalBySlug(
         const found = list.find(
           (p) => p.category.toLowerCase() === cleanCategory && p.clientSlug.toLowerCase() === cleanSlug
         );
-        if (found) return found;
+        if (found) {
+          foundProposal = found;
+        }
       }
     } catch {}
   }
 
-  // Fallback: Always return a valid personalized proposal based on template if not found in DB/localStorage
-  const template = STANDARD_TEMPLATES[cleanCategory as ProposalCategory] || STANDARD_TEMPLATES['individual'];
   const formattedName = cleanSlug
     .split('-')
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(' ');
 
+  if (foundProposal) {
+    return {
+      ...template,
+      ...foundProposal,
+      packages: cleanCategory === 'casamento' 
+        ? template.packages 
+        : (foundProposal.packages && foundProposal.packages.length > 0 ? foundProposal.packages : template.packages),
+      videoPackages: cleanCategory === 'casamento' 
+        ? [] 
+        : (foundProposal.videoPackages !== undefined ? foundProposal.videoPackages : template.videoPackages),
+      title: cleanCategory === 'casamento' ? template.title : (foundProposal.title || template.title),
+      subtitle: cleanCategory === 'casamento' ? template.subtitle : (foundProposal.subtitle || template.subtitle),
+      investmentNote: cleanCategory === 'casamento' ? template.investmentNote : (foundProposal.investmentNote || template.investmentNote),
+      welcomeMessage: cleanCategory === 'casamento' ? template.welcomeMessage : (foundProposal.welcomeMessage || template.welcomeMessage),
+      clientName: foundProposal.clientName || formattedName,
+      clientSlug: cleanSlug,
+    };
+  }
+
+  // Fallback: Always return a valid personalized proposal based on template if not found in DB/localStorage
   return {
     ...template,
     id: `dynamic-${cleanCategory}-${cleanSlug}`,
@@ -87,7 +110,8 @@ export async function fetchProposalBySlug(
     clientName: formattedName || 'Cliente',
     clientSlug: cleanSlug,
     isTemplate: false,
-    welcomeMessage: `Olá ${formattedName || 'Cliente'}! Foi um prazer conversar com você. Esta proposta foi desenhada especialmente para registrar os seus momentos com sensibilidade e elegância.`,
+    packages: template.packages,
+    videoPackages: cleanCategory === 'casamento' ? [] : template.videoPackages,
   };
 }
 

@@ -482,6 +482,7 @@ interface PortfolioProps {
   title?: string;
   limitSlots?: number;
   showViewMoreButton?: boolean;
+  showViewPortfolioButton?: boolean;
 }
 
 export default function Portfolio({
@@ -489,6 +490,7 @@ export default function Portfolio({
   title = brandConfig.portfolio.title,
   limitSlots,
   showViewMoreButton = false,
+  showViewPortfolioButton = false,
 }: PortfolioProps = {}) {
   const [slots, setSlots] = useState<SlotItem[]>(initialSlots);
 
@@ -628,6 +630,19 @@ export default function Portfolio({
               id="portfolio-view-more-work"
             >
               <span>veja mais do meu trabalho</span>
+            </Link>
+          </div>
+        )}
+
+        {/* Botão VER PORTFÓLIO em vermelho vinho */}
+        {showViewPortfolioButton && (
+          <div className="mt-12 md:mt-16 text-center">
+            <Link
+              href="/portfolio"
+              className="inline-flex items-center justify-center gap-2.5 px-8 py-4 rounded-full bg-brand-wine text-white text-xs font-semibold uppercase tracking-widest hover:bg-brand-wine-dark transition-all duration-300 shadow-md hover:shadow-lg hover:-translate-y-0.5"
+              id="portfolio-btn-ver-portfolio"
+            >
+              <span>VER PORTFÓLIO</span>
             </Link>
           </div>
         )}
