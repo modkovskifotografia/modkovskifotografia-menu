@@ -25,9 +25,75 @@ function ensureDataFile(): Proposal[] {
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir, { recursive: true });
     }
+
+    const maysaProposal: Proposal = {
+      id: 'prop-maysa-rickely',
+      category: 'casamento',
+      clientName: 'Maysa Rickely',
+      clientSlug: 'maysa-rickely',
+      title: 'Proposta de Cobertura de Casamento',
+      subtitle: 'Registros espontâneos, poéticos e inesquecíveis do dia mais emocionante da vida de vocês.',
+      welcomeMessage: 'O casamento é o início de um novo capítulo. Estamos preparados para captar cada lágrima de alegria, abraço sincero e sorriso com máxima sensibilidade e atenção aos detalhes.',
+      validityDays: 10,
+      createdAt: new Date().toISOString(),
+      investmentNote: 'Contrato formal com garantia de data. Pagamento facilitado em até 12x no cartão ou entrada de 30% + parcelas.',
+      isTemplate: false,
+      packages: [
+        {
+          id: 'cas-01',
+          name: 'Cobertura Essencial',
+          highlight: false,
+          price: 'R$ 4.500',
+          paymentMethod: 'Pix',
+          duration: '2 horas de cobertura',
+          features: [
+            '60 fotos selecionadas',
+            '1 vídeo de até 1min30',
+            'Registro dos principais momentos',
+            'Prazo de entrega de até 10 dias',
+            'Foto extra R$ 25,00'
+          ],
+          installments: calculateDefaultInstallments('R$ 4.500')
+        },
+        {
+          id: 'cas-02',
+          name: 'Cobertura Especial',
+          highlight: false,
+          price: 'R$ 4.600',
+          paymentMethod: 'Pix',
+          duration: '3 horas de cobertura',
+          features: [
+            '70 fotos selecionadas',
+            '2 vídeos de até 1min30',
+            'Cobertura ampliada da cerimônia',
+            'Prazo de entrega de até 15 dias',
+            'Foto extra R$ 23,00'
+          ],
+          installments: calculateDefaultInstallments('R$ 4.600')
+        },
+        {
+          id: 'cas-03',
+          name: 'Cobertura Completa',
+          highlight: false,
+          price: 'R$ 4.750',
+          paymentMethod: 'Pix',
+          duration: '4 horas de cobertura',
+          features: [
+            '80 fotos selecionadas',
+            '3 vídeos de até 1min30',
+            'Maior tempo de cobertura',
+            'Prazo de entrega de até 20 dias',
+            'Foto extra R$ 20,00'
+          ],
+          installments: calculateDefaultInstallments('R$ 4.750')
+        }
+      ]
+    };
+
+    let list: Proposal[] = [];
     if (!fs.existsSync(DATA_FILE)) {
-      // Seed with an example proposal so the user can see how it works right away
-      const initial: Proposal[] = [
+      list = [
+        maysaProposal,
         {
           ...STANDARD_TEMPLATES.corporativo,
           id: 'sample-corp-01',
@@ -35,14 +101,33 @@ function ensureDataFile(): Proposal[] {
           clientSlug: 'dra-camila-santos',
           isTemplate: false,
           createdAt: new Date().toISOString(),
-          welcomeMessage: 'Olá Dra. Camila! Foi um prazer conversar com você. Esta proposta foi desenhada especialmente para elevar o posicionamento digital da sua clínica com fotos de autoridade e vídeos estratégicos.',
+          welcomeMessage: 'Olá Dra. Camila! Foi um prazer conversar com você. Esta proposta foi desenhada especialmente para elevar o posicionamento digital da sua clínica com fotos de autoridade e vídeos estratégicos.,',
         }
       ];
-      fs.writeFileSync(DATA_FILE, JSON.stringify(initial, null, 2), 'utf-8');
-      return initial;
+      fs.writeFileSync(DATA_FILE, JSON.stringify(list, null, 2), 'utf-8');
+    } else {
+      const content = fs.readFileSync(DATA_FILE, 'utf-8');
+      list = JSON.parse(content || '[]');
+      const hasMaysa = list.some(p => p.clientSlug.toLowerCase() === 'maysa-rickely' && p.category === 'casamento');
+      if (!hasMaysa) {
+        list.unshift(maysaProposal);
+        fs.writeFileSync(DATA_FILE, JSON.stringify(list, null, 2), 'utf-8');
+      } else {
+        // Update Maysa proposal with correct packages/prices if found
+        const idx = list.findIndex(p => p.clientSlug.toLowerCase() === 'maysa-rickely' && p.category === 'casamento');
+        if (idx >= 0) {
+          list[idx] = {
+            ...list[idx],
+            packages: maysaProposal.packages,
+            title: maysaProposal.title,
+            subtitle: maysaProposal.subtitle,
+            welcomeMessage: maysaProposal.welcomeMessage,
+          };
+          fs.writeFileSync(DATA_FILE, JSON.stringify(list, null, 2), 'utf-8');
+        }
+      }
     }
-    const content = fs.readFileSync(DATA_FILE, 'utf-8');
-    return JSON.parse(content || '[]');
+    return list;
   } catch (err) {
     console.error('Error reading propostas.json:', err);
     return [];

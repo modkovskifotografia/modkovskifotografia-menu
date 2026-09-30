@@ -85,6 +85,7 @@ export function getInitialProposalSnapshot(category: string, slug: string): Prop
 }
 
 export async function fetchAllProposals(): Promise<Proposal[]> {
+  let serverProposals: Proposal[] = [];
   try {
     const res = await fetch(`/api/propostas?_t=${Date.now()}`, { 
       cache: 'no-store',
@@ -96,29 +97,45 @@ export async function fetchAllProposals(): Promise<Proposal[]> {
     if (res.ok) {
       const data = await res.json();
       if (data.success && Array.isArray(data.proposals)) {
-        const enriched = data.proposals.map(enrichProposal);
-        if (typeof window !== 'undefined') {
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(enriched));
-        }
-        return enriched;
+        serverProposals = data.proposals.map(enrichProposal);
       }
     }
   } catch (err) {
-    console.warn('Could not fetch proposals from API, falling back to localStorage:', err);
+    console.warn('Could not fetch proposals from API:', err);
   }
 
-  // Fallback to localStorage
+  let localProposals: Proposal[] = [];
   if (typeof window !== 'undefined') {
     try {
       const cached = localStorage.getItem(STORAGE_KEY);
       if (cached) {
-        const list: Proposal[] = JSON.parse(cached);
-        return list.map(enrichProposal);
+        localProposals = JSON.parse(cached).map(enrichProposal);
       }
     } catch {}
   }
 
-  return [];
+  // Merge server and local proposals (deduplicating by category + clientSlug)
+  const map = new Map<string, Proposal>();
+  serverProposals.forEach(p => map.set(`${p.category}:${p.clientSlug.toLowerCase()}`, p));
+  localProposals.forEach(p => {
+    const key = `${p.category}:${p.clientSlug.toLowerCase()}`;
+    if (!map.has(key)) {
+      map.set(key, p);
+    } else {
+      // If server has it but local has newer or edits, we can prefer or merge
+      const existing = map.get(key)!;
+      // Keep whichever has more recent createdAt or keep local if customized
+      map.set(key, { ...existing, ...p });
+    }
+  });
+
+  const merged = Array.from(map.values());
+  if (typeof window !== 'undefined') {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(merged));
+    } catch {}
+  }
+  return merged;
 }
 
 export async function fetchProposalBySlug(
