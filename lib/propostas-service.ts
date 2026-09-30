@@ -1,10 +1,24 @@
 'use client';
 
-import { Proposal, ProposalCategory, STANDARD_TEMPLATES } from './propostas';
+import { Proposal, ProposalCategory, STANDARD_TEMPLATES, calculateDefaultInstallments } from './propostas';
 
 const STORAGE_KEY = 'modkovski_propostas_cache_v1';
 export const PROPOSAL_SYNC_CHANNEL = 'modkovski_proposals_broadcast_v1';
 export const PROPOSAL_CUSTOM_EVENT = 'modkovski:proposal-update';
+
+function enrichProposal(proposal: Proposal): Proposal {
+  return {
+    ...proposal,
+    packages: (proposal.packages || []).map(pkg => ({
+      ...pkg,
+      installments: calculateDefaultInstallments(pkg.price)
+    })),
+    videoPackages: (proposal.videoPackages || []).map(pkg => ({
+      ...pkg,
+      installments: calculateDefaultInstallments(pkg.price)
+    }))
+  };
+}
 
 export interface ProposalSyncMessage {
   action: 'save' | 'delete' | 'revalidate';
@@ -50,7 +64,7 @@ export function getInitialProposalSnapshot(category: string, slug: string): Prop
           (p) => p.category.toLowerCase() === cleanCategory && p.clientSlug.toLowerCase() === cleanSlug
         );
         if (found) {
-          return {
+          return enrichProposal({
             ...template,
             ...found,
             packages: found.packages && found.packages.length > 0 ? found.packages : template.packages,
@@ -61,7 +75,7 @@ export function getInitialProposalSnapshot(category: string, slug: string): Prop
             welcomeMessage: found.welcomeMessage || template.welcomeMessage,
             clientName: found.clientName || cleanSlug,
             clientSlug: cleanSlug,
-          };
+          });
         }
       }
     } catch {}
@@ -82,10 +96,11 @@ export async function fetchAllProposals(): Promise<Proposal[]> {
     if (res.ok) {
       const data = await res.json();
       if (data.success && Array.isArray(data.proposals)) {
+        const enriched = data.proposals.map(enrichProposal);
         if (typeof window !== 'undefined') {
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(data.proposals));
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(enriched));
         }
-        return data.proposals;
+        return enriched;
       }
     }
   } catch (err) {
@@ -97,7 +112,8 @@ export async function fetchAllProposals(): Promise<Proposal[]> {
     try {
       const cached = localStorage.getItem(STORAGE_KEY);
       if (cached) {
-        return JSON.parse(cached);
+        const list: Proposal[] = JSON.parse(cached);
+        return list.map(enrichProposal);
       }
     } catch {}
   }
@@ -115,7 +131,7 @@ export async function fetchProposalBySlug(
 
   // If asking for the standard template preview:
   if (cleanSlug === 'padrao' && template) {
-    return template;
+    return enrichProposal(template);
   }
 
   let foundProposal: Proposal | null = null;
@@ -160,7 +176,7 @@ export async function fetchProposalBySlug(
     .join(' ');
 
   if (foundProposal) {
-    return {
+    return enrichProposal({
       ...template,
       ...foundProposal,
       packages: foundProposal.packages && foundProposal.packages.length > 0 ? foundProposal.packages : template.packages,
@@ -171,11 +187,11 @@ export async function fetchProposalBySlug(
       welcomeMessage: foundProposal.welcomeMessage || template.welcomeMessage,
       clientName: foundProposal.clientName || formattedName,
       clientSlug: cleanSlug,
-    };
+    });
   }
 
   // Fallback: Always return a valid personalized proposal based on template if not found in DB/localStorage
-  const fallbackProp: Proposal = {
+  const fallbackProp: Proposal = enrichProposal({
     ...template,
     id: `prop-${Date.now()}-${Math.random().toString(36).substr(2, 6)}`,
     category: (cleanCategory as ProposalCategory) || 'individual',
@@ -185,7 +201,7 @@ export async function fetchProposalBySlug(
     createdAt: new Date().toISOString(),
     packages: template.packages,
     videoPackages: cleanCategory === 'casamento' ? [] : template.videoPackages,
-  };
+  });
   updateLocalCache(fallbackProp);
   return fallbackProp;
 }

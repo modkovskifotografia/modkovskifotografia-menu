@@ -1,9 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
-import { Proposal, ProposalCategory, STANDARD_TEMPLATES } from '@/lib/propostas';
+import { Proposal, ProposalCategory, STANDARD_TEMPLATES, calculateDefaultInstallments } from '@/lib/propostas';
 
 const DATA_FILE = path.join(process.cwd(), 'data', 'propostas.json');
+
+function enrichProposal(proposal: Proposal): Proposal {
+  return {
+    ...proposal,
+    packages: (proposal.packages || []).map(pkg => ({
+      ...pkg,
+      installments: calculateDefaultInstallments(pkg.price)
+    })),
+    videoPackages: (proposal.videoPackages || []).map(pkg => ({
+      ...pkg,
+      installments: calculateDefaultInstallments(pkg.price)
+    }))
+  };
+}
 
 function ensureDataFile(): Proposal[] {
   try {
@@ -67,7 +81,7 @@ export async function GET(req: NextRequest) {
       );
     }
     if (found) {
-      return NextResponse.json({ success: true, proposal: found });
+      return NextResponse.json({ success: true, proposal: enrichProposal(found) });
     }
     
     // Fallback: Return a dynamic proposal based on STANDARD_TEMPLATES and save it to active proposals list
@@ -90,13 +104,14 @@ export async function GET(req: NextRequest) {
         : `Olá ${formattedName || 'Cliente'}! Foi um prazer conversar com você. Esta proposta foi desenhada especialmente para registrar os seus momentos com sensibilidade e elegância.`,
     };
 
-    list.unshift(dynamicProposal);
+    const enrichedDynamic = enrichProposal(dynamicProposal);
+    list.unshift(enrichedDynamic);
     writeDataFile(list);
 
-    return NextResponse.json({ success: true, proposal: dynamicProposal });
+    return NextResponse.json({ success: true, proposal: enrichedDynamic });
   }
 
-  return NextResponse.json({ success: true, proposals: list });
+  return NextResponse.json({ success: true, proposals: list.map(enrichProposal) });
 }
 
 // POST: create new proposal
@@ -118,12 +133,12 @@ export async function POST(req: NextRequest) {
       (p) => p.category === body.category && p.clientSlug.toLowerCase() === body.clientSlug.toLowerCase()
     );
 
-    const newProposal: Proposal = {
+    const newProposal: Proposal = enrichProposal({
       ...body,
       id: body.id || `prop-${Date.now()}-${Math.random().toString(36).substr(2, 6)}`,
       createdAt: body.createdAt || new Date().toISOString(),
       isTemplate: false,
-    };
+    });
 
     if (existingIndex >= 0) {
       list[existingIndex] = newProposal;
