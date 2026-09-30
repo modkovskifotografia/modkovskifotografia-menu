@@ -539,55 +539,55 @@ export const STANDARD_TEMPLATES: Record<ProposalCategory, Proposal> = {
         id: 'cas-01',
         name: 'Cobertura Essencial',
         highlight: false,
-        price: 'R$ 4.500',
+        price: 'R$ 650',
         paymentMethod: 'Pix',
         duration: '2 horas de cobertura',
         features: [
-          '60 fotos selecionadas',
+          '40 fotos selecionadas',
           '1 vídeo de até 1min30',
           'Registro dos principais momentos',
           'Prazo de entrega de até 10 dias',
           'Foto extra R$ 25,00'
         ],
-        installments: calculateDefaultInstallments('R$ 4.500')
+        installments: calculateDefaultInstallments('R$ 650')
       },
       {
         id: 'cas-02',
         name: 'Cobertura Especial',
         highlight: false,
-        price: 'R$ 4.600',
+        price: 'R$ 750',
         paymentMethod: 'Pix',
-        duration: '3 horas de cobertura',
+        duration: '2 horas de cobertura',
         features: [
-          '70 fotos selecionadas',
-          '2 vídeos de até 1min30',
+          '60 fotos selecionadas',
+          '1 vídeos de até 1min30',
           'Cobertura ampliada da cerimônia',
           'Prazo de entrega de até 15 dias',
           'Foto extra R$ 23,00'
         ],
-        installments: calculateDefaultInstallments('R$ 4.600')
+        installments: calculateDefaultInstallments('R$ 750')
       },
       {
         id: 'cas-03',
         name: 'Cobertura Completa',
         highlight: false,
-        price: 'R$ 4.750',
+        price: 'R$ 950',
         paymentMethod: 'Pix',
-        duration: '4 horas de cobertura',
+        duration: '3 horas de cobertura',
         features: [
           '80 fotos selecionadas',
-          '3 vídeos de até 1min30',
+          '2 vídeos de até 1min30',
           'Maior tempo de cobertura',
           'Prazo de entrega de até 20 dias',
           'Foto extra R$ 20,00'
         ],
-        installments: calculateDefaultInstallments('R$ 4.750')
+        installments: calculateDefaultInstallments('R$ 950')
       },
       {
         id: 'cas-04',
         name: 'Para guardar tudo.',
         highlight: true,
-        price: 'R$ 5.000',
+        price: 'R$ 1.350',
         paymentMethod: 'Pix',
         duration: '2 horas de Making Of da noiva + 4 horas de cobertura',
         features: [
@@ -599,7 +599,7 @@ export const STANDARD_TEMPLATES: Record<ProposalCategory, Proposal> = {
           'Prazo de entrega de até 25 dias'
         ],
         extraNote: 'Porque você não precisa escolher quais memórias merecem permanecer.',
-        installments: calculateDefaultInstallments('R$ 5.000')
+        installments: calculateDefaultInstallments('R$ 1.350')
       }
     ],
     videoPackages: []
