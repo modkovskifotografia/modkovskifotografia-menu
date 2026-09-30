@@ -40,7 +40,7 @@ export const brandConfig = {
     title: "O seu momento. Para sempre.",
     quote: "Alguns momentos passam em poucos segundos. O registro certo faz com que eles permaneçam eternos.",
     ctaText: "Ver Proposta Comercial",
-    image: "/images/capa.jpg",
+    image: "/images/capainicio.jpg",
     // Premium wedding editorial photography fallback
     imageFallback: "https://picsum.photos/seed/modkovski-hero/1920/1280",
   },

@@ -3,10 +3,82 @@
 import { Proposal, ProposalCategory, STANDARD_TEMPLATES } from './propostas';
 
 const STORAGE_KEY = 'modkovski_propostas_cache_v1';
+export const PROPOSAL_SYNC_CHANNEL = 'modkovski_proposals_broadcast_v1';
+export const PROPOSAL_CUSTOM_EVENT = 'modkovski:proposal-update';
+
+export interface ProposalSyncMessage {
+  action: 'save' | 'delete' | 'revalidate';
+  category?: string;
+  slug?: string;
+  proposal?: Proposal;
+  timestamp: number;
+}
+
+export function broadcastProposalSync(msg: ProposalSyncMessage) {
+  if (typeof window === 'undefined') return;
+
+  // 1. Dispatch custom event for same window / tab
+  try {
+    window.dispatchEvent(new CustomEvent(PROPOSAL_CUSTOM_EVENT, { detail: msg }));
+  } catch {}
+
+  // 2. BroadcastChannel for cross-tab instant synchronization
+  if (typeof BroadcastChannel !== 'undefined') {
+    try {
+      const channel = new BroadcastChannel(PROPOSAL_SYNC_CHANNEL);
+      channel.postMessage(msg);
+      channel.close();
+    } catch {}
+  }
+}
+
+export function getInitialProposalSnapshot(category: string, slug: string): Proposal | null {
+  const cleanCategory = category.toLowerCase();
+  const cleanSlug = slug.toLowerCase();
+  const template = STANDARD_TEMPLATES[cleanCategory as ProposalCategory] || STANDARD_TEMPLATES['individual'];
+
+  if (cleanSlug === 'padrao') {
+    return template;
+  }
+
+  if (typeof window !== 'undefined') {
+    try {
+      const cached = localStorage.getItem(STORAGE_KEY);
+      if (cached) {
+        const list: Proposal[] = JSON.parse(cached);
+        const found = list.find(
+          (p) => p.category.toLowerCase() === cleanCategory && p.clientSlug.toLowerCase() === cleanSlug
+        );
+        if (found) {
+          return {
+            ...template,
+            ...found,
+            packages: found.packages && found.packages.length > 0 ? found.packages : template.packages,
+            videoPackages: found.videoPackages !== undefined ? found.videoPackages : template.videoPackages,
+            title: found.title || template.title,
+            subtitle: found.subtitle || template.subtitle,
+            investmentNote: found.investmentNote || template.investmentNote,
+            welcomeMessage: found.welcomeMessage || template.welcomeMessage,
+            clientName: found.clientName || cleanSlug,
+            clientSlug: cleanSlug,
+          };
+        }
+      }
+    } catch {}
+  }
+
+  return null;
+}
 
 export async function fetchAllProposals(): Promise<Proposal[]> {
   try {
-    const res = await fetch('/api/propostas', { cache: 'no-store' });
+    const res = await fetch(`/api/propostas?_t=${Date.now()}`, { 
+      cache: 'no-store',
+      headers: {
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
+      }
+    });
     if (res.ok) {
       const data = await res.json();
       if (data.success && Array.isArray(data.proposals)) {
@@ -49,8 +121,12 @@ export async function fetchProposalBySlug(
   let foundProposal: Proposal | null = null;
 
   try {
-    const res = await fetch(`/api/propostas?category=${cleanCategory}&slug=${cleanSlug}`, {
+    const res = await fetch(`/api/propostas?category=${cleanCategory}&slug=${cleanSlug}&_t=${Date.now()}`, {
       cache: 'no-store',
+      headers: {
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
+      }
     });
     if (res.ok) {
       const data = await res.json();
@@ -87,16 +163,12 @@ export async function fetchProposalBySlug(
     return {
       ...template,
       ...foundProposal,
-      packages: cleanCategory === 'casamento' 
-        ? template.packages 
-        : (foundProposal.packages && foundProposal.packages.length > 0 ? foundProposal.packages : template.packages),
-      videoPackages: cleanCategory === 'casamento' 
-        ? [] 
-        : (foundProposal.videoPackages !== undefined ? foundProposal.videoPackages : template.videoPackages),
-      title: cleanCategory === 'casamento' ? template.title : (foundProposal.title || template.title),
-      subtitle: cleanCategory === 'casamento' ? template.subtitle : (foundProposal.subtitle || template.subtitle),
-      investmentNote: cleanCategory === 'casamento' ? template.investmentNote : (foundProposal.investmentNote || template.investmentNote),
-      welcomeMessage: cleanCategory === 'casamento' ? template.welcomeMessage : (foundProposal.welcomeMessage || template.welcomeMessage),
+      packages: foundProposal.packages && foundProposal.packages.length > 0 ? foundProposal.packages : template.packages,
+      videoPackages: foundProposal.videoPackages !== undefined ? foundProposal.videoPackages : template.videoPackages,
+      title: foundProposal.title || template.title,
+      subtitle: foundProposal.subtitle || template.subtitle,
+      investmentNote: foundProposal.investmentNote || template.investmentNote,
+      welcomeMessage: foundProposal.welcomeMessage || template.welcomeMessage,
       clientName: foundProposal.clientName || formattedName,
       clientSlug: cleanSlug,
     };
@@ -125,7 +197,7 @@ export async function saveProposalAction(proposal: Proposal): Promise<Proposal> 
     if (res.ok) {
       const data = await res.json();
       if (data.success && data.proposal) {
-        // update local cache
+        // update local cache and broadcast
         updateLocalCache(data.proposal);
         return data.proposal;
       }
@@ -173,6 +245,14 @@ function updateLocalCache(proposal: Proposal) {
       list.unshift(proposal);
     }
     localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+    // Broadcast instant update across tabs and windows
+    broadcastProposalSync({
+      action: 'save',
+      category: proposal.category,
+      slug: proposal.clientSlug,
+      proposal,
+      timestamp: Date.now(),
+    });
   } catch {}
 }
 
@@ -188,6 +268,13 @@ function deleteFromLocalCache(id: string, category?: string, clientSlug?: string
         return true;
       });
       localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+      // Broadcast instant delete
+      broadcastProposalSync({
+        action: 'delete',
+        category,
+        slug: clientSlug,
+        timestamp: Date.now(),
+      });
     }
   } catch {}
 }

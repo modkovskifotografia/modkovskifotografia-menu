@@ -201,9 +201,6 @@ export default function ProposalManager() {
               }}
               className="w-full px-4 py-2.5 rounded-xl border border-brand-wine/20 text-sm focus:outline-none focus:ring-2 focus:ring-brand-wine/30"
             />
-            <p className="text-[10px] text-brand-text-soft mt-1">
-              Dica: a senha atual é <span className="font-mono text-brand-wine font-semibold">modkovski2026</span> (ou <span className="font-mono text-brand-wine font-semibold">alessandra</span>)
-            </p>
           </div>
 
           <div>
@@ -558,11 +555,7 @@ export default function ProposalManager() {
             </Link>
           </div>
 
-          <div className="mt-3 text-center">
-            <span className="text-[11px] text-brand-text-soft">
-              Senha atual do painel: <span className="font-mono font-bold text-brand-wine">modkovski2026</span>
-            </span>
-          </div>
+
         </div>
 
         {/* Modal para alterar senha na tela de login */}

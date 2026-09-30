@@ -14,6 +14,9 @@ interface HeroProps {
   fotoButtonText?: string;
   hideVideoButton?: boolean;
   hideProposalButtons?: boolean;
+  customImage?: string;
+  customTitle?: string;
+  customQuote?: string;
 }
 
 export default function Hero({
@@ -23,8 +26,11 @@ export default function Hero({
   fotoButtonText = 'VER PROPOSTA FOTOGRÁFICA',
   hideVideoButton = false,
   hideProposalButtons = false,
+  customImage,
+  customTitle,
+  customQuote,
 }: HeroProps = {}) {
-  const [imageSrc, setImageSrc] = useState(brandConfig.hero.image);
+  const [imageSrc, setImageSrc] = useState(customImage || brandConfig.hero.image);
 
   const handleImageError = () => {
     setImageSrc(brandConfig.hero.imageFallback);
@@ -72,7 +78,7 @@ export default function Hero({
               transition={{ duration: 1, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
               className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-light text-brand-wine tracking-tight leading-[1.05] mb-4 font-serif"
             >
-              {brandConfig.hero.title}
+              {customTitle || brandConfig.hero.title}
             </motion.h1>
 
             <motion.p 
@@ -81,7 +87,7 @@ export default function Hero({
               transition={{ duration: 0.8, delay: 0.6, ease: [0.16, 1, 0.3, 1] }}
               className="font-serif italic text-base md:text-lg lg:text-xl text-brand-text-soft leading-relaxed max-w-xl mb-10"
             >
-              &ldquo;{brandConfig.hero.quote}&rdquo;
+              &ldquo;{customQuote || brandConfig.hero.quote}&rdquo;
             </motion.p>
 
             {!hideProposalButtons && (
