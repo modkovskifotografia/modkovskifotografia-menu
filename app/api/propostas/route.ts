@@ -70,7 +70,7 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ success: true, proposal: found });
     }
     
-    // Fallback: Return a dynamic proposal based on STANDARD_TEMPLATES
+    // Fallback: Return a dynamic proposal based on STANDARD_TEMPLATES and save it to active proposals list
     const template = (STANDARD_TEMPLATES as Record<string, Proposal>)[category] || STANDARD_TEMPLATES['individual'];
     const formattedName = cleanSlug
       .split('-')
@@ -79,15 +79,19 @@ export async function GET(req: NextRequest) {
 
     const dynamicProposal: Proposal = {
       ...template,
-      id: `dynamic-${category}-${cleanSlug}`,
+      id: `prop-${Date.now()}-${Math.random().toString(36).substr(2, 6)}`,
       category: (category as ProposalCategory) || 'individual',
       clientName: formattedName || 'Cliente',
       clientSlug: cleanSlug,
       isTemplate: false,
+      createdAt: new Date().toISOString(),
       welcomeMessage: category === 'casamento'
         ? template.welcomeMessage
         : `Olá ${formattedName || 'Cliente'}! Foi um prazer conversar com você. Esta proposta foi desenhada especialmente para registrar os seus momentos com sensibilidade e elegância.`,
     };
+
+    list.unshift(dynamicProposal);
+    writeDataFile(list);
 
     return NextResponse.json({ success: true, proposal: dynamicProposal });
   }

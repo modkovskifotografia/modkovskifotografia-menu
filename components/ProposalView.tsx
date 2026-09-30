@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { motion } from 'motion/react';
 import { 
   Check, 
   MessageCircle, 
@@ -16,7 +17,8 @@ import {
   CheckCircle2,
   AlertCircle,
   CreditCard,
-  ChevronDown
+  ChevronDown,
+  Download
 } from 'lucide-react';
 import { 
   Proposal, 
@@ -369,6 +371,15 @@ export default function ProposalView({ category, slug }: ProposalViewProps) {
 
           <div className="flex items-center gap-2.5">
             <button
+              onClick={() => window.print()}
+              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 hover:bg-white/20 text-[11px] text-white transition-colors"
+              title="Baixar ou imprimir proposta em PDF"
+            >
+              <Download className="w-3 h-3" />
+              <span>Baixar PDF</span>
+            </button>
+
+            <button
               onClick={handleCopyLink}
               className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 hover:bg-white/20 text-[11px] text-white transition-colors"
               title="Copiar link da proposta"
@@ -388,7 +399,13 @@ export default function ProposalView({ category, slug }: ProposalViewProps) {
       </div>
 
       {/* 3. Saudação Especial & Apresentação da Proposta */}
-      <section className="w-full py-8 sm:py-10 px-4 sm:px-6 lg:px-8 bg-brand-cream/80 border-b border-brand-wine/10">
+      <motion.section 
+        initial={{ opacity: 0, y: 35 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: '-50px' }}
+        transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+        className="w-full py-8 sm:py-10 px-4 sm:px-6 lg:px-8 bg-brand-cream/80 border-b border-brand-wine/10"
+      >
         <div className="max-w-5xl mx-auto bg-white rounded-3xl p-6 sm:p-8 shadow-[0_10px_35px_rgba(78,0,0,0.05)] border border-brand-wine/15">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div className="flex-1">
@@ -442,7 +459,7 @@ export default function ProposalView({ category, slug }: ProposalViewProps) {
             </div>
           </div>
         </div>
-      </section>
+      </motion.section>
 
       {/* 4. Apresentação da Marca & Hero da Página Início */}
       <Hero 

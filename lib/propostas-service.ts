@@ -175,16 +175,19 @@ export async function fetchProposalBySlug(
   }
 
   // Fallback: Always return a valid personalized proposal based on template if not found in DB/localStorage
-  return {
+  const fallbackProp: Proposal = {
     ...template,
-    id: `dynamic-${cleanCategory}-${cleanSlug}`,
+    id: `prop-${Date.now()}-${Math.random().toString(36).substr(2, 6)}`,
     category: (cleanCategory as ProposalCategory) || 'individual',
     clientName: formattedName || 'Cliente',
     clientSlug: cleanSlug,
     isTemplate: false,
+    createdAt: new Date().toISOString(),
     packages: template.packages,
     videoPackages: cleanCategory === 'casamento' ? [] : template.videoPackages,
   };
+  updateLocalCache(fallbackProp);
+  return fallbackProp;
 }
 
 export async function saveProposalAction(proposal: Proposal): Promise<Proposal> {

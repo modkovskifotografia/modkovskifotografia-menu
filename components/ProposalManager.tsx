@@ -53,12 +53,17 @@ import Logo from '@/components/Logo';
 export default function ProposalManager() {
   const [proposals, setProposals] = useState<Proposal[]>([]);
   const [loading, setLoading] = useState(true);
-  const [isUnlocked, setIsUnlocked] = useState<boolean>(() => {
+  const [isUnlocked, setIsUnlocked] = useState<boolean>(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
     if (typeof window !== 'undefined') {
-      return sessionStorage.getItem('modkovski_admin_auth') === 'true';
+      if (sessionStorage.getItem('modkovski_admin_auth') === 'true') {
+        setIsUnlocked(true);
+      }
     }
-    return false;
-  });
+  }, []);
 
   // Login form state
   const [loginUsername, setLoginUsername] = useState('alessandra');
