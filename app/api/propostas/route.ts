@@ -171,6 +171,13 @@ export async function GET(req: NextRequest) {
       );
     }
     if (found) {
+      // Auto-update status to visualizada if client views and it was nova or unset
+      const fromAdmin = searchParams.get('admin') === 'true';
+      if (!fromAdmin && (!found.status || found.status === 'nova')) {
+        found.status = 'visualizada';
+        found.viewedAt = new Date().toISOString();
+        writeDataFile(list);
+      }
       return NextResponse.json({ success: true, proposal: enrichProposal(found) });
     }
     
@@ -242,6 +249,38 @@ export async function POST(req: NextRequest) {
   } catch (err) {
     console.error('Error in POST /api/propostas:', err);
     return NextResponse.json({ success: false, message: 'Erro ao salvar proposta' }, { status: 500 });
+  }
+}
+
+// PATCH: update status or partial fields
+export async function PATCH(req: NextRequest) {
+  try {
+    const body = await req.json();
+    const { id, category, slug, status } = body;
+
+    const list = ensureDataFile();
+    const index = list.findIndex((p) => {
+      if (id && p.id === id) return true;
+      if (category && slug && p.category === category && p.clientSlug.toLowerCase() === slug.toLowerCase()) return true;
+      return false;
+    });
+
+    if (index === -1) {
+      return NextResponse.json({ success: false, message: 'Proposta não encontrada' }, { status: 404 });
+    }
+
+    if (status) {
+      list[index].status = status;
+      if (status === 'visualizada' && !list[index].viewedAt) {
+        list[index].viewedAt = new Date().toISOString();
+      }
+    }
+
+    writeDataFile(list);
+    return NextResponse.json({ success: true, proposal: enrichProposal(list[index]) });
+  } catch (err) {
+    console.error('Error in PATCH /api/propostas:', err);
+    return NextResponse.json({ success: false, message: 'Erro ao atualizar proposta' }, { status: 500 });
   }
 }
 

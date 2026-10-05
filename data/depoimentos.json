@@ -1,0 +1,110 @@
+{
+  "testimonials": [
+    {
+      "id": "dep-01",
+      "category": "casamento",
+      "occasion": "1 ANO DE CASADOS",
+      "client": "ANDRESSA E DEIVISON",
+      "quote": "“Eu queria muito eternizar esse momento e compartilhar a nossa alegria, sou muito grata. A gente começou com vergonha e depois fomos nos soltando, foi muito divertido. A equipe nos conduziu de forma leve e divertida.”",
+      "rating": 5,
+      "featured": true,
+      "createdAt": "2026-09-01T12:00:00.000Z"
+    },
+    {
+      "id": "dep-02",
+      "category": "corporativo",
+      "occasion": "ENSAIO FOTOGRÁFICO E VÍDEOS",
+      "client": "ANA LETÍCIA | ADVOGADA",
+      "quote": "“Meninas, passando para agradecer por toda a experiência de hoje! Vocês foram maravilhosas do início ao fim. Amei a sessão de fotos, me deixaram super à vontade, foram muito acolhedoras, tiveram toda a paciência e ainda foram dando ideias e direcionamentos durante o ensaio, o que fez toda a diferença. Me senti muito tranquila e confiante. Dá para perceber o carinho e o profissionalismo de vocês em cada detalhe. Foi uma experiência leve e especial, e eu só tenho elogios. Com certeza vou indicar o trabalho de vocês para todo mundo que eu puder! Muito obrigada por tornarem esse momento tão incrível.”",
+      "rating": 5,
+      "featured": true,
+      "createdAt": "2026-09-02T12:00:00.000Z"
+    },
+    {
+      "id": "dep-03",
+      "category": "evento",
+      "occasion": "ANIVERSÁRIO 1 ANO DA HELOÍSA",
+      "client": "POLIANE E JULIAN",
+      "quote": "“A gente recebeu o serviço de fotografia e de filmagem, gostamos muito, elas foram bem atenciosas com todos os nossos convidados. A gente teve algumas intercorrências aqui na festa, elas aguardaram e fizeram um serviço maravilhoso. A gente ficou encantado, agradecemos muito.”",
+      "rating": 5,
+      "featured": true,
+      "createdAt": "2026-09-03T12:00:00.000Z"
+    },
+    {
+      "id": "dep-04",
+      "category": "corporativo",
+      "occasion": "FOTOGRAFIA E PRODUÇÃO DE VÍDEO MENSAL",
+      "client": "LAURA DA MAMTUR VIAGENS",
+      "quote": "“Nós tivemos muita dificuldade com equipes de mídia por questão de criatividade, compromisso e prazo, essa é uma dor de várias empresas. Elas fornecem o serviço pra gente um pouco mais de 1 ano, sempre entregam no prazo, com criatividade, ideias, roteiro pronto, tudo organizado com planejamento. Temos reuniões mensais e eu não me preocupo com nada. A gente vê que elas fazem o serviço com amor e com excelência.”",
+      "rating": 5,
+      "featured": true,
+      "createdAt": "2026-09-04T12:00:00.000Z"
+    },
+    {
+      "id": "dep-05",
+      "category": "corporativo",
+      "occasion": "FOTOGRAFIA E PRODUÇÃO DE VÍDEO",
+      "client": "SÉRGIO | PSICÓLOGO",
+      "quote": "“Contratar o trabalho delas foi fundamental no contexto profissional, as pessoas começaram a alcançar temas importantes a respeito da saúde mental, não só clientes, mas pessoas que assistem e passam a colocar em prática o que é falado. Esse serviço foi fundamental na minha profissão.”",
+      "rating": 5,
+      "featured": true,
+      "createdAt": "2026-09-05T12:00:00.000Z"
+    }
+  ],
+  "partners": [
+    {
+      "id": "part-01",
+      "name": "Mamtur Viagens",
+      "category": "Turismo & Viagens",
+      "imageUrl": "/images/portfolio-01.jpg",
+      "link": "https://www.instagram.com/mamturviagens/",
+      "order": 1,
+      "active": true
+    },
+    {
+      "id": "part-02",
+      "name": "Ana Letícia Advocacia",
+      "category": "Jurídico",
+      "imageUrl": "/images/portfolio-02.jpg",
+      "link": "",
+      "order": 2,
+      "active": true
+    },
+    {
+      "id": "part-03",
+      "name": "Sérgio Moura",
+      "category": "Psicologia",
+      "imageUrl": "/depoimentos/depoimentossergiomoura.jpg",
+      "link": "https://www.instagram.com/sergiomourapsi/",
+      "order": 3,
+      "active": true
+    },
+    {
+      "id": "part-04",
+      "name": "Cerimonial & Eventos",
+      "category": "Eventos",
+      "imageUrl": "/images/portfolio-04.jpg",
+      "link": "",
+      "order": 4,
+      "active": true
+    },
+    {
+      "id": "part-05",
+      "name": "Espaço & Buffet",
+      "category": "Gastronomia",
+      "imageUrl": "/images/portfolio-05.jpg",
+      "link": "",
+      "order": 5,
+      "active": true
+    },
+    {
+      "id": "part-06",
+      "name": "Make & Hair Noivas",
+      "category": "Beleza",
+      "imageUrl": "/images/portfolio-06.jpg",
+      "link": "",
+      "order": 6,
+      "active": true
+    }
+  ]
+}

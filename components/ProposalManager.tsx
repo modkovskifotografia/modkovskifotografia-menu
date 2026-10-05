@@ -31,46 +31,36 @@ import {
   User,
   Camera,
   Video,
-  Download
+  Download,
+  FileSpreadsheet,
+  X,
+  Filter
 } from 'lucide-react';
 import { 
   Proposal, 
   ProposalCategory, 
   ProposalPackage, 
+  ProposalStatus,
   STANDARD_TEMPLATES, 
   CATEGORY_LABELS, 
   CATEGORY_DESCRIPTIONS, 
+  STATUS_LABELS,
   slugify 
 } from '@/lib/propostas';
 import { 
   fetchAllProposals, 
   saveProposalAction, 
-  deleteProposalAction 
+  deleteProposalAction,
+  updateProposalStatusAction
 } from '@/lib/propostas-service';
 import { brandConfig } from '@/lib/config';
 import Logo from '@/components/Logo';
+import PanelNavigation from '@/components/panel/PanelNavigation';
 
 export default function ProposalManager() {
   const [proposals, setProposals] = useState<Proposal[]>([]);
   const [loading, setLoading] = useState(true);
-  const [isUnlocked, setIsUnlocked] = useState<boolean>(false);
   const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-    if (typeof window !== 'undefined') {
-      if (sessionStorage.getItem('modkovski_admin_auth') === 'true') {
-        setIsUnlocked(true);
-      }
-    }
-  }, []);
-
-  // Login form state
-  const [loginUsername, setLoginUsername] = useState('alessandra');
-  const [loginPassword, setLoginPassword] = useState('');
-  const [loginError, setLoginError] = useState('');
-  const [loginLoading, setLoginLoading] = useState(false);
-  const [showLoginPassword, setShowLoginPassword] = useState(false);
 
   // Change password modal state
   const [isChangePasswordOpen, setIsChangePasswordOpen] = useState(false);
@@ -85,10 +75,12 @@ export default function ProposalManager() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingProposal, setEditingProposal] = useState<Proposal | null>(null);
   
-  // Feedback states
+  // Feedback and Filter states
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [filterCategory, setFilterCategory] = useState<string>('all');
+  const [filterStatus, setFilterStatus] = useState<string>('all');
+  const [sortBy, setSortBy] = useState<'recent' | 'oldest' | 'name' | 'status'>('recent');
   const [saveSuccess, setSaveSuccess] = useState(false);
 
   const loadProposals = () => {
@@ -100,70 +92,12 @@ export default function ProposalManager() {
   };
 
   useEffect(() => {
-    let active = true;
-    if (isUnlocked) {
-      fetchAllProposals().then((data) => {
-        if (active) {
-          setProposals(data);
-          setLoading(false);
-        }
-      });
-    }
-    return () => {
-      active = false;
-    };
-  }, [isUnlocked]);
-
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoginError('');
-    setLoginLoading(true);
-
-    try {
-      const res = await fetch('/api/admin/auth', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          action: 'login',
-          username: loginUsername,
-          password: loginPassword,
-        }),
-      });
-
-      const data = await res.json();
-      if (res.ok && data.success) {
-        setIsUnlocked(true);
-        if (typeof window !== 'undefined') {
-          sessionStorage.setItem('modkovski_admin_auth', 'true');
-          sessionStorage.setItem('modkovski_admin_user', data.username || loginUsername);
-        }
-      } else {
-        setLoginError(data.message || 'Credenciais inválidas. Tente novamente.');
-      }
-    } catch {
-      // Fallback local check
-      const u = loginUsername.trim().toLowerCase();
-      const p = loginPassword.trim();
-      if ((u === 'alessandra' || u === 'admin') && (p === 'alessandra' || p === 'modkovski2026' || p === '1234')) {
-        setIsUnlocked(true);
-        if (typeof window !== 'undefined') {
-          sessionStorage.setItem('modkovski_admin_auth', 'true');
-        }
-      } else {
-        setLoginError('Usuário ou senha incorretos.');
-      }
-    } finally {
-      setLoginLoading(false);
-    }
-  };
-
-  const handleLogout = () => {
-    setIsUnlocked(false);
-    if (typeof window !== 'undefined') {
-      sessionStorage.removeItem('modkovski_admin_auth');
-      sessionStorage.removeItem('modkovski_admin_user');
-    }
-  };
+    const timer = setTimeout(() => {
+      setMounted(true);
+      loadProposals();
+    }, 0);
+    return () => clearTimeout(timer);
+  }, []);
 
   const renderChangePasswordModal = () => (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/50 backdrop-blur-sm">
@@ -312,7 +246,6 @@ export default function ProposalManager() {
       const data = await res.json();
       if (res.ok && data.success) {
         setChangePasswordSuccess('Senha alterada com sucesso!');
-        setLoginPassword(newPassword);
         setCurrentPassword('');
         setNewPassword('');
         setConfirmPassword('');
@@ -340,6 +273,7 @@ export default function ProposalManager() {
       clientSlug: '',
       createdAt: new Date().toISOString(),
       isTemplate: false,
+      status: 'nova',
       packages: JSON.parse(JSON.stringify(template.packages)), // deep clone
       videoPackages: template.videoPackages 
         ? JSON.parse(JSON.stringify(template.videoPackages))
@@ -369,6 +303,7 @@ export default function ProposalManager() {
     if (cloned.category === 'individual' && (!cloned.videoPackages || cloned.videoPackages.length === 0)) {
       cloned.videoPackages = JSON.parse(JSON.stringify(STANDARD_TEMPLATES.individual.videoPackages || []));
     }
+    if (!cloned.status) cloned.status = 'nova';
     setEditingProposal(cloned);
     setIsModalOpen(true);
   };
@@ -385,10 +320,9 @@ export default function ProposalManager() {
     }
   };
 
-  // Update proposal status
-  const handleUpdateStatus = async (p: Proposal, newStatus: 'pendente' | 'fechado' | 'desistiu') => {
-    const updated: Proposal = { ...p, status: newStatus };
-    await saveProposalAction(updated);
+  // Update proposal status (Nova, Visualizada, Assinada, Pendente, Desistiu)
+  const handleUpdateStatus = async (p: Proposal, newStatus: ProposalStatus) => {
+    const updated = await updateProposalStatusAction(p, newStatus);
     setProposals((prev) =>
       prev.map((item) => (item.id === p.id || (item.category === p.category && item.clientSlug === p.clientSlug) ? updated : item))
     );
@@ -453,184 +387,152 @@ export default function ProposalManager() {
     setEditingProposal(null);
   };
 
-  // Filtered list
-  const filteredProposals = proposals.filter((p) => {
-    const matchesSearch = p.clientName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          p.clientSlug.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesCat = filterCategory === 'all' || p.category === filterCategory;
-    return matchesSearch && matchesCat;
-  });
+  // Status counts for filters and statistics
+  const statusCounts = {
+    all: proposals.filter((p) => !p.isTemplate).length,
+    nova: proposals.filter((p) => !p.isTemplate && (p.status === 'nova' || !p.status)).length,
+    visualizada: proposals.filter((p) => !p.isTemplate && p.status === 'visualizada').length,
+    assinada: proposals.filter((p) => !p.isTemplate && (p.status === 'assinada' || p.status === 'fechado')).length,
+    pendente: proposals.filter((p) => !p.isTemplate && p.status === 'pendente').length,
+    desistiu: proposals.filter((p) => !p.isTemplate && p.status === 'desistiu').length,
+  };
 
-  // Password / Login Gate
-  if (!isUnlocked) {
-    return (
-      <main className="min-h-screen bg-brand-cream flex flex-col items-center justify-center p-4 sm:p-6 text-center">
-        <div className="max-w-md w-full bg-white p-8 sm:p-10 rounded-3xl shadow-xl border border-brand-wine/15">
-          <div className="w-16 h-16 rounded-full bg-brand-wine/10 text-brand-wine flex items-center justify-center mx-auto mb-4">
-            <Lock className="w-7 h-7" />
-          </div>
-          <h1 className="font-serif text-2xl sm:text-3xl text-brand-text font-bold mb-1">
-            Acesso ao Painel
-          </h1>
-          <p className="text-xs text-brand-text-soft mb-6">
-            Área administrativa restrita da Modkovski Fotografia para gerenciar e criar orçamentos exclusivos.
-          </p>
+  // Filtered and sorted list
+  const filteredProposals = proposals
+    .filter((p) => {
+      if (p.isTemplate) return false;
 
-          <form onSubmit={handleLogin} className="space-y-4 text-left">
-            <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-brand-text mb-1">
-                Usuário / Login
-              </label>
-              <div className="relative">
-                <User className="w-4 h-4 text-brand-text-soft absolute left-3 top-1/2 -translate-y-1/2" />
-                <input
-                  type="text"
-                  required
-                  placeholder="Seu usuário"
-                  value={loginUsername}
-                  onChange={(e) => {
-                    setLoginUsername(e.target.value);
-                    setLoginError('');
-                  }}
-                  className="w-full pl-9 pr-4 py-3 rounded-xl border border-brand-wine/20 text-sm focus:outline-none focus:ring-2 focus:ring-brand-wine/30 bg-brand-cream/20"
-                />
-              </div>
-            </div>
+      // Status check
+      const currentStatus = p.status || 'nova';
+      let matchesStatus = true;
+      if (filterStatus !== 'all') {
+        if (filterStatus === 'assinada') {
+          matchesStatus = currentStatus === 'assinada' || currentStatus === 'fechado';
+        } else if (filterStatus === 'nova') {
+          matchesStatus = currentStatus === 'nova' || !p.status;
+        } else {
+          matchesStatus = currentStatus === filterStatus;
+        }
+      }
 
-            <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-brand-text mb-1">
-                Senha
-              </label>
-              <div className="relative">
-                <Lock className="w-4 h-4 text-brand-text-soft absolute left-3 top-1/2 -translate-y-1/2" />
-                <input
-                  type={showLoginPassword ? 'text' : 'password'}
-                  required
-                  placeholder="Sua senha"
-                  value={loginPassword}
-                  onChange={(e) => {
-                    setLoginPassword(e.target.value);
-                    setLoginError('');
-                  }}
-                  className="w-full pl-9 pr-10 py-3 rounded-xl border border-brand-wine/20 text-sm focus:outline-none focus:ring-2 focus:ring-brand-wine/30 bg-brand-cream/20"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowLoginPassword(!showLoginPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-brand-text-soft hover:text-brand-wine p-1"
-                  title={showLoginPassword ? 'Ocultar senha' : 'Ver senha'}
-                >
-                  {showLoginPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                </button>
-              </div>
-            </div>
+      // Category check
+      const matchesCat = filterCategory === 'all' || p.category === filterCategory;
 
-            {loginError && (
-              <div className="bg-red-50 border border-red-200 text-red-700 text-xs px-3.5 py-2.5 rounded-xl flex items-center gap-2">
-                <AlertCircle className="w-4 h-4 shrink-0 text-red-500" />
-                <span>{loginError}</span>
-              </div>
-            )}
+      // Search query check (Client name, slug, title, packages, or ID)
+      const q = searchQuery.toLowerCase().trim();
+      const packagesNames = (p.packages || []).map((pkg) => pkg.name).join(' ').toLowerCase();
+      const matchesSearch =
+        !q ||
+        p.clientName.toLowerCase().includes(q) ||
+        p.clientSlug.toLowerCase().includes(q) ||
+        p.title.toLowerCase().includes(q) ||
+        packagesNames.includes(q) ||
+        (p.id && p.id.toLowerCase().includes(q));
 
-            <button
-              type="submit"
-              disabled={loginLoading}
-              className="w-full py-3.5 rounded-full bg-brand-wine text-white text-xs font-semibold uppercase tracking-wider hover:bg-brand-wine-dark transition-all shadow-md flex items-center justify-center gap-2 disabled:opacity-50"
-            >
-              <Unlock className="w-4 h-4" />
-              {loginLoading ? 'Verificando...' : 'Entrar no Painel'}
-            </button>
-          </form>
+      return matchesStatus && matchesCat && matchesSearch;
+    })
+    .sort((a, b) => {
+      if (sortBy === 'recent') {
+        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+      }
+      if (sortBy === 'oldest') {
+        return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+      }
+      if (sortBy === 'name') {
+        return a.clientName.localeCompare(b.clientName);
+      }
+      if (sortBy === 'status') {
+        const sA = a.status || 'nova';
+        const sB = b.status || 'nova';
+        return sA.localeCompare(sB);
+      }
+      return 0;
+    });
 
-          <div className="mt-5 pt-4 border-t border-brand-wine/10 flex items-center justify-between gap-2">
-            <button
-              type="button"
-              onClick={() => {
-                setIsChangePasswordOpen(true);
-                setChangePasswordError('');
-                setChangePasswordSuccess('');
-              }}
-              className="inline-flex items-center gap-1.5 text-xs text-brand-wine hover:text-brand-wine-dark font-medium transition-colors"
-            >
-              <KeyRound className="w-3.5 h-3.5" />
-              <span>Alterar Senha</span>
-            </button>
-            <Link href="/" className="text-xs text-brand-text-soft hover:text-brand-wine transition-colors">
-              ← Página Inicial
-            </Link>
-          </div>
+  // Export proposals to CSV file
+  const exportToCSV = () => {
+    const listToExport = filteredProposals.length > 0 ? filteredProposals : proposals.filter((p) => !p.isTemplate);
+    if (listToExport.length === 0) {
+      alert('Não há propostas disponíveis para exportar no momento.');
+      return;
+    }
 
+    const headers = [
+      'Nome do Cliente',
+      'Título da Proposta',
+      'Categoria',
+      'Status',
+      'Data de Criação',
+      'Validade (dias)',
+      'Link da Proposta',
+      'Pacotes e Valores'
+    ];
 
-        </div>
+    const escapeCSV = (value: string | number | undefined | null) => {
+      const stringValue = String(value ?? '');
+      if (stringValue.includes(';') || stringValue.includes('"') || stringValue.includes('\n') || stringValue.includes('\r')) {
+        return `"${stringValue.replace(/"/g, '""')}"`;
+      }
+      return stringValue;
+    };
 
-        {/* Modal para alterar senha na tela de login */}
-        {isChangePasswordOpen && renderChangePasswordModal()}
-      </main>
-    );
-  }
+    const rows = listToExport.map((p) => {
+      const formattedDate = new Date(p.createdAt).toLocaleDateString('pt-BR', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+      const currentStatus = p.status || 'nova';
+      const statusLabel = 
+        currentStatus === 'nova' ? 'Nova' :
+        currentStatus === 'visualizada' ? 'Visualizada' :
+        currentStatus === 'assinada' || currentStatus === 'fechado' ? 'Assinada' :
+        currentStatus === 'desistiu' ? 'Desistiu' : 'Pendente';
+      const categoryLabel = CATEGORY_LABELS[p.category] || p.category;
+      const packagesSummary = p.packages.map((pkg) => `${pkg.name} (${pkg.price})`).join(' | ');
+      const proposalUrl = `https://www.modkovskifotografia.com.br/propostas/${p.category}/${p.clientSlug}`;
+
+      return [
+        escapeCSV(p.clientName),
+        escapeCSV(p.title),
+        escapeCSV(categoryLabel),
+        escapeCSV(statusLabel),
+        escapeCSV(formattedDate),
+        escapeCSV(p.validityDays || 10),
+        escapeCSV(proposalUrl),
+        escapeCSV(packagesSummary)
+      ].join(';');
+    });
+
+    const csvContent = '\uFEFF' + [headers.join(';'), ...rows].join('\r\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.setAttribute('href', url);
+    const today = new Date().toISOString().split('T')[0];
+    link.setAttribute('download', `propostas-modkovski-${today}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
 
   return (
     <div className="min-h-screen bg-brand-cream text-brand-text selection:bg-brand-wine selection:text-white pb-24">
       
-      {/* Top Header */}
-      <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-brand-wine/15 py-3 px-4 sm:px-8 shadow-sm">
-        <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <Link href="/" className="flex items-center gap-2 group">
-              <Logo className="w-8 h-8 text-brand-wine" />
-              <div className="flex flex-col">
-                <span className="font-serif text-base font-bold text-brand-wine leading-none">
-                  Modkovski Fotografia
-                </span>
-                <span className="text-[9px] tracking-widest text-brand-text-soft uppercase">
-                  Painel de Propostas Personalizadas
-                </span>
-              </div>
-            </Link>
-          </div>
-
-          <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
-            {/* Botao Alterar Senha */}
-            <button
-              onClick={() => {
-                setIsChangePasswordOpen(true);
-                setChangePasswordError('');
-                setChangePasswordSuccess('');
-              }}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-brand-wine/25 text-xs text-brand-wine font-medium hover:bg-brand-wine hover:text-white transition-all"
-              title="Alterar a senha do painel"
-            >
-              <KeyRound className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">Alterar Senha</span>
-              <span className="sm:hidden">Senha</span>
-            </button>
-
-            <button
-              onClick={loadProposals}
-              className="p-2 rounded-lg text-brand-text-soft hover:text-brand-wine hover:bg-brand-cream/70 transition-colors"
-              title="Atualizar lista de propostas"
-            >
-              <RefreshCw className="w-4 h-4" />
-            </button>
-
-            <Link
-              href="/"
-              className="px-3.5 py-1.5 rounded-full border border-brand-wine/20 text-xs text-brand-text font-medium hover:bg-brand-wine/5 transition-colors hidden sm:inline-block"
-            >
-              Ver Site
-            </Link>
-
-            {/* Logout */}
-            <button
-              onClick={handleLogout}
-              className="p-2 rounded-lg text-brand-text-soft hover:text-red-600 hover:bg-red-50 transition-colors"
-              title="Sair do painel administrativo"
-            >
-              <LogOut className="w-4 h-4" />
-            </button>
-          </div>
-        </div>
-      </header>
+      {/* Top Header Navigation */}
+      <PanelNavigation 
+        onOpenChangePassword={() => {
+          setIsChangePasswordOpen(true);
+          setChangePasswordError('');
+          setChangePasswordSuccess('');
+        }}
+        activeCount={{
+          proposals: proposals.filter(p => !p.isTemplate).length
+        }}
+      />
 
       {/* Main Content Area */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
@@ -646,7 +548,7 @@ export default function ProposalManager() {
                 Gerenciador de Propostas Padrões e Personalizadas
               </h1>
               <p className="text-sm text-brand-text-soft max-w-2xl leading-relaxed">
-                Aqui você pode copiar qualquer modelo padrão, personalizar com o nome do seu cliente e os valores acordados, gerar o link exclusivo (ex: <span className="font-mono text-xs bg-brand-cream px-1.5 py-0.5 rounded text-brand-wine">/corporativo/nome</span>) e apagar assim que ele visualizar.
+                Aqui você pode copiar qualquer modelo padrão, personalizar com o nome do seu cliente e os valores acordados, gerar o link exclusivo (ex: <span className="font-mono text-xs bg-brand-cream px-1.5 py-0.5 rounded text-brand-wine">/corporativo/nome</span>). As propostas permanecem salvas no sistema por tempo indeterminado e só são excluídas quando você apagá-las manualmente.
               </p>
             </div>
 
@@ -778,11 +680,19 @@ export default function ProposalManager() {
                     </div>
                     <button
                       onClick={() => window.print()}
-                      className="inline-flex items-center gap-1.5 bg-brand-wine text-white px-3 py-1.5 rounded-xl text-xs font-semibold hover:bg-brand-wine-dark transition-all shadow-sm"
+                      className="inline-flex items-center gap-1.5 bg-brand-wine text-white px-3 py-1.5 rounded-xl text-xs font-semibold hover:bg-brand-wine-dark transition-all shadow-sm cursor-pointer"
                       title="Exportar ou imprimir relatório mensal em PDF"
                     >
                       <Download className="w-3.5 h-3.5" />
                       <span>Exportar PDF</span>
+                    </button>
+                    <button
+                      onClick={exportToCSV}
+                      className="inline-flex items-center gap-1.5 bg-brand-cream border border-brand-wine/20 text-brand-wine px-3 py-1.5 rounded-xl text-xs font-semibold hover:bg-brand-wine hover:text-white transition-all shadow-xs cursor-pointer"
+                      title="Exportar lista de propostas para planilha CSV"
+                    >
+                      <FileSpreadsheet className="w-3.5 h-3.5" />
+                      <span>Exportar CSV</span>
                     </button>
                   </div>
                 </div>
@@ -835,33 +745,159 @@ export default function ProposalManager() {
 
         {/* Section 2: Active Proposals List */}
         <section className="mb-14">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-5">
             <div>
-              <h2 className="font-serif text-xl sm:text-2xl text-brand-text font-medium">
-                Propostas Ativas ({filteredProposals.length})
-              </h2>
+              <div className="flex items-center gap-2 mb-1">
+                <h2 className="font-serif text-xl sm:text-2xl text-brand-text font-medium">
+                  Propostas Cadastradas
+                </h2>
+                <span className="text-xs px-2.5 py-0.5 rounded-full bg-brand-wine/10 text-brand-wine font-bold">
+                  {filteredProposals.length} {filteredProposals.length === 1 ? 'proposta' : 'propostas'}
+                </span>
+              </div>
               <p className="text-xs text-brand-text-soft">
-                Propostas criadas para clientes. Copie o link, envie no WhatsApp ou apague quando quiser.
+                Gerencie todos os orçamentos emitidos, monitore status de visualização e assinatura.
               </p>
             </div>
 
-            {/* Filter and Search */}
-            <div className="flex flex-wrap items-center gap-3">
-              <div className="relative">
-                <Search className="w-3.5 h-3.5 text-brand-text-soft absolute left-3 top-1/2 -translate-y-1/2" />
-                <input
-                  type="text"
-                  placeholder="Buscar por cliente..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-8 pr-3 py-1.5 rounded-xl border border-brand-wine/20 bg-white text-xs focus:outline-none focus:ring-1 focus:ring-brand-wine w-44 sm:w-56"
-                />
-              </div>
+            {/* Quick Status Filter Tabs */}
+            <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
+              <button
+                onClick={() => setFilterStatus('all')}
+                className={`px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all flex items-center gap-1.5 cursor-pointer ${
+                  filterStatus === 'all'
+                    ? 'bg-brand-wine text-white shadow-xs'
+                    : 'bg-white border border-brand-wine/15 text-brand-text hover:bg-brand-cream/60'
+                }`}
+              >
+                <span>Todas</span>
+                <span className={`px-1.5 py-0.2 rounded-full text-[10px] font-bold ${filterStatus === 'all' ? 'bg-white/20 text-white' : 'bg-brand-cream text-brand-wine'}`}>
+                  {statusCounts.all}
+                </span>
+              </button>
 
+              <button
+                onClick={() => setFilterStatus('nova')}
+                className={`px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all flex items-center gap-1.5 cursor-pointer ${
+                  filterStatus === 'nova'
+                    ? 'bg-sky-600 text-white shadow-xs'
+                    : 'bg-sky-50 border border-sky-200 text-sky-800 hover:bg-sky-100'
+                }`}
+              >
+                <Sparkles className="w-3 h-3 text-sky-500" />
+                <span>Novas</span>
+                <span className={`px-1.5 py-0.2 rounded-full text-[10px] font-bold ${filterStatus === 'nova' ? 'bg-white/20 text-white' : 'bg-sky-200/70 text-sky-800'}`}>
+                  {statusCounts.nova}
+                </span>
+              </button>
+
+              <button
+                onClick={() => setFilterStatus('visualizada')}
+                className={`px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all flex items-center gap-1.5 cursor-pointer ${
+                  filterStatus === 'visualizada'
+                    ? 'bg-indigo-600 text-white shadow-xs'
+                    : 'bg-indigo-50 border border-indigo-200 text-indigo-800 hover:bg-indigo-100'
+                }`}
+              >
+                <Eye className="w-3 h-3 text-indigo-500" />
+                <span>Visualizadas</span>
+                <span className={`px-1.5 py-0.2 rounded-full text-[10px] font-bold ${filterStatus === 'visualizada' ? 'bg-white/20 text-white' : 'bg-indigo-200/70 text-indigo-800'}`}>
+                  {statusCounts.visualizada}
+                </span>
+              </button>
+
+              <button
+                onClick={() => setFilterStatus('assinada')}
+                className={`px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all flex items-center gap-1.5 cursor-pointer ${
+                  filterStatus === 'assinada'
+                    ? 'bg-emerald-600 text-white shadow-xs'
+                    : 'bg-emerald-50 border border-emerald-200 text-emerald-800 hover:bg-emerald-100'
+                }`}
+              >
+                <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+                <span>Assinadas</span>
+                <span className={`px-1.5 py-0.2 rounded-full text-[10px] font-bold ${filterStatus === 'assinada' ? 'bg-white/20 text-white' : 'bg-emerald-200/70 text-emerald-800'}`}>
+                  {statusCounts.assinada}
+                </span>
+              </button>
+
+              <button
+                onClick={() => setFilterStatus('pendente')}
+                className={`px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all flex items-center gap-1.5 cursor-pointer ${
+                  filterStatus === 'pendente'
+                    ? 'bg-amber-500 text-white shadow-xs'
+                    : 'bg-amber-50 border border-amber-200 text-amber-800 hover:bg-amber-100'
+                }`}
+              >
+                <Clock className="w-3 h-3 text-amber-600" />
+                <span>Pendentes</span>
+                <span className={`px-1.5 py-0.2 rounded-full text-[10px] font-bold ${filterStatus === 'pendente' ? 'bg-white/20 text-white' : 'bg-amber-200/70 text-amber-800'}`}>
+                  {statusCounts.pendente}
+                </span>
+              </button>
+
+              <button
+                onClick={() => setFilterStatus('desistiu')}
+                className={`px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all flex items-center gap-1.5 cursor-pointer ${
+                  filterStatus === 'desistiu'
+                    ? 'bg-rose-600 text-white shadow-xs'
+                    : 'bg-rose-50 border border-rose-200 text-rose-800 hover:bg-rose-100'
+                }`}
+              >
+                <AlertCircle className="w-3 h-3 text-rose-600" />
+                <span>Desistiram</span>
+                <span className={`px-1.5 py-0.2 rounded-full text-[10px] font-bold ${filterStatus === 'desistiu' ? 'bg-white/20 text-white' : 'bg-rose-200/70 text-rose-800'}`}>
+                  {statusCounts.desistiu}
+                </span>
+              </button>
+            </div>
+          </div>
+
+          {/* Search and Granular Filter Bar */}
+          <div className="bg-white rounded-2xl p-3.5 border border-brand-wine/15 shadow-2xs mb-5 flex flex-wrap items-center gap-2.5">
+            {/* Search Input */}
+            <div className="relative flex-1 min-w-[200px] sm:min-w-[260px]">
+              <Search className="w-3.5 h-3.5 text-brand-text-soft absolute left-3 top-1/2 -translate-y-1/2" />
+              <input
+                type="text"
+                placeholder="Buscar por cliente, documento, link ou pacote..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-8 pr-8 py-2 rounded-xl border border-brand-wine/20 bg-brand-cream/30 text-xs text-brand-text focus:outline-none focus:ring-1 focus:ring-brand-wine"
+              />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery('')}
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-brand-text-soft hover:text-brand-text text-xs p-0.5"
+                  title="Limpar busca"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              )}
+            </div>
+
+            {/* Status Select */}
+            <div className="relative">
+              <select
+                value={filterStatus}
+                onChange={(e) => setFilterStatus(e.target.value)}
+                className="px-3 py-2 rounded-xl border border-brand-wine/20 bg-brand-cream/30 text-xs text-brand-text focus:outline-none focus:ring-1 focus:ring-brand-wine cursor-pointer font-medium"
+              >
+                <option value="all">Todos os Status ({statusCounts.all})</option>
+                <option value="nova">✦ Nova ({statusCounts.nova})</option>
+                <option value="visualizada">👁 Visualizada ({statusCounts.visualizada})</option>
+                <option value="assinada">✍ Assinada ({statusCounts.assinada})</option>
+                <option value="pendente">⏳ Pendente ({statusCounts.pendente})</option>
+                <option value="desistiu">❌ Desistiu ({statusCounts.desistiu})</option>
+              </select>
+            </div>
+
+            {/* Category Select */}
+            <div className="relative">
               <select
                 value={filterCategory}
                 onChange={(e) => setFilterCategory(e.target.value)}
-                className="px-3 py-1.5 rounded-xl border border-brand-wine/20 bg-white text-xs text-brand-text focus:outline-none focus:ring-1 focus:ring-brand-wine"
+                className="px-3 py-2 rounded-xl border border-brand-wine/20 bg-brand-cream/30 text-xs text-brand-text focus:outline-none focus:ring-1 focus:ring-brand-wine cursor-pointer font-medium"
               >
                 <option value="all">Todas as Categorias</option>
                 <option value="individual">Individual</option>
@@ -872,17 +908,69 @@ export default function ProposalManager() {
                 <option value="personalizado">Personalizado</option>
               </select>
             </div>
+
+            {/* Order Sort */}
+            <div className="relative">
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value as any)}
+                className="px-3 py-2 rounded-xl border border-brand-wine/20 bg-brand-cream/30 text-xs text-brand-text focus:outline-none focus:ring-1 focus:ring-brand-wine cursor-pointer font-medium"
+              >
+                <option value="recent">Mais Recentes</option>
+                <option value="oldest">Mais Antigas</option>
+                <option value="name">Nome (A-Z)</option>
+                <option value="status">Por Status</option>
+              </select>
+            </div>
+
+            {/* Reset Filters button */}
+            {(searchQuery || filterStatus !== 'all' || filterCategory !== 'all') && (
+              <button
+                onClick={() => {
+                  setSearchQuery('');
+                  setFilterStatus('all');
+                  setFilterCategory('all');
+                }}
+                className="px-2.5 py-2 rounded-xl border border-brand-wine/20 text-brand-wine hover:bg-brand-wine/10 text-xs font-semibold transition-colors flex items-center gap-1 cursor-pointer"
+                title="Limpar todos os filtros"
+              >
+                <X className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">Limpar</span>
+              </button>
+            )}
+
+            {/* Exportar CSV */}
+            <button
+              onClick={exportToCSV}
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-brand-wine/25 bg-white hover:bg-brand-wine hover:text-white text-xs text-brand-wine font-semibold transition-all shadow-2xs hover:shadow-xs cursor-pointer ml-auto"
+              title="Exportar lista de propostas filtradas para planilha CSV (Excel / Planilhas Google)"
+            >
+              <FileSpreadsheet className="w-3.5 h-3.5" />
+              <span>Exportar CSV</span>
+            </button>
           </div>
 
           {filteredProposals.length === 0 ? (
             <div className="bg-white rounded-3xl p-10 text-center border border-brand-wine/10">
               <FileText className="w-10 h-10 text-brand-wine/30 mx-auto mb-3" />
               <h3 className="font-serif text-lg text-brand-text font-medium mb-1">
-                Nenhuma proposta ativa no momento
+                Nenhuma proposta encontrada com os filtros selecionados
               </h3>
-              <p className="text-xs text-brand-text-soft max-w-md mx-auto mb-5">
-                Escolha um dos modelos padrões acima e clique em &ldquo;Copiar e Criar&rdquo; para gerar a primeira proposta para o seu cliente!
+              <p className="text-xs text-brand-text-soft max-w-md mx-auto mb-4">
+                Tente alterar os termos da busca ou redefinir os filtros de status e categoria.
               </p>
+              {(searchQuery || filterStatus !== 'all' || filterCategory !== 'all') && (
+                <button
+                  onClick={() => {
+                    setSearchQuery('');
+                    setFilterStatus('all');
+                    setFilterCategory('all');
+                  }}
+                  className="px-4 py-2 rounded-xl bg-brand-wine text-white text-xs font-semibold hover:bg-brand-wine-dark transition-all shadow-xs cursor-pointer"
+                >
+                  Limpar Filtros de Busca
+                </button>
+              )}
             </div>
           ) : (
             <div className="space-y-3">
@@ -890,7 +978,7 @@ export default function ProposalManager() {
                 const isCopied = copiedId === p.id;
                 const formattedDate = new Date(p.createdAt).toLocaleDateString('pt-BR');
                 const pathUrl = `/propostas/${p.category}/${p.clientSlug}`;
-                const currentStatus = p.status || 'pendente';
+                const currentStatus = p.status || 'nova';
 
                 return (
                   <div
@@ -903,22 +991,33 @@ export default function ProposalManager() {
                         <span className="text-[10px] font-bold uppercase tracking-widest px-2.5 py-0.5 rounded-full bg-brand-wine text-white">
                           {CATEGORY_LABELS[p.category]}
                         </span>
-                        <span className="text-xs font-semibold text-brand-text font-serif">
+                        <span className="text-sm font-semibold text-brand-text font-serif">
                           {p.clientName}
                         </span>
                         
                         {/* Status Badge */}
-                        {currentStatus === 'fechado' ? (
-                          <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-600 text-white flex items-center gap-1">
-                            <CheckCircle2 className="w-3 h-3" /> Fechado 🤝
+                        {currentStatus === 'nova' ? (
+                          <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-sky-100 text-sky-800 border border-sky-300 flex items-center gap-1 shadow-2xs">
+                            <Sparkles className="w-3 h-3 text-sky-600" /> Nova ✦
+                          </span>
+                        ) : currentStatus === 'visualizada' ? (
+                          <span 
+                            className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-indigo-100 text-indigo-800 border border-indigo-300 flex items-center gap-1 shadow-2xs" 
+                            title={p.viewedAt ? `Visualizada pelo cliente em ${new Date(p.viewedAt).toLocaleDateString('pt-BR')} às ${new Date(p.viewedAt).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}` : 'Visualizada pelo cliente'}
+                          >
+                            <Eye className="w-3 h-3 text-indigo-600" /> Visualizada 👁
+                          </span>
+                        ) : currentStatus === 'assinada' || currentStatus === 'fechado' ? (
+                          <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300 flex items-center gap-1 shadow-2xs">
+                            <CheckCircle2 className="w-3 h-3 text-emerald-600" /> Assinada ✍
                           </span>
                         ) : currentStatus === 'desistiu' ? (
-                          <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-rose-600 text-white flex items-center gap-1">
-                            <AlertCircle className="w-3 h-3" /> Desistiu ❌
+                          <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-rose-100 text-rose-800 border border-rose-300 flex items-center gap-1 shadow-2xs">
+                            <AlertCircle className="w-3 h-3 text-rose-600" /> Desistiu ❌
                           </span>
                         ) : (
-                          <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-amber-500 text-white flex items-center gap-1">
-                            <Clock className="w-3 h-3" /> Pendente ⏳
+                          <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800 border border-amber-300 flex items-center gap-1 shadow-2xs">
+                            <Clock className="w-3 h-3 text-amber-600" /> Pendente ⏳
                           </span>
                         )}
 
@@ -938,35 +1037,30 @@ export default function ProposalManager() {
 
                     {/* Right: Actions */}
                     <div className="flex items-center gap-2 flex-wrap shrink-0">
-                      {/* Status toggle buttons */}
-                      <div className="flex items-center gap-1 bg-brand-cream/60 p-1 rounded-xl border border-brand-wine/10">
-                        <button
-                          onClick={() => handleUpdateStatus(p, 'pendente')}
-                          className={`px-2 py-1 rounded-lg text-[10px] font-semibold transition-colors ${
-                            currentStatus === 'pendente' ? 'bg-amber-500 text-white shadow-sm' : 'text-brand-text-soft hover:text-brand-text'
+                      {/* Status Selector Dropdown */}
+                      <div className="relative">
+                        <select
+                          value={currentStatus === 'fechado' ? 'assinada' : currentStatus}
+                          onChange={(e) => handleUpdateStatus(p, e.target.value as ProposalStatus)}
+                          className={`text-xs font-semibold rounded-xl px-2.5 py-1.5 border transition-all cursor-pointer shadow-2xs focus:outline-none focus:ring-1 focus:ring-brand-wine ${
+                            currentStatus === 'nova'
+                              ? 'bg-sky-50 text-sky-800 border-sky-300'
+                              : currentStatus === 'visualizada'
+                              ? 'bg-indigo-50 text-indigo-800 border-indigo-300'
+                              : currentStatus === 'assinada' || currentStatus === 'fechado'
+                              ? 'bg-emerald-50 text-emerald-800 border-emerald-300'
+                              : currentStatus === 'desistiu'
+                              ? 'bg-rose-50 text-rose-800 border-rose-300'
+                              : 'bg-amber-50 text-amber-800 border-amber-300'
                           }`}
-                          title="Marcar como Pendente"
+                          title="Alterar status desta proposta"
                         >
-                          Pendente
-                        </button>
-                        <button
-                          onClick={() => handleUpdateStatus(p, 'fechado')}
-                          className={`px-2 py-1 rounded-lg text-[10px] font-semibold transition-colors ${
-                            currentStatus === 'fechado' ? 'bg-emerald-600 text-white shadow-sm' : 'text-brand-text-soft hover:text-brand-text'
-                          }`}
-                          title="Marcar como Fechado"
-                        >
-                          Fechado
-                        </button>
-                        <button
-                          onClick={() => handleUpdateStatus(p, 'desistiu')}
-                          className={`px-2 py-1 rounded-lg text-[10px] font-semibold transition-colors ${
-                            currentStatus === 'desistiu' ? 'bg-rose-600 text-white shadow-sm' : 'text-brand-text-soft hover:text-brand-text'
-                          }`}
-                          title="Marcar como Desistiu"
-                        >
-                          Desistiu
-                        </button>
+                          <option value="nova">✦ Nova</option>
+                          <option value="visualizada">👁 Visualizada</option>
+                          <option value="assinada">✍ Assinada</option>
+                          <option value="pendente">⏳ Pendente</option>
+                          <option value="desistiu">❌ Desistiu</option>
+                        </select>
                       </div>
                       {/* Copiar Link */}
                       <button
@@ -1069,8 +1163,8 @@ export default function ProposalManager() {
 
             <form onSubmit={handleSaveProposal} className="space-y-6">
               
-              {/* Client Name and Slug */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {/* Client Name, Slug and Status */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div>
                   <label className="block text-xs font-bold uppercase tracking-wider text-brand-text mb-1.5">
                     Nome do Cliente ou Empresa *
@@ -1097,10 +1191,7 @@ export default function ProposalManager() {
                     Link da Proposta (URL)
                   </label>
                   <div className="flex items-center">
-                    <span className="text-[11px] text-brand-text-soft bg-brand-cream/80 px-2.5 py-2.5 rounded-l-xl border border-r-0 border-brand-wine/20 font-mono hidden sm:inline">
-                      www.modkovskifotografia.com.br/propostas/{editingProposal.category}/
-                    </span>
-                    <span className="text-xs text-brand-text-soft bg-brand-cream/80 px-2.5 py-2.5 rounded-l-xl border border-r-0 border-brand-wine/20 font-mono sm:hidden">
+                    <span className="text-[11px] text-brand-text-soft bg-brand-cream/80 px-2.5 py-2.5 rounded-l-xl border border-r-0 border-brand-wine/20 font-mono">
                       /{editingProposal.category}/
                     </span>
                     <input
@@ -1118,6 +1209,26 @@ export default function ProposalManager() {
                       className="w-full px-3 py-2.5 rounded-r-xl border border-brand-wine/20 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-brand-wine/30"
                     />
                   </div>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-brand-text mb-1.5">
+                    Status da Proposta
+                  </label>
+                  <select
+                    value={editingProposal.status || 'nova'}
+                    onChange={(e) => {
+                      const st = e.target.value as ProposalStatus;
+                      setEditingProposal((prev) => prev ? { ...prev, status: st } : null);
+                    }}
+                    className="w-full px-4 py-2.5 rounded-xl border border-brand-wine/20 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-brand-wine/30 bg-white cursor-pointer"
+                  >
+                    <option value="nova">✦ Nova (Recém criada)</option>
+                    <option value="visualizada">👁 Visualizada (Cliente abriu)</option>
+                    <option value="assinada">✍ Assinada (Fechada)</option>
+                    <option value="pendente">⏳ Pendente (Negociação)</option>
+                    <option value="desistiu">❌ Desistiu (Cancelada)</option>
+                  </select>
                 </div>
               </div>
 

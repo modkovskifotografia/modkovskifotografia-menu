@@ -86,14 +86,14 @@
     "welcomeMessage": "Olá Dra. Camila! Foi um prazer conversar com você. Esta proposta foi desenhada especialmente para elevar o posicionamento digital da sua clínica com fotos de autoridade e vídeos estratégicos.",
     "validityDays": 10,
     "createdAt": "2026-09-30T15:27:58.760Z",
-    "investmentNote": "Condições comerciais: 30% na reserva e 70% na entrega das fotos, ou faturamento em até 12x no cartão de crédito. Emissão de Nota Fiscal.",
+    "investmentNote": "Garantia de reserva mediante sinal de 30% do valor contratado, com os 70% restantes quitados no dia do ensaio. Facilitamos o pagamento em até 12x no cartão de crédito.",
     "isTemplate": false,
     "packages": [
       {
         "id": "corp-01",
         "name": "Ensaio Essencial",
         "highlight": false,
-        "price": "R$ 250",
+        "price": "R$ 257",
         "paymentMethod": "Pix",
         "duration": "Duração de até 01 hora",
         "features": [

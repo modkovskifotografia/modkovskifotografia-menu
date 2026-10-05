@@ -25,8 +25,8 @@ export const brandConfig = {
     url: "https://www.instagram.com/modkovskifotografia/",
   },
   whatsApp: {
-    number: "5569999718820",
-    url: "https://wa.me/5569999718820",
+    number: "556999718820",
+    url: "https://wa.me/556999718820",
   },
   client: {
     name: "Letícia Faustino",

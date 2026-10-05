@@ -1,0 +1,126 @@
+{
+  "templates": [
+    {
+      "id": "tpl-casamento",
+      "category": "casamento",
+      "name": "Contrato de Prestação de Serviços Fotográficos - Casamento",
+      "description": "Modelo completo para cobertura de casamento, cerimônia, recepção, making of e ensaio pré-wedding.",
+      "clauses": [
+        {
+          "title": "CLÁUSULA 1ª - DO OBJETO",
+          "content": "O presente contrato tem por objeto a prestação de serviços fotográficos e/ou captação de vídeo pela CONTRATADA para a cobertura do evento de casamento dos CONTRATANTES, a realizar-se na data, horário e local especificados no cabeçalho."
+        },
+        {
+          "title": "CLÁUSULA 2ª - DO PACOTE E ESPECIFICAÇÕES",
+          "content": "A CONTRATADA executará a cobertura conforme o pacote contratado: {{PACOTE_NOME}}, contemplando {{QUANTIDADE_FOTOS}} fotos em alta resolução tratadas individualmente, {{QUANTIDADE_VIDEOS}} vídeos editados e tempo de permanência de até {{DURACAO_HORAS}} horas."
+        },
+        {
+          "title": "CLÁUSULA 3ª - DOS VALORES E FORMA DE PAGAMENTO",
+          "content": "Pela execução dos serviços descritos, os CONTRATANTES pagarão à CONTRATADA o valor total de {{VALOR_TOTAL}}, a ser quitado nas seguintes condições: {{CONDICOES_PAGAMENTO}}."
+        },
+        {
+          "title": "CLÁUSULA 4ª - DOS PRAZOS DE SELEÇÃO E ENTREGA",
+          "content": "A CONTRATADA disponibilizará a galeria online para seleção das fotos em até {{PRAZO_SELECAO}} dias úteis após o evento. Após a finalização da escolha pelos CONTRATANTES, o prazo de entrega final com tratamento minucioso é de {{PRAZO_ENTREGA}} dias corridos."
+        },
+        {
+          "title": "CLÁUSULA 5ª - DA ALIMENTAÇÃO E CONDIÇÕES DO LOCAL",
+          "content": "Para coberturas com duração superior a 4 (quatro) horas contínuas, os CONTRATANTES se comprometem a fornecer alimentação e bebidas não alcoólicas para a equipe da CONTRATADA no mesmo padrão dos convidados/fornecedores."
+        },
+        {
+          "title": "CLÁUSULA 6ª - DO USO DE IMAGEM",
+          "content": "Os CONTRATANTES autorizam expressamente a CONTRATADA a utilizar imagens decorrentes deste trabalho exclusivamente para fins de divulgação profissional em portfólio, site, redes sociais e materiais institucionais."
+        },
+        {
+          "title": "CLÁUSULA 7ª - DO CANCELAMENTO E RESCISÃO",
+          "content": "Em caso de desistência por parte dos CONTRATANTES com antecedência superior a 60 dias da data do evento, o sinal de reserva não será restituído, cobrindo os custos de reserva de data e recusa de outras propostas. Em caso de força maior comprovada, as partes acordarão nova data sem custos adicionais, conforme disponibilidade de agenda da CONTRATADA."
+        },
+        {
+          "title": "CLÁUSULA 8ª - DO FORO",
+          "content": "Para dirimir quaisquer controvérsias oriundas do presente contrato, as partes elegem o foro da Comarca de domicílio da CONTRATADA, com renúncia expressa a qualquer outro."
+        }
+      ]
+    },
+    {
+      "id": "tpl-ensaio",
+      "category": "individual",
+      "name": "Contrato de Ensaio Fotográfico Individual / Posicionamento",
+      "description": "Modelo para ensaio pessoal, feminino, retrato corporativo e posicionamento de imagem.",
+      "clauses": [
+        {
+          "title": "CLÁUSULA 1ª - DO OBJETO",
+          "content": "O presente contrato tem por objeto a realização de ensaio fotográfico e/ou captação audiovisual para a(o) CONTRATANTE, com foco em valorização de imagem, autoridade e estética autoral."
+        },
+        {
+          "title": "CLÁUSULA 2ª - DA EXECUÇÃO E DURAÇÃO",
+          "content": "A sessão terá duração de até {{DURACAO_HORAS}} horas, a ser realizada em locação externa, estúdio ou ambiente profissional previamente alinhado entre as partes."
+        },
+        {
+          "title": "CLÁUSULA 3ª - DO INVESTIMENTO E FORMA DE PAGAMENTO",
+          "content": "O valor total do serviço é de {{VALOR_TOTAL}}, com sinal de reserva de 30% na assinatura deste instrumento e o saldo restante quitado até o dia da sessão fotográfica ou parcelado no cartão."
+        },
+        {
+          "title": "CLÁUSULA 4ª - DA ENTREGA E FOTOS EXTRAS",
+          "content": "Serão entregues {{QUANTIDADE_FOTOS}} fotografias em alta resolução tratadas com padrão profissional em até {{PRAZO_ENTREGA}} dias. Fotos adicionais poderão ser adquiridas pelo valor unitário de {{VALOR_FOTO_EXTRA}}."
+        },
+        {
+          "title": "CLÁUSULA 5ª - DO REMARCAÇÃO POR CLIMA OU FORÇA MAIOR",
+          "content": "Em caso de condições meteorológicas desfavoráveis para ensaios externos ou motivo de saúde justificável, a sessão será remarcada em comum acordo, sem aplicação de multas, mediante aviso prévio de 24 horas."
+        },
+        {
+          "title": "CLÁUSULA 6ª - DO FORO",
+          "content": "As partes elegem o foro da Comarca local para dirimir eventuais divergências decorrentes deste instrumento."
+        }
+      ]
+    },
+    {
+      "id": "tpl-corporativo",
+      "category": "corporativo",
+      "name": "Contrato de Produção Audiovisual & Posicionamento Corporativo",
+      "description": "Modelo para empresas, consultórios, clínicas, profissionais liberais e produção mensal de conteúdo.",
+      "clauses": [
+        {
+          "title": "CLÁUSULA 1ª - DO OBJETO",
+          "content": "Prestação de serviços contínuos ou pontuais de captação fotográfica, criação de vídeos estratégicos (reels/shorts), direção de cena e alinhamento de posicionamento de marca para a empresa CONTRATANTE."
+        },
+        {
+          "title": "CLÁUSULA 2ª - DOS ENTREGÁVEIS",
+          "content": "A CONTRATADA entregará mensalmente/pontualmente: {{QUANTIDADE_FOTOS}} fotos tratadas e {{QUANTIDADE_VIDEOS}} vídeos editados com legenda, trilha e capa de acordo com cronograma aprovado."
+        },
+        {
+          "title": "CLÁUSULA 3ª - DO PAGAMENTO E NOTA FISCAL",
+          "content": "O pagamento mensal/pontual no valor de {{VALOR_TOTAL}} será realizado via PIX ou boleto até o dia acordado de cada mês, mediante emissão de Nota Fiscal de Serviços."
+        },
+        {
+          "title": "CLÁUSULA 4ª - DOS DIREITOS AUTORAIS E PATRIMONIAIS",
+          "content": "A CONTRATANTE adquire o direito de veiculação e uso comercial dos materiais em seus canais digitais, mantida a autoria moral da CONTRATADA."
+        }
+      ]
+    }
+  ],
+  "contracts": [
+    {
+      "id": "ctr-101",
+      "templateId": "tpl-casamento",
+      "title": "Contrato de Casamento - Maysa Rickely",
+      "category": "casamento",
+      "status": "assinado",
+      "clientName": "Maysa Rickely",
+      "clientDocument": "000.000.000-00",
+      "clientEmail": "maysa@exemplo.com",
+      "clientPhone": "(69) 99999-0000",
+      "eventDate": "2026-11-20",
+      "eventLocation": "Espaço Jardim das Flores - Porto Velho/RO",
+      "packageName": "Cobertura Completa",
+      "photoCount": "80 fotos selecionadas",
+      "videoCount": "2 vídeos de até 1min30",
+      "duration": "3 horas de cobertura",
+      "totalValue": "R$ 950,00",
+      "paymentTerms": "Sinal de 30% na reserva e saldo restante em até 12x no cartão de crédito",
+      "deliveryTime": "20 dias",
+      "selectionTime": "5 dias",
+      "extraPhotoPrice": "R$ 20,00",
+      "createdAt": "2026-09-30T16:00:00.000Z",
+      "notes": "Cliente solicitou ênfase na cerimônia e fotos de família."
+    }
+  ]
+}

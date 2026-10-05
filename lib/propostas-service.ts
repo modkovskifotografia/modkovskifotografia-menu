@@ -81,7 +81,21 @@ export function getInitialProposalSnapshot(category: string, slug: string): Prop
     } catch {}
   }
 
-  return null;
+  const formattedName = cleanSlug === '[nome]' ? '[nome]' : cleanSlug
+    .split('-')
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+
+  return enrichProposal({
+    ...template,
+    id: `prop-initial-${cleanCategory}-${cleanSlug}`,
+    category: (cleanCategory as ProposalCategory) || 'individual',
+    clientName: formattedName || 'Cliente',
+    clientSlug: cleanSlug,
+    isTemplate: false,
+    packages: template.packages,
+    videoPackages: cleanCategory === 'casamento' ? [] : template.videoPackages,
+  });
 }
 
 export async function fetchAllProposals(): Promise<Proposal[]> {
@@ -245,6 +259,42 @@ export async function saveProposalAction(proposal: Proposal): Promise<Proposal> 
   // Local fallback save
   updateLocalCache(proposal);
   return proposal;
+}
+
+export async function updateProposalStatusAction(
+  proposal: Proposal,
+  status: Proposal['status']
+): Promise<Proposal> {
+  const updated: Proposal = {
+    ...proposal,
+    status,
+    viewedAt: status === 'visualizada' && !proposal.viewedAt ? new Date().toISOString() : proposal.viewedAt,
+  };
+
+  try {
+    const res = await fetch('/api/propostas', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        id: proposal.id,
+        category: proposal.category,
+        slug: proposal.clientSlug,
+        status,
+      }),
+    });
+    if (res.ok) {
+      const data = await res.json();
+      if (data.success && data.proposal) {
+        updateLocalCache(data.proposal);
+        return data.proposal;
+      }
+    }
+  } catch (err) {
+    console.warn('Error patching status to API, updating local cache only:', err);
+  }
+
+  updateLocalCache(updated);
+  return updated;
 }
 
 export async function deleteProposalAction(id: string, category?: string, clientSlug?: string): Promise<boolean> {

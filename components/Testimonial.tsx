@@ -34,14 +34,27 @@ export default function Testimonial({
   showMoreButton = true,
   buttonWine = true,
 }: TestimonialProps = {}) {
-  const testimonials = brandConfig.testimonial.items || [
-    {
-      id: 1,
-      occasion: brandConfig.testimonial.occasion || "1 ANO DE CASADOS",
-      quote: brandConfig.testimonial.quote,
-      client: brandConfig.testimonial.client || "ANDRESSA E DEIVISON",
-    }
-  ];
+  const [testimonials, setTestimonials] = useState(
+    brandConfig.testimonial.items || [
+      {
+        id: 1,
+        occasion: brandConfig.testimonial.occasion || "1 ANO DE CASADOS",
+        quote: brandConfig.testimonial.quote,
+        client: brandConfig.testimonial.client || "ANDRESSA E DEIVISON",
+      }
+    ]
+  );
+
+  useEffect(() => {
+    fetch('/api/depoimentos?type=testimonials')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success && Array.isArray(data.testimonials) && data.testimonials.length > 0) {
+          setTestimonials(data.testimonials);
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   const total = testimonials.length;
   const [currentIndex, setCurrentIndex] = useState(0);

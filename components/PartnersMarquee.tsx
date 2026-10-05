@@ -1,25 +1,59 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { motion } from 'motion/react';
 
 interface Partner {
   id: string;
   name: string;
+  category?: string;
+  imageUrl?: string;
+  link?: string;
+  active?: boolean;
 }
 
-const partners: Partner[] = [
-  { id: '01', name: 'Parceiro 01' },
-  { id: '02', name: 'Parceiro 02' },
-  { id: '03', name: 'Parceiro 03' },
-  { id: '04', name: 'Parceiro 04' },
-  { id: '05', name: 'Parceiro 05' },
-  { id: '06', name: 'Parceiro 06' },
-  { id: '07', name: 'Parceiro 07' },
-  { id: '08', name: 'Parceiro 08' },
+const DEFAULT_PARTNERS: Partner[] = [
+  { id: 'part-01', name: 'Mamtur Viagens', category: 'Turismo & Viagens', imageUrl: '/images/portfolio-01.jpg' },
+  { id: 'part-02', name: 'Ana Letícia Advocacia', category: 'Jurídico', imageUrl: '/images/portfolio-02.jpg' },
+  { id: 'part-03', name: 'Sérgio Psicologia', category: 'Saúde & Bem-estar', imageUrl: '/images/portfolio-03.jpg' },
+  { id: 'part-04', name: 'Cerimonial & Eventos', category: 'Eventos', imageUrl: '/images/portfolio-04.jpg' },
+  { id: 'part-05', name: 'Espaço & Buffet', category: 'Gastronomia', imageUrl: '/images/portfolio-05.jpg' },
+  { id: 'part-06', name: 'Make & Hair Noivas', category: 'Beleza', imageUrl: '/images/portfolio-06.jpg' },
 ];
 
+function cleanImageSrc(src?: string): string {
+  if (!src) return '/images/portfolio-01.jpg';
+  const trimmed = src.trim();
+  if (trimmed.startsWith('http://') || trimmed.startsWith('https://') || trimmed.startsWith('data:')) {
+    return trimmed;
+  }
+  if (trimmed.startsWith('app/painel/depoimentos/')) {
+    return '/' + trimmed.replace('app/painel/depoimentos/', 'depoimentos/');
+  }
+  if (!trimmed.startsWith('/')) {
+    return `/${trimmed}`;
+  }
+  return trimmed;
+}
+
 export default function PartnersMarquee() {
+  const [partners, setPartners] = useState<Partner[]>(DEFAULT_PARTNERS);
+
+  useEffect(() => {
+    fetch('/api/depoimentos?type=partners')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success && Array.isArray(data.partners) && data.partners.length > 0) {
+          const activeOnes = data.partners.filter((p: Partner) => p.active !== false);
+          if (activeOnes.length > 0) {
+            setPartners(activeOnes);
+          }
+        }
+      })
+      .catch(() => {});
+  }, []);
+
   const duplicatedPartners = [...partners, ...partners];
 
   return (
@@ -37,7 +71,7 @@ export default function PartnersMarquee() {
       {/* Marquee container */}
       <div className="relative w-full overflow-hidden flex py-8">
         <motion.div
-          className="flex gap-10 md:gap-16 shrink-0 items-center"
+          className="flex gap-8 md:gap-14 shrink-0 items-center"
           animate={{ x: ['0%', '-50%'] }}
           transition={{
             repeat: Infinity,
@@ -57,12 +91,61 @@ export default function PartnersMarquee() {
               }}
               className="flex flex-col items-center justify-center shrink-0"
             >
-              <div 
-                className="w-24 h-24 md:w-28 md:h-28 rounded-full bg-brand-wine/10 border border-brand-wine/25 flex items-center justify-center shadow-sm hover:scale-105 transition-transform duration-300 relative overflow-hidden"
-                id={`partner-slot-${partner.id}`}
-              >
-                <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-brand-wine/20 flex items-center justify-center text-brand-wine/60" />
-              </div>
+              {partner.link ? (
+                <a 
+                  href={partner.link} 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="group flex flex-col items-center"
+                  title={`Visitar ${partner.name}`}
+                >
+                  <div 
+                    className="w-24 h-24 md:w-28 md:h-28 rounded-full bg-white border-2 border-brand-wine/25 flex items-center justify-center shadow-xs group-hover:scale-105 group-hover:border-brand-wine transition-all duration-300 relative overflow-hidden"
+                    id={`partner-slot-${partner.id}-${index}`}
+                  >
+                    {partner.imageUrl ? (
+                      <Image
+                        src={cleanImageSrc(partner.imageUrl)}
+                        alt={partner.name}
+                        fill
+                        className="object-cover group-hover:scale-110 transition-transform duration-300"
+                        referrerPolicy="no-referrer"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-brand-wine/10 text-brand-wine font-serif font-bold text-lg">
+                        {partner.name.substring(0, 2).toUpperCase()}
+                      </div>
+                    )}
+                  </div>
+                  <span className="text-[11px] font-medium text-brand-text/80 mt-2.5 max-w-[120px] text-center truncate group-hover:text-brand-wine transition-colors">
+                    {partner.name}
+                  </span>
+                </a>
+              ) : (
+                <div className="group flex flex-col items-center">
+                  <div 
+                    className="w-24 h-24 md:w-28 md:h-28 rounded-full bg-white border-2 border-brand-wine/25 flex items-center justify-center shadow-xs hover:scale-105 hover:border-brand-wine transition-all duration-300 relative overflow-hidden"
+                    id={`partner-slot-${partner.id}-${index}`}
+                  >
+                    {partner.imageUrl ? (
+                      <Image
+                        src={cleanImageSrc(partner.imageUrl)}
+                        alt={partner.name}
+                        fill
+                        className="object-cover hover:scale-110 transition-transform duration-300"
+                        referrerPolicy="no-referrer"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-brand-wine/10 text-brand-wine font-serif font-bold text-lg">
+                        {partner.name.substring(0, 2).toUpperCase()}
+                      </div>
+                    )}
+                  </div>
+                  <span className="text-[11px] font-medium text-brand-text/80 mt-2.5 max-w-[120px] text-center truncate">
+                    {partner.name}
+                  </span>
+                </div>
+              )}
             </motion.div>
           ))}
         </motion.div>

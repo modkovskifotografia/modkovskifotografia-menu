@@ -18,6 +18,8 @@ export interface ProposalPackage {
   extraNote?: string;
 }
 
+export type ProposalStatus = 'nova' | 'visualizada' | 'assinada' | 'pendente' | 'fechado' | 'desistiu';
+
 export interface Proposal {
   id: string;
   category: ProposalCategory;
@@ -33,8 +35,18 @@ export interface Proposal {
   videoPackages?: ProposalPackage[];
   customObservations?: string;
   isTemplate?: boolean;
-  status?: 'pendente' | 'fechado' | 'desistiu';
+  status?: ProposalStatus;
+  viewedAt?: string;
 }
+
+export const STATUS_LABELS: Record<string, string> = {
+  nova: 'Nova',
+  visualizada: 'Visualizada',
+  assinada: 'Assinada',
+  fechado: 'Assinada',
+  pendente: 'Pendente',
+  desistiu: 'Desistiu',
+};
 
 export const CATEGORY_LABELS: Record<ProposalCategory, string> = {
   individual: 'Individual',
@@ -387,14 +399,14 @@ export const STANDARD_TEMPLATES: Record<ProposalCategory, Proposal> = {
     welcomeMessage: 'A imagem profissional é o primeiro ponto de confiança com seu cliente. Desenvolvemos esta proposta corporativa focada em destacar a essência do seu negócio com excelência técnica e visual sofisticado.',
     validityDays: 10,
     createdAt: new Date().toISOString(),
-    investmentNote: 'Condições comerciais: 30% na reserva e 70% na entrega das fotos, ou faturamento em até 12x no cartão de crédito. Emissão de Nota Fiscal.',
+    investmentNote: 'Garantia de reserva mediante sinal de 30% do valor contratado, com os 70% restantes quitados no dia do ensaio. Facilitamos o pagamento em até 12x no cartão de crédito.',
     isTemplate: true,
     packages: [
       {
         id: 'corp-01',
         name: 'Ensaio Essencial',
         highlight: false,
-        price: 'R$ 250',
+        price: 'R$ 257',
         paymentMethod: 'Pix',
         duration: 'Duração de até 01 hora',
         features: [
@@ -403,13 +415,13 @@ export const STANDARD_TEMPLATES: Record<ProposalCategory, Proposal> = {
           'Prazo de entrega de até 10 dias',
           'Foto extra R$ 25,00 (desconto a partir de 13 extras)'
         ],
-        installments: calculateDefaultInstallments('R$ 250')
+        installments: calculateDefaultInstallments('R$ 257')
       },
       {
         id: 'corp-02',
         name: 'Ensaio Clássico',
         highlight: false,
-        price: 'R$ 350',
+        price: 'R$ 357',
         paymentMethod: 'Pix',
         duration: 'Duração de até 01 hora',
         features: [
@@ -418,13 +430,13 @@ export const STANDARD_TEMPLATES: Record<ProposalCategory, Proposal> = {
           'Prazo de entrega de até 15 dias',
           'Foto extra R$ 23,00 (desconto a partir de 13 extras)'
         ],
-        installments: calculateDefaultInstallments('R$ 350')
+        installments: calculateDefaultInstallments('R$ 357')
       },
       {
         id: 'corp-03',
         name: 'Ensaio Especial',
         highlight: false,
-        price: 'R$ 450',
+        price: 'R$ 447',
         paymentMethod: 'Pix',
         duration: 'Duração de até 02 horas',
         features: [
@@ -433,22 +445,22 @@ export const STANDARD_TEMPLATES: Record<ProposalCategory, Proposal> = {
           'Prazo de entrega de até 15 dias',
           'Foto extra R$ 22,00 (desconto a partir de 13 extras)'
         ],
-        installments: calculateDefaultInstallments('R$ 450')
+        installments: calculateDefaultInstallments('R$ 447')
       },
       {
         id: 'corp-04',
         name: 'Ensaio Completo',
         highlight: true,
-        price: 'R$ 550',
+        price: 'R$ 597',
         paymentMethod: 'Pix',
         duration: 'Duração de até 02 horas',
         features: [
-          '30 fotos selecionadas',
+          '35 fotos selecionadas',
           '01 vídeo brinde Making Of',
           'Prazo de entrega de até 20 dias',
           'Foto extra R$ 19,00 (desconto a partir de 13 extras)'
         ],
-        installments: calculateDefaultInstallments('R$ 550')
+        installments: calculateDefaultInstallments('R$ 597')
       }
     ],
     videoPackages: [
@@ -456,7 +468,7 @@ export const STANDARD_TEMPLATES: Record<ProposalCategory, Proposal> = {
         id: 'vid-co-01',
         name: 'Prático',
         highlight: false,
-        price: 'R$ 150',
+        price: 'R$ 157',
         paymentMethod: 'Pix',
         duration: '01 vídeo até 1:30seg',
         features: [
@@ -466,13 +478,13 @@ export const STANDARD_TEMPLATES: Record<ProposalCategory, Proposal> = {
           'Edição dinâmica, cortes essenciais, legenda e trilha sonora',
           'Prazo de entrega de até 72 horas'
         ],
-        installments: calculateDefaultInstallments('R$ 150')
+        installments: calculateDefaultInstallments('R$ 157')
       },
       {
         id: 'vid-co-02',
         name: 'Essencial',
         highlight: false,
-        price: 'R$ 560',
+        price: 'R$ 587',
         paymentMethod: 'Pix',
         duration: '04 vídeos até 1:30seg',
         features: [
@@ -483,13 +495,13 @@ export const STANDARD_TEMPLATES: Record<ProposalCategory, Proposal> = {
           '02 vídeos brindes curtos até 15seg',
           'Prazo de entrega de até 10 dias'
         ],
-        installments: calculateDefaultInstallments('R$ 560')
+        installments: calculateDefaultInstallments('R$ 587')
       },
       {
         id: 'vid-co-03',
         name: 'Presença',
         highlight: false,
-        price: 'R$ 1.040',
+        price: 'R$ 1.087',
         paymentMethod: 'Pix',
         duration: '08 vídeos até 1:30seg',
         features: [
@@ -497,16 +509,16 @@ export const STANDARD_TEMPLATES: Record<ProposalCategory, Proposal> = {
           '08 capas pra vídeo',
           'Roteirização, direção e posicionamento',
           'Edição dinâmica, cortes essenciais, legenda e trilha sonora',
-          '04 vídeos brindes curtos até 15seg',
+          '03 vídeos brindes curtos até 15seg',
           'Prazo de entrega de até 15 dias'
         ],
-        installments: calculateDefaultInstallments('R$ 1.040')
+        installments: calculateDefaultInstallments('R$ 1.087')
       },
       {
         id: 'vid-co-04',
         name: 'Autoridade',
         highlight: true,
-        price: 'R$ 1.440',
+        price: 'R$ 1.487',
         paymentMethod: 'Pix',
         duration: '12 vídeos até 1:30seg',
         features: [
@@ -514,10 +526,10 @@ export const STANDARD_TEMPLATES: Record<ProposalCategory, Proposal> = {
           '12 capas pra vídeo',
           'Roteirização, direção e posicionamento',
           'Edição dinâmica, cortes essenciais, legenda e trilha sonora',
-          '06 vídeos brindes curtos até 15seg',
+          '04 vídeos brindes curtos até 15seg',
           'Prazo de entrega de até 20 dias'
         ],
-        installments: calculateDefaultInstallments('R$ 1.440')
+        installments: calculateDefaultInstallments('R$ 1.487')
       }
     ]
   },

@@ -332,7 +332,7 @@ export default function ProposalView({ category, slug }: ProposalViewProps) {
         : 'Meu objetivo é transformar o nosso ensaio em um momento leve e divertido. Vou te guiar em cada passo para que a timidez vá embora e você se sinta em casa logo no primeiro clique.')
     : proposal.welcomeMessage;
 
-   const isRestricted = ['individual', 'casal', 'corporativo'].includes(proposal.category);
+   const isRestricted = ['individual', 'casal'].includes(proposal.category);
 
   return (
     <main className="w-full relative min-h-screen flex flex-col bg-brand-cream selection:bg-brand-wine selection:text-white pt-20" id="main-proposal-page">
@@ -349,7 +349,7 @@ export default function ProposalView({ category, slug }: ProposalViewProps) {
             </span>
             <span className="text-xs text-white/90">
               {proposal.category === 'corporativo' ? (
-                <>Proposta Corporativa para <strong className="text-white">{proposal.clientName}</strong></>
+                <>Proposta Corporativa para <strong className="text-white">{proposal.clientSlug === 'padrao' ? '[nome]' : proposal.clientName}</strong></>
               ) : proposal.category === 'casamento' ? (
                 <>Cobertura de casamento para <strong className="text-white">{proposal.clientName}</strong></>
               ) : proposal.category === 'personalizado' ? (
@@ -438,7 +438,7 @@ export default function ProposalView({ category, slug }: ProposalViewProps) {
               </span>
               <span className="font-serif text-xl sm:text-2xl text-brand-wine font-bold mb-3">
                 {proposal.category === 'corporativo'
-                  ? `Corporativo para ${proposal.clientName}`
+                  ? `Corporativo para ${proposal.clientSlug === 'padrao' ? '[nome]' : proposal.clientName}`
                   : proposal.category === 'casamento'
                     ? `Cobertura de casamento para ${proposal.clientName}`
                     : proposal.category === 'personalizado'
@@ -465,19 +465,31 @@ export default function ProposalView({ category, slug }: ProposalViewProps) {
       <Hero 
         fotoTargetId={proposal.category === 'individual' ? 'ensaio-fotografico' : 'orcamento-personalizado'}
         videoTargetId="producao-de-video"
-        videoButtonWine={proposal.category === 'individual' || proposal.category === 'personalizado'}
+        videoButtonWine={proposal.category === 'individual' || proposal.category === 'personalizado' || proposal.category === 'corporativo'}
         fotoButtonText={proposal.category === 'casamento' || proposal.category === 'personalizado' ? 'VER PROPOSTA' : 'VER PROPOSTA FOTOGRÁFICA'}
         hideVideoButton={proposal.category === 'casamento'}
         hideProposalButtons={false}
         customImage={proposal.category === 'personalizado' ? '/images/capapersonalizado.jpg' : undefined}
-        customTitle={proposal.category === 'personalizado' ? 'A sua marca transmitindo autoridade.' : undefined}
-        customQuote={proposal.category === 'personalizado' ? 'O mercado avalia a sua marca em frações de segundos. Um registro estratégico garante que a primeira impressão seja de absoluta excelência.' : undefined}
+        customTitle={
+          proposal.category === 'corporativo'
+            ? 'Credibilidade em cada detalhe.'
+            : proposal.category === 'personalizado'
+              ? 'A sua marca transmitindo autoridade.'
+              : undefined
+        }
+        customQuote={
+          proposal.category === 'corporativo'
+            ? 'Antes de contratarem o seu serviço, seus clientes julgam a sua estrutura. Fortalecemos a credibilidade da sua empresa em cada detalhe visual.'
+            : proposal.category === 'personalizado'
+              ? 'O mercado avalia a sua marca em frações de segundos. Um registro estratégico garante que a primeira impressão seja de absoluta excelência.'
+              : undefined
+        }
       />
 
-      {/* 5. Conexão com a Fotógrafa (About) - Para evento, exibimos acima dos vídeos */}
-      {!isRestricted && proposal.category !== 'evento' && <About />}
+      {/* 5. Conexão com a Fotógrafa (About) - Exibido acima de 'Histórias reais' para corporativo e casamento */}
+      {(proposal.category === 'corporativo' || (!isRestricted && proposal.category !== 'evento')) && <About />}
       
-      {/* 6. Portfólio Completo de Imagens e Vídeos */}
+      {/* 6. Portfólio Completo de Imagens e Vídeos ('Histórias reais.') */}
       {proposal.category === 'individual' ? (
         <Portfolio limitSlots={3} showViewMoreButton={true} showViewPortfolioButton={true} />
       ) : (
@@ -491,8 +503,8 @@ export default function ProposalView({ category, slug }: ProposalViewProps) {
         </div>
       )}
       
-      {/* 7. SEÇÃO DE PACOTES E ORÇAMENTO EXCLUSIVO DO CLIENTE (Para evento, exibida após os vídeos e condições) */}
-      {!isRestricted && proposal.category !== 'evento' && (
+      {/* 7. SEÇÃO DE PACOTES E ORÇAMENTO EXCLUSIVO DO CLIENTE (Para corporativo, foto packages + condições) */}
+      {(!isRestricted || proposal.category === 'corporativo') && proposal.category !== 'evento' && (
         <section 
           id={proposal.category === 'individual' ? 'ensaio-fotografico' : 'orcamento-personalizado'} 
           className="w-full py-20 px-4 sm:px-6 lg:px-8 bg-white border-y border-brand-wine/10 relative"
@@ -502,7 +514,19 @@ export default function ProposalView({ category, slug }: ProposalViewProps) {
           <div className="max-w-7xl mx-auto">
             
             <div className="text-center max-w-3xl mx-auto mb-12">
-              {proposal.category === 'individual' ? (
+              {proposal.category === 'corporativo' ? (
+                <>
+                  <span className="text-xs uppercase tracking-[0.25em] text-brand-wine font-semibold block mb-2">
+                    A PROPOSTA
+                  </span>
+                  <h2 className="font-serif text-3xl sm:text-4xl text-brand-text font-normal mb-3">
+                    Ensaio fotográfico
+                  </h2>
+                  <p className="text-brand-text-soft text-sm sm:text-base leading-relaxed">
+                    Estruturamos quatro formatos de ensaio corporativo para posicionar sua marca com a autoridade que o mercado exige. Da imagem executiva essencial ao direcionamento completo de presença de marca, oferecemos o registro certo para elevar o seu valor percebido perante clientes e parceiros.
+                  </p>
+                </>
+              ) : proposal.category === 'individual' ? (
                 <>
                   <span className="text-xs uppercase tracking-[0.25em] text-brand-wine font-semibold block mb-2">
                     A PROPOSTA
@@ -512,18 +536,6 @@ export default function ProposalView({ category, slug }: ProposalViewProps) {
                   </h2>
                   <p className="text-brand-text-soft text-sm sm:text-base leading-relaxed">
                     Preparamos quatro possibilidades de ensaio para que você escolha o formato que mais combina com aquilo que deseja guardar. Desde um ensaio mais objetivo até uma experiência completa.
-                  </p>
-                </>
-              ) : proposal.category === 'corporativo' && proposal.clientSlug === 'padrao' ? (
-                <>
-                  <span className="text-xs uppercase tracking-[0.25em] text-brand-wine font-semibold block mb-2">
-                    A PROPOSTA
-                  </span>
-                  <h2 className="font-serif text-3xl sm:text-4xl text-brand-text font-normal mb-3">
-                    Ensaio fotográfico
-                  </h2>
-                  <p className="text-brand-text-soft text-sm sm:text-base leading-relaxed">
-                    Preparamos quatro possibilidades de ensaio corporativo para que você escolha o formato que mais se alinha ao posicionamento da sua marca. Desde uma sessão mais objetiva até uma experiência completa de imagem profissional.
                   </p>
                 </>
               ) : proposal.category === 'casamento' ? (
@@ -821,14 +833,14 @@ export default function ProposalView({ category, slug }: ProposalViewProps) {
         </section>
       )}
 
-      {/* Campo Antes e Depois da Edição (Para evento, vem após a proposta) */}
-      {!isRestricted && proposal.category !== 'evento' && <BeforeAfterSlider />}
+      {/* Campo Antes e Depois da Edição (Para corporativo e outros) */}
+      {(!isRestricted || proposal.category === 'corporativo') && proposal.category !== 'evento' && <BeforeAfterSlider />}
 
-      {/* Campo Produção de vídeo (Para evento, vem acima das condições e proposta) */}
-      {!isRestricted && proposal.category === 'evento' && (() => {
-        const videoList = proposal.videoPackages !== undefined 
-          ? proposal.videoPackages 
-          : (videoSection?.packages || []);
+      {/* Campo Produção de vídeo (Para corporativo e evento) */}
+      {(proposal.category === 'corporativo' || (!isRestricted && proposal.category === 'evento')) && (() => {
+        const videoList = (proposal.videoPackages && proposal.videoPackages.length > 0)
+          ? proposal.videoPackages
+          : (STANDARD_TEMPLATES.corporativo?.videoPackages || videoSection?.packages || []);
 
         if (!videoList || videoList.length === 0) return null;
 
@@ -847,7 +859,9 @@ export default function ProposalView({ category, slug }: ProposalViewProps) {
                   </h2>
                   <div className="w-12 h-[1px] bg-brand-wine/35 mx-auto mb-6" />
                   <p className="text-sm md:text-base text-brand-text-soft leading-relaxed font-light">
-                    {videoSection?.description || 'Preparamos quatro formatos de produção de vídeo para atender à sua estratégia.'}
+                    {proposal.category === 'corporativo'
+                      ? 'Empresas que se posicionam com autoridade dominam a decisão de compra do cliente. Estruturamos quatro abordagens audiovisuais para atender desde demandas pontuais até estratégias completas de diferenciação no mercado. Estamos à disposição para adequar o volume de vídeos à necessidade da sua equipe comercial.'
+                      : (videoSection?.description || 'Preparamos quatro formatos de produção de vídeo para atender à sua estratégia, do modelo prático ao nível autoridade. Caso sua estratégia necessite de uma quantidade específica de vídeos, nos informe para ajustarmos.')}
                   </p>
                 </div>
 
@@ -1035,251 +1049,329 @@ export default function ProposalView({ category, slug }: ProposalViewProps) {
                     );
                   })}
                 </div>
-              </div>
-            </section>
 
-            {/* Condições abaixo dos slots de vídeo para Evento */}
-            <section className="py-16 px-4 sm:px-6 lg:px-8 bg-white border-b border-brand-wine/10">
-              <div className="max-w-4xl mx-auto bg-brand-cream/40 rounded-3xl p-6 sm:p-8 border border-brand-wine/10">
-                <div className="flex items-center gap-2 mb-2">
-                  <FileCheck2 className="w-4 h-4 text-brand-wine" />
-                  <span className="text-xs uppercase tracking-[0.2em] text-brand-wine font-semibold">
-                    Condições de Pagamento e Reserva
-                  </span>
-                </div>
-                <p className="text-xs sm:text-sm text-brand-text-soft leading-relaxed mb-4">
-                  {proposal.investmentNote}
-                </p>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-3 border-t border-brand-wine/10 text-xs text-brand-text">
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-green-700 shrink-0" />
-                    <span>Contrato digital seguro</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-green-700 shrink-0" />
-                    <span>Garantia de data na agenda</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-green-700 shrink-0" />
-                    <span>Emissão de Nota Fiscal</span>
-                  </div>
-                </div>
-              </div>
-            </section>
-
-            {/* Sessão de proposta (Pacotes de foto) abaixo das condições para Evento */}
-            <section id="orcamento-personalizado" className="w-full py-20 px-4 sm:px-6 lg:px-8 bg-white border-b border-brand-wine/10 relative">
-              <div className="max-w-7xl mx-auto">
-                <div className="text-center max-w-3xl mx-auto mb-12">
-                  <span className="text-xs uppercase tracking-[0.25em] text-brand-wine font-semibold block mb-2">
-                    A PROPOSTA
-                  </span>
-                  <h2 className="font-serif text-3xl sm:text-4xl text-brand-text font-normal mb-3">
-                    Cobertura de evento
-                  </h2>
-                  <p className="text-brand-text-soft text-sm sm:text-base leading-relaxed">
-                    Preparamos quatro possibilidades de cobertura de evento para que você escolha o formato perfeito para eternizar o seu evento.
-                  </p>
-                </div>
-
-                <div className={`grid gap-6 sm:gap-8 mb-14 ${
-                  proposal.packages.length === 1 
-                    ? 'max-w-md mx-auto grid-cols-1' 
-                    : proposal.packages.length === 2 
-                      ? 'grid-cols-1 md:grid-cols-2 max-w-4xl mx-auto' 
-                      : proposal.packages.length === 4
-                        ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-4'
-                        : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'
-                }`}>
-                  {proposal.packages.map((pkg, index) => {
-                    const expNumber = `EXPERIÊNCIA 0${index + 1}`;
-                    const isInstallmentOpen = !!openInstallments[pkg.id];
-                    const currentSelectedInst = selectedInstallments[pkg.id];
-                    const isFeatured = pkg.highlight;
-                    const individualWhatsAppUrl = getIndividualWhatsAppUrl(
-                      pkg.name,
-                      expNumber,
-                      pkg.price,
-                      currentSelectedInst
-                    );
-
-                    return (
-                      <div
-                        key={pkg.id}
-                        className={`card-float rounded-3xl flex flex-col justify-between transition-all duration-300 relative bg-white ${
-                          isFeatured
-                            ? 'border-2 border-brand-wine shadow-[0_16px_45px_rgba(78,0,0,0.12)] scale-[1.02] p-6 sm:p-7'
-                            : 'border border-brand-wine/15 shadow-[0_8px_30px_rgba(78,0,0,0.05)] p-6 sm:p-7 hover:shadow-xl hover:border-brand-wine/30'
-                        }`}
-                        style={{
-                          animationDelay: `${(index % 4) * 0.7}s`,
-                          animationDuration: `${4.5 + (index % 3) * 0.5}s`,
-                        }}
-                        id={`package-card-${pkg.id}`}
-                      >
-                        {isFeatured && (
-                          <div className="absolute -top-3 right-6 bg-brand-wine text-white text-[9px] font-bold tracking-[0.2em] uppercase px-3 py-1 rounded-full shadow-sm">
-                            EXPERIÊNCIA COMPLETA
-                          </div>
-                        )}
-
-                        <div>
-                          <span className="text-[10px] font-bold tracking-[0.25em] text-brand-wine uppercase block mb-1.5">
-                            {expNumber}
-                          </span>
-                          <h3 className="text-2xl font-serif text-brand-text font-normal mb-1">
-                            {pkg.name}
-                          </h3>
-                          {pkg.duration && (
-                            <span className="text-xs sm:text-sm text-brand-text-soft font-light block pb-4 border-b border-brand-wine/10">
-                              {pkg.duration}
-                            </span>
-                          )}
-                          <ul className="mt-4 space-y-2.5 text-xs text-brand-text-soft font-light">
-                            {pkg.features.map((feature, fIndex) => (
-                              <li key={fIndex} className="flex items-start gap-2 leading-relaxed">
-                                <Check className="w-3.5 h-3.5 text-brand-wine mt-0.5 shrink-0" strokeWidth={2} />
-                                <span>{feature}</span>
-                              </li>
-                            ))}
-                          </ul>
-                          {pkg.extraNote && (
-                            <p className="mt-4 text-[11px] text-brand-text-soft italic bg-brand-cream/60 p-3 rounded-xl border border-brand-wine/10 leading-relaxed">
-                              {pkg.extraNote}
-                            </p>
-                          )}
-                        </div>
-
-                        <div className="mt-6 pt-4 border-t border-brand-wine/10">
-                          <span className="text-[9.5px] uppercase tracking-widest text-brand-text-soft font-semibold block mb-1">
-                            Investimento
-                          </span>
-                          <div className="flex items-baseline gap-1.5 mb-1">
-                            <span className="text-3xl sm:text-4xl font-light text-brand-wine font-serif">
-                              {pkg.price}
-                            </span>
-                            <span className="text-[11px] font-medium text-brand-text-soft uppercase tracking-wider">
-                              NO PIX
-                            </span>
-                          </div>
-                          <div className="flex items-center gap-1.5 text-[11px] text-brand-text-soft mb-2.5">
-                            <CreditCard className="w-3.5 h-3.5 text-brand-wine/60" />
-                            <span>Reserva via sinal de 30%</span>
-                          </div>
-                          <div className="w-full h-[1px] bg-brand-wine/10 my-2.5" />
-                          {pkg.installments && pkg.installments.length > 0 && (
-                            <div className="mb-3">
-                              <button
-                                type="button"
-                                onClick={() => toggleInstallments(pkg.id)}
-                                className={`w-full flex items-center justify-between py-2 px-3 rounded-xl border transition-all duration-200 cursor-pointer ${
-                                  isInstallmentOpen || currentSelectedInst
-                                    ? 'bg-brand-cream border-brand-wine/30 text-brand-wine font-medium'
-                                    : 'bg-brand-cream/60 hover:bg-brand-cream border-brand-wine/15 text-[11px] text-brand-wine font-medium'
-                                }`}
-                                id={`btn-parcelamento-${pkg.id}`}
-                                aria-expanded={isInstallmentOpen}
-                              >
-                                <span className="tracking-wider uppercase font-semibold text-[10.5px]">
-                                  {currentSelectedInst ? `Parcelado (${currentSelectedInst.times})` : 'PARCELAMENTO'}
-                                </span>
-                                <ChevronDown
-                                  className={`w-3.5 h-3.5 text-brand-wine transition-transform duration-300 ${
-                                    isInstallmentOpen ? 'rotate-180' : ''
-                                  }`}
-                                />
-                              </button>
-                              {isInstallmentOpen && (
-                                <div className="overflow-hidden border-x border-b border-brand-wine/15 rounded-b-xl bg-brand-cream/40 p-2.5 animate-in fade-in duration-200">
-                                  <p className="text-[9.5px] text-brand-text-soft font-light mb-2 text-center italic">
-                                    Selecione a opção desejada:
-                                  </p>
-                                  <div className="grid grid-cols-2 gap-1.5 text-[10px]">
-                                    {pkg.installments.map((inst, iIdx) => {
-                                      const isSelected = currentSelectedInst?.times === inst.times;
-                                      return (
-                                        <button
-                                          type="button"
-                                          key={iIdx}
-                                          onClick={() => handleSelectInstallment(pkg.id, inst)}
-                                          className={`flex items-center justify-between py-1.5 px-2 rounded-lg text-left border transition-all cursor-pointer ${
-                                            isSelected
-                                              ? 'bg-brand-wine text-white border-brand-wine shadow-xs'
-                                              : 'bg-white/80 hover:bg-white border-brand-wine/10 text-brand-text hover:border-brand-wine/30'
-                                          }`}
-                                          id={`pkg-${pkg.id}-opt-${inst.times}`}
-                                        >
-                                          <span className={`text-[10px] font-semibold ${isSelected ? 'text-white' : 'text-brand-wine'}`}>
-                                            {inst.times}:
-                                          </span>
-                                          <span className="text-[10px] font-medium">
-                                            {inst.value}
-                                          </span>
-                                        </button>
-                                      );
-                                    })}
-                                  </div>
-                                  {currentSelectedInst && (
-                                    <button
-                                      type="button"
-                                      onClick={() => setSelectedInstallments((prev) => ({ ...prev, [pkg.id]: null }))}
-                                      className="w-full text-center text-[10px] text-brand-wine hover:underline mt-2 pt-1.5 border-t border-brand-wine/10 font-medium cursor-pointer"
-                                    >
-                                      Voltar para valor à vista (Pix)
-                                    </button>
-                                  )}
-                                  <span className="text-[9px] text-brand-text-soft/70 block mt-1.5 text-center font-light">
-                                    Cartão de crédito
-                                  </span>
-                                </div>
-                              )}
-                            </div>
-                          )}
-                          <div className="mb-3 text-center">
-                            {currentSelectedInst ? (
-                              <div className="inline-flex items-center gap-1.5 text-[10.5px] text-brand-wine bg-brand-cream/80 px-2.5 py-1 rounded-full border border-brand-wine/20">
-                                <CheckCircle2 className="w-3.5 h-3.5 text-brand-wine" />
-                                <span>Opção: <strong>{currentSelectedInst.times} de {currentSelectedInst.value}</strong></span>
-                              </div>
-                            ) : (
-                              <span className="text-[10px] text-brand-text-soft/70 block font-light">
-                                Opção: À vista ({pkg.price} no Pix)
-                              </span>
-                            )}
-                          </div>
-                          <a
-                            href={individualWhatsAppUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className={`w-full py-3.5 px-4 rounded-full text-xs font-semibold tracking-widest uppercase transition-all duration-300 flex items-center justify-center gap-2 shadow-sm ${
-                              isFeatured
-                                ? 'bg-brand-wine text-white hover:bg-brand-wine-dark hover:shadow-md hover:-translate-y-0.5'
-                                : 'bg-brand-cream border border-brand-wine/25 text-brand-wine hover:bg-brand-wine hover:text-white hover:-translate-y-0.5'
-                            }`}
-                            id={`package-cta-${pkg.id}`}
-                          >
-                            <MessageCircle className="w-4 h-4 text-inherit shrink-0" strokeWidth={1.5} />
-                            <span>RESERVAR DATA</span>
-                          </a>
-                        </div>
+                {/* Condições comerciais de vídeo (Apenas para evento, não para corporativo) */}
+                {proposal.category === 'evento' && (
+                  <div className="mt-14 bg-brand-cream/40 rounded-3xl p-6 sm:p-8 border border-brand-wine/10 max-w-4xl mx-auto">
+                    <div className="flex items-center gap-2 mb-2">
+                      <FileCheck2 className="w-4 h-4 text-brand-wine" />
+                      <span className="text-xs uppercase tracking-[0.2em] text-brand-wine font-semibold">
+                        Condições de Produção & Reserva
+                      </span>
+                    </div>
+                    <p className="text-xs sm:text-sm text-brand-text-soft leading-relaxed mb-4">
+                      {proposal.investmentNote}
+                    </p>
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-3 border-t border-brand-wine/10 text-xs text-brand-text">
+                      <div className="flex items-center gap-2">
+                        <CheckCircle2 className="w-4 h-4 text-green-700 shrink-0" />
+                        <span>Contrato formal de prestação de serviços</span>
                       </div>
-                    );
-                  })}
-                </div>
+                      <div className="flex items-center gap-2">
+                        <CheckCircle2 className="w-4 h-4 text-green-700 shrink-0" />
+                        <span>Roteirização e direção especializada</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <CheckCircle2 className="w-4 h-4 text-green-700 shrink-0" />
+                        <span>Emissão de Nota Fiscal</span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
               </div>
             </section>
-
-            {/* Antes e Depois (Para evento, vem após a proposta) */}
-            <BeforeAfterSlider />
-
-            {/* Como funciona o processo (Para evento, vem após o antes e depois) */}
-            <Process />
           </>
         );
       })()}
 
+      {/* Segunda Seção: Produção de Conteúdo (Exclusiva para Corporativo, acima de Como funciona o processo) */}
+      {proposal.category === 'corporativo' && (() => {
+        const conteudoList = [
+          {
+            id: 'cont-01',
+            name: 'Prático',
+            highlight: false,
+            price: 'R$ 667',
+            features: [
+              '04 vídeos até 1:30seg (Feed)',
+              'Capas para vídeos (Feed)',
+              '04 vídeos até 20seg ou cards (Story)',
+              'Gerenciamento de postagens e análise dos melhores dias e horários',
+              'Acompanhamento, roteirização, direção e posicionamento',
+              'Edição dinâmica, cortes essenciais, legenda e trilha sonora',
+              'Entrega mensal, postagem média de 1x feed por semana',
+            ],
+            installments: calculateDefaultInstallments('R$ 667'),
+          },
+          {
+            id: 'cont-02',
+            name: 'Essencial',
+            highlight: false,
+            price: 'R$ 777',
+            features: [
+              '04 vídeos até 1:30seg (Feed)',
+              '04 vídeos até 20seg ou cards/carrossel (Feed)',
+              'Capas para vídeos (Feed)',
+              '12 vídeos até 20seg ou cards (Story)',
+              'Gerenciamento de postagens e área de Destaques do Instagram, análise dos melhores dias e horários',
+              'Acompanhamento, roteirização, direção e posicionamento',
+              'Edição dinâmica, cortes essenciais, legenda e trilha sonora',
+              'Entrega mensal, postagem média de 2x feed e 3x story na semana',
+              '__DIVIDER__',
+              '*Bônus: 05 capas para Destaques do Instagram.',
+              'Card ou vídeo curto extra em caso de faltar.',
+            ],
+            installments: calculateDefaultInstallments('R$ 777'),
+          },
+          {
+            id: 'cont-03',
+            name: 'Presença',
+            highlight: false,
+            price: 'R$ 1.267',
+            features: [
+              '08 vídeos até 1:30seg (Feed)',
+              '02 vídeos até 20seg (Feed)',
+              '10 capas pra vídeo (Feed)',
+              '02 cards/carrossel (Feed)',
+              '08 cards ou vídeos até 20seg (Story)',
+              'Gerenciamento de postagens e área de Destaques do Instagram, análise dos melhores dias e horários',
+              'Acompanhamento, roteirização, direção e posicionamento',
+              'Edição dinâmica, cortes essenciais, legenda e trilha sonora',
+              'Entrega mensal, postagem 3x na semana feed e 2x na semana story',
+              '__DIVIDER__',
+              '*Bônus: 05 capas para Destaques do Instagram.',
+              'Card ou vídeo curto extra em caso de faltar.',
+            ],
+            installments: calculateDefaultInstallments('R$ 1.267'),
+          },
+          {
+            id: 'cont-04',
+            name: 'Autoridade',
+            highlight: true,
+            price: 'R$ 1.547',
+            features: [
+              '12 vídeos até 1:30seg (Feed)',
+              '02 vídeos até 20seg (Feed)',
+              '14 capas pra vídeo (Feed)',
+              '02 cards/carrossel (Feed)',
+              '12 cards ou vídeos até 20seg (Story)',
+              'Gerenciamento de postagens e área de Destaques do Instagram, análise dos melhores dias e horários',
+              'Acompanhamento, roteirização, direção e posicionamento',
+              'Edição dinâmica, cortes essenciais, legenda e trilha sonora',
+              'Entrega mensal, postagem 4x na semana feed e 3x na semana story',
+              '__DIVIDER__',
+              '*Bônus: 05 capas para Destaques do Instagram.',
+              'Card ou vídeo curto extra em caso de faltar.',
+            ],
+            installments: calculateDefaultInstallments('R$ 1.547'),
+          },
+        ];
+
+        return (
+          <section className="py-20 md:py-28 lg:py-32 bg-white border-b border-brand-wine/10 w-full" id="producao-de-conteudo">
+            <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-20">
+              
+              {/* Intro Header */}
+              <div className="max-w-3xl mx-auto text-center mb-16 md:mb-20">
+                <span className="text-[10px] md:text-xs font-semibold tracking-[0.3em] text-brand-wine uppercase block mb-3">
+                  A PROPOSTA
+                </span>
+                <h2 className="text-3xl md:text-4xl lg:text-5xl font-light text-brand-text tracking-tight font-serif mb-4">
+                  Produção de conteúdo
+                </h2>
+                <div className="w-12 h-[1px] bg-brand-wine/35 mx-auto mb-6" />
+                <p className="text-sm md:text-base text-brand-text-soft leading-relaxed font-light">
+                  Cuidamos de todo o processo, do planejamento ao agendamento diário. Você foca na gestão do seu negócio enquanto garantimos a constância da sua marca no digital.
+                </p>
+              </div>
+
+              {/* Conteúdo Packages Grid */}
+              <div className="grid gap-6 sm:gap-8 items-stretch grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
+                {conteudoList.map((pkg, vIdx) => {
+                  const itemKey = `conteudo-${pkg.id}`;
+                  const expNumber = `EXPERIÊNCIA 0${vIdx + 1}`;
+                  const isVideoOpen = !!openVideoInstallments[itemKey];
+                  const currentVideoInst = selectedVideoInstallments[itemKey];
+                  const isFeatured = pkg.highlight;
+                  const propTitle = proposal?.title || 'Proposta';
+                  const client = proposal?.clientName || '';
+                  
+                  let whatsappText = '';
+                  if (currentVideoInst) {
+                    whatsappText = `Olá Alessandra! Vi a ${propTitle}${proposal?.clientSlug !== 'padrao' && client ? ` para ${client}` : ''} e quero reservar a minha data para a Produção de conteúdo (${expNumber}: ${pkg.name}) com a opção de parcelamento em ${currentVideoInst.times} de ${currentVideoInst.value} no cartão de crédito.`;
+                  } else {
+                    whatsappText = `Olá Alessandra! Vi a ${propTitle}${proposal?.clientSlug !== 'padrao' && client ? ` para ${client}` : ''} e quero reservar a minha data para a Produção de conteúdo (${expNumber}: ${pkg.name} - ${pkg.price} via Pix).`;
+                  }
+                  const videoWhatsAppUrl = `https://wa.me/${brandConfig.whatsApp.number}?text=${encodeURIComponent(whatsappText)}`;
+
+                  return (
+                    <div
+                      key={itemKey}
+                      className={`card-float rounded-3xl flex flex-col justify-between transition-all duration-300 relative bg-white ${
+                        isFeatured
+                          ? 'border-2 border-brand-wine shadow-[0_16px_45px_rgba(78,0,0,0.12)] scale-[1.02] p-6 sm:p-7'
+                          : 'border border-brand-wine/15 shadow-[0_8px_30px_rgba(78,0,0,0.05)] p-6 sm:p-7 hover:shadow-xl hover:border-brand-wine/30'
+                      }`}
+                      style={{
+                        animationDelay: `${(vIdx % 4) * 0.7}s`,
+                        animationDuration: `${4.5 + (vIdx % 3) * 0.5}s`,
+                      }}
+                      id={`conteudo-card-${pkg.id}`}
+                    >
+                      {isFeatured && (
+                        <div className="absolute -top-3 right-6 bg-brand-wine text-white text-[9px] font-bold tracking-[0.2em] uppercase px-3 py-1 rounded-full shadow-sm">
+                          EXPERIÊNCIA COMPLETA
+                        </div>
+                      )}
+
+                      <div>
+                        <h3 className="text-2xl font-serif text-brand-text font-normal mb-3 pb-3 border-b border-brand-wine/10">
+                          {pkg.name}
+                        </h3>
+
+                        <ul className="space-y-2.5 text-xs text-brand-text-soft font-light">
+                          {pkg.features.map((feature, fIndex) => {
+                            if (feature === '__DIVIDER__') {
+                              return <div key={fIndex} className="w-full h-[1px] bg-brand-wine/10 my-2.5" />;
+                            }
+                            const isBold = feature.startsWith('*Bônus') || feature.includes('extra em caso de faltar');
+                            return (
+                              <li key={fIndex} className="flex items-start gap-2 leading-relaxed">
+                                <Check className="w-3.5 h-3.5 text-brand-wine mt-0.5 shrink-0" strokeWidth={2} />
+                                <span className={isBold ? 'font-bold text-brand-text' : 'font-light'}>
+                                  {feature}
+                                </span>
+                              </li>
+                            );
+                          })}
+                        </ul>
+                      </div>
+
+                      <div className="mt-6 pt-4 border-t border-brand-wine/10">
+                        <span className="text-[9.5px] uppercase tracking-widest text-brand-text-soft font-semibold block mb-1">
+                          Investimento
+                        </span>
+                        <div className="flex items-baseline gap-1.5 mb-1">
+                          <span className="text-3xl sm:text-4xl font-light text-brand-wine font-serif">
+                            {pkg.price}
+                          </span>
+                          <span className="text-[11px] font-medium text-brand-text-soft uppercase tracking-wider">
+                            NO PIX
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-1.5 text-[11px] text-brand-text-soft mb-2.5">
+                          <CreditCard className="w-3.5 h-3.5 text-brand-wine/60" />
+                          <span>Pagamento integral para ciclo mensal recorrente.</span>
+                        </div>
+                        <div className="w-full h-[1px] bg-brand-wine/10 my-2.5" />
+                        {pkg.installments && pkg.installments.length > 0 && (
+                          <div className="mb-3">
+                            <button
+                              type="button"
+                              onClick={() => toggleVideoInstallments(itemKey)}
+                              className={`w-full flex items-center justify-between py-2 px-3 rounded-xl border transition-all duration-200 cursor-pointer ${
+                                isVideoOpen || currentVideoInst
+                                  ? 'bg-brand-cream border-brand-wine/30 text-brand-wine font-medium'
+                                  : 'bg-brand-cream/60 hover:bg-brand-cream border-brand-wine/15 text-[11px] text-brand-wine font-medium'
+                              }`}
+                              id={`btn-parcelamento-conteudo-${pkg.id}`}
+                              aria-expanded={isVideoOpen}
+                            >
+                              <span className="tracking-wider uppercase font-semibold text-[10.5px]">
+                                {currentVideoInst ? `Parcelado (${currentVideoInst.times})` : 'PARCELAMENTO'}
+                              </span>
+                              <ChevronDown
+                                className={`w-3.5 h-3.5 text-brand-wine transition-transform duration-300 ${
+                                  isVideoOpen ? 'rotate-180' : ''
+                                }`}
+                              />
+                            </button>
+                            {isVideoOpen && (
+                              <div className="overflow-hidden border-x border-b border-brand-wine/15 rounded-b-xl bg-brand-cream/40 p-2.5 animate-in fade-in duration-200">
+                                <p className="text-[9.5px] text-brand-text-soft font-light mb-2 text-center italic">
+                                  Selecione a opção desejada:
+                                </p>
+                                <div className="grid grid-cols-2 gap-1.5 text-[10px]">
+                                  {pkg.installments.map((inst, iIdx) => {
+                                    const isSelected = currentVideoInst?.times === inst.times;
+                                    return (
+                                      <button
+                                        type="button"
+                                        key={iIdx}
+                                        onClick={() => handleSelectVideoInstallment(itemKey, inst)}
+                                        className={`flex items-center justify-between py-1.5 px-2 rounded-lg text-left border transition-all cursor-pointer ${
+                                          isSelected
+                                            ? 'bg-brand-wine text-white border-brand-wine shadow-xs'
+                                            : 'bg-white/80 hover:bg-white border-brand-wine/10 text-brand-text hover:border-brand-wine/30'
+                                        }`}
+                                        id={`pkg-conteudo-${pkg.id}-opt-${inst.times}`}
+                                      >
+                                        <span className={`text-[10px] font-semibold ${isSelected ? 'text-white' : 'text-brand-wine'}`}>
+                                          {inst.times}:
+                                        </span>
+                                        <span className="text-[10px] font-medium">
+                                          {inst.value}
+                                        </span>
+                                      </button>
+                                    );
+                                  })}
+                                </div>
+                                {currentVideoInst && (
+                                  <button
+                                    type="button"
+                                    onClick={() => setSelectedVideoInstallments((prev) => ({ ...prev, [itemKey]: null }))}
+                                    className="w-full text-center text-[10px] text-brand-wine hover:underline mt-2 pt-1.5 border-t border-brand-wine/10 font-medium cursor-pointer"
+                                  >
+                                    Voltar para valor à vista (Pix)
+                                  </button>
+                                )}
+                                <span className="text-[9px] text-brand-text-soft/70 block mt-1.5 text-center font-light">
+                                  Cartão de crédito
+                                </span>
+                              </div>
+                            )}
+                          </div>
+                        )}
+                        <div className="mb-3 text-center">
+                          {currentVideoInst ? (
+                            <div className="inline-flex items-center gap-1.5 text-[10.5px] text-brand-wine bg-brand-cream/80 px-2.5 py-1 rounded-full border border-brand-wine/20">
+                              <CheckCircle2 className="w-3.5 h-3.5 text-brand-wine" />
+                              <span>Opção: <strong>{currentVideoInst.times} de {currentVideoInst.value}</strong></span>
+                            </div>
+                          ) : (
+                            <span className="text-[10px] text-brand-text-soft/70 block font-light">
+                              Opção: À vista ({pkg.price} no Pix)
+                            </span>
+                          )}
+                        </div>
+                        <a
+                          href={videoWhatsAppUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={`w-full py-3.5 px-4 rounded-full text-xs font-semibold tracking-widest uppercase transition-all duration-300 flex items-center justify-center gap-2 shadow-sm ${
+                            isFeatured
+                              ? 'bg-brand-wine text-white hover:bg-brand-wine-dark hover:shadow-md hover:-translate-y-0.5'
+                              : 'bg-brand-cream border border-brand-wine/25 text-brand-wine hover:bg-brand-wine hover:text-white hover:-translate-y-0.5'
+                          }`}
+                          id={`conteudo-cta-${pkg.id}`}
+                        >
+                          <MessageCircle className="w-4 h-4 text-inherit shrink-0" strokeWidth={1.5} />
+                          <span>RESERVAR DATA</span>
+                        </a>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+            </div>
+          </section>
+        );
+      })()}
+
       {/* 8. Processo de Contratação (Como funciona - Igual à página Início) */}
-      {!isRestricted && <Process />}
+      {(!isRestricted || proposal.category === 'corporativo') && <Process />}
       
       {/* 9. Depoimentos das Clientes (Igual à página Início) */}
       <Testimonial buttonWine={true} />
