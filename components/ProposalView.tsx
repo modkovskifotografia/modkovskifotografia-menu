@@ -469,7 +469,13 @@ export default function ProposalView({ category, slug }: ProposalViewProps) {
         fotoButtonText={proposal.category === 'casamento' || proposal.category === 'personalizado' ? 'VER PROPOSTA' : 'VER PROPOSTA FOTOGRÁFICA'}
         hideVideoButton={proposal.category === 'casamento'}
         hideProposalButtons={false}
-        customImage={proposal.category === 'personalizado' ? '/images/capapersonalizado.jpg' : undefined}
+        customImage={
+          proposal.category === 'personalizado'
+            ? '/images/capapersonalizado.jpg'
+            : proposal.category === 'corporativo'
+              ? '/images/capacorporativo.jpg'
+              : undefined
+        }
         customTitle={
           proposal.category === 'corporativo'
             ? 'Credibilidade em cada detalhe.'
@@ -1113,7 +1119,7 @@ export default function ProposalView({ category, slug }: ProposalViewProps) {
               '04 vídeos até 1:30seg (Feed)',
               '04 vídeos até 20seg ou cards/carrossel (Feed)',
               'Capas para vídeos (Feed)',
-              '12 vídeos até 20seg ou cards (Story)',
+              '08 vídeos até 20seg ou cards (Story)',
               'Gerenciamento de postagens e área de Destaques do Instagram, análise dos melhores dias e horários',
               'Acompanhamento, roteirização, direção e posicionamento',
               'Edição dinâmica, cortes essenciais, legenda e trilha sonora',
@@ -1131,14 +1137,13 @@ export default function ProposalView({ category, slug }: ProposalViewProps) {
             price: 'R$ 1.267',
             features: [
               '08 vídeos até 1:30seg (Feed)',
-              '02 vídeos até 20seg (Feed)',
-              '10 capas pra vídeo (Feed)',
-              '02 cards/carrossel (Feed)',
-              '08 cards ou vídeos até 20seg (Story)',
+              '04 vídeos até 20seg ou cards/carrossel (Feed)',
+              'Capas para vídeos (Feed)',
+              '12 vídeos até 20seg ou cards (Story)',
               'Gerenciamento de postagens e área de Destaques do Instagram, análise dos melhores dias e horários',
               'Acompanhamento, roteirização, direção e posicionamento',
               'Edição dinâmica, cortes essenciais, legenda e trilha sonora',
-              'Entrega mensal, postagem 3x na semana feed e 2x na semana story',
+              'Entrega mensal, postagem média de 3x feed e 3x story na semana',
               '__DIVIDER__',
               '*Bônus: 05 capas para Destaques do Instagram.',
               'Card ou vídeo curto extra em caso de faltar.',
@@ -1152,14 +1157,13 @@ export default function ProposalView({ category, slug }: ProposalViewProps) {
             price: 'R$ 1.547',
             features: [
               '12 vídeos até 1:30seg (Feed)',
-              '02 vídeos até 20seg (Feed)',
-              '14 capas pra vídeo (Feed)',
-              '02 cards/carrossel (Feed)',
-              '12 cards ou vídeos até 20seg (Story)',
+              '04 vídeos até 20seg ou cards/carrossel (Feed)',
+              'Capas para vídeos (Feed)',
+              '20 vídeos até 20seg ou cards (Story)',
               'Gerenciamento de postagens e área de Destaques do Instagram, análise dos melhores dias e horários',
               'Acompanhamento, roteirização, direção e posicionamento',
               'Edição dinâmica, cortes essenciais, legenda e trilha sonora',
-              'Entrega mensal, postagem 4x na semana feed e 3x na semana story',
+              'Entrega mensal, postagem média de 4x feed e 5x story na semana',
               '__DIVIDER__',
               '*Bônus: 05 capas para Destaques do Instagram.',
               'Card ou vídeo curto extra em caso de faltar.',

@@ -7,5 +7,14 @@ export const metadata = {
 };
 
 export default function CorporativoPage() {
-  return <HomeView hidePackages={true} hideAbout={true} hideProcess={true} />;
+  return (
+    <HomeView 
+      hidePackages={true} 
+      hideAbout={true} 
+      hideProcess={true}
+      customHeroImage="/images/capacorporativo.jpg"
+      customHeroTitle="Credibilidade em cada detalhe."
+      customHeroQuote="Antes de contratarem o seu serviço, seus clientes julgam a sua estrutura. Fortalecemos a credibilidade da sua empresa em cada detalhe visual."
+    />
+  );
 }

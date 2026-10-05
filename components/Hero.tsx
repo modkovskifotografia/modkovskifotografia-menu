@@ -30,10 +30,12 @@ export default function Hero({
   customTitle,
   customQuote,
 }: HeroProps = {}) {
-  const [imageSrc, setImageSrc] = useState(customImage || brandConfig.hero.image);
+  const [hasImageError, setHasImageError] = useState(false);
+  const targetImage = customImage || brandConfig.hero.image;
+  const imageSrc = hasImageError ? brandConfig.hero.imageFallback : targetImage;
 
   const handleImageError = () => {
-    setImageSrc(brandConfig.hero.imageFallback);
+    setHasImageError(true);
   };
 
   const scrollToSection = (id: string) => {

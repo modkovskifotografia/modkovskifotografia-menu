@@ -16,12 +16,18 @@ interface HomeViewProps {
   hidePackages?: boolean;
   hideAbout?: boolean;
   hideProcess?: boolean;
+  customHeroImage?: string;
+  customHeroTitle?: string;
+  customHeroQuote?: string;
 }
 
 export default function HomeView({ 
   hidePackages = false,
   hideAbout = false,
   hideProcess = false,
+  customHeroImage,
+  customHeroTitle,
+  customHeroQuote,
 }: HomeViewProps) {
   return (
     <main className="w-full relative min-h-screen flex flex-col bg-brand-cream selection:bg-brand-wine selection:text-white pt-20" id="main-homepage">
@@ -29,7 +35,12 @@ export default function HomeView({
       <Navbar />
 
       {/* 1. Apresentação da Marca & Proposta no Hero */}
-      <Hero hideProposalButtons={true} />
+      <Hero 
+        hideProposalButtons={true} 
+        customImage={customHeroImage}
+        customTitle={customHeroTitle}
+        customQuote={customHeroQuote}
+      />
 
       {/* 3. Conexão com a Fotógrafa */}
       {!hideAbout && <About />}

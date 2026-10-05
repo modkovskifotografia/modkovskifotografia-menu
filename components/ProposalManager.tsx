@@ -293,6 +293,24 @@ export default function ProposalManager() {
       newProposal.packages = JSON.parse(JSON.stringify(template.packages));
       newProposal.videoPackages = [];
     }
+    if (cat === 'personalizado') {
+      newProposal.title = template.title;
+      newProposal.subtitle = template.subtitle;
+      newProposal.welcomeMessage = template.welcomeMessage;
+      newProposal.investmentNote = template.investmentNote;
+      newProposal.validityDays = template.validityDays || 10;
+      newProposal.packages = JSON.parse(JSON.stringify(template.packages));
+      newProposal.videoPackages = template.videoPackages ? JSON.parse(JSON.stringify(template.videoPackages)) : [];
+    }
+    if (cat === 'corporativo') {
+      newProposal.title = template.title;
+      newProposal.subtitle = template.subtitle;
+      newProposal.welcomeMessage = template.welcomeMessage;
+      newProposal.investmentNote = template.investmentNote;
+      newProposal.validityDays = template.validityDays || 10;
+      newProposal.packages = JSON.parse(JSON.stringify(template.packages));
+      newProposal.videoPackages = template.videoPackages ? JSON.parse(JSON.stringify(template.videoPackages)) : [];
+    }
     setEditingProposal(newProposal);
     setIsModalOpen(true);
   };
