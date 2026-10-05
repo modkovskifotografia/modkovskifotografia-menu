@@ -16,6 +16,10 @@ function enrichProposal(proposal: Proposal): Proposal {
     videoPackages: (proposal.videoPackages || []).map(pkg => ({
       ...pkg,
       installments: calculateDefaultInstallments(pkg.price)
+    })),
+    conteudoPackages: (proposal.conteudoPackages || []).map(pkg => ({
+      ...pkg,
+      installments: calculateDefaultInstallments(pkg.price)
     }))
   };
 }
@@ -69,6 +73,7 @@ export function getInitialProposalSnapshot(category: string, slug: string): Prop
             ...found,
             packages: found.packages && found.packages.length > 0 ? found.packages : template.packages,
             videoPackages: found.videoPackages !== undefined ? found.videoPackages : template.videoPackages,
+            conteudoPackages: found.conteudoPackages !== undefined ? found.conteudoPackages : template.conteudoPackages,
             title: found.title || template.title,
             subtitle: found.subtitle || template.subtitle,
             investmentNote: found.investmentNote || template.investmentNote,
@@ -95,6 +100,7 @@ export function getInitialProposalSnapshot(category: string, slug: string): Prop
     isTemplate: false,
     packages: template.packages,
     videoPackages: cleanCategory === 'casamento' ? [] : template.videoPackages,
+    conteudoPackages: cleanCategory === 'corporativo' ? template.conteudoPackages : undefined,
   });
 }
 
@@ -212,6 +218,7 @@ export async function fetchProposalBySlug(
       ...foundProposal,
       packages: foundProposal.packages && foundProposal.packages.length > 0 ? foundProposal.packages : template.packages,
       videoPackages: foundProposal.videoPackages !== undefined ? foundProposal.videoPackages : template.videoPackages,
+      conteudoPackages: foundProposal.conteudoPackages !== undefined ? foundProposal.conteudoPackages : template.conteudoPackages,
       title: foundProposal.title || template.title,
       subtitle: foundProposal.subtitle || template.subtitle,
       investmentNote: foundProposal.investmentNote || template.investmentNote,
@@ -232,6 +239,7 @@ export async function fetchProposalBySlug(
     createdAt: new Date().toISOString(),
     packages: template.packages,
     videoPackages: cleanCategory === 'casamento' ? [] : template.videoPackages,
+    conteudoPackages: cleanCategory === 'corporativo' ? template.conteudoPackages : undefined,
   });
   updateLocalCache(fallbackProp);
   return fallbackProp;

@@ -15,6 +15,10 @@ function enrichProposal(proposal: Proposal): Proposal {
     videoPackages: (proposal.videoPackages || []).map(pkg => ({
       ...pkg,
       installments: calculateDefaultInstallments(pkg.price)
+    })),
+    conteudoPackages: (proposal.conteudoPackages || []).map(pkg => ({
+      ...pkg,
+      installments: calculateDefaultInstallments(pkg.price)
     }))
   };
 }

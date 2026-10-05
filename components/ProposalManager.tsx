@@ -308,8 +308,11 @@ export default function ProposalManager() {
       newProposal.welcomeMessage = template.welcomeMessage;
       newProposal.investmentNote = template.investmentNote;
       newProposal.validityDays = template.validityDays || 10;
+      newProposal.beforeImage = template.beforeImage || '/images/corporativoantes.jpeg';
+      newProposal.afterImage = template.afterImage || '/images/corporativodepois.jpeg';
       newProposal.packages = JSON.parse(JSON.stringify(template.packages));
       newProposal.videoPackages = template.videoPackages ? JSON.parse(JSON.stringify(template.videoPackages)) : [];
+      newProposal.conteudoPackages = template.conteudoPackages ? JSON.parse(JSON.stringify(template.conteudoPackages)) : [];
     }
     setEditingProposal(newProposal);
     setIsModalOpen(true);
@@ -318,8 +321,24 @@ export default function ProposalManager() {
   // Open edit modal for existing proposal
   const handleEditProposal = (p: Proposal) => {
     const cloned: Proposal = JSON.parse(JSON.stringify(p));
-    if (cloned.category === 'individual' && (!cloned.videoPackages || cloned.videoPackages.length === 0)) {
-      cloned.videoPackages = JSON.parse(JSON.stringify(STANDARD_TEMPLATES.individual.videoPackages || []));
+    if (cloned.category === 'individual') {
+      if (!cloned.packages || cloned.packages.length === 0) {
+        cloned.packages = JSON.parse(JSON.stringify(STANDARD_TEMPLATES.individual.packages || []));
+      }
+      if (!cloned.videoPackages || cloned.videoPackages.length === 0) {
+        cloned.videoPackages = JSON.parse(JSON.stringify(STANDARD_TEMPLATES.individual.videoPackages || []));
+      }
+    }
+    if (cloned.category === 'corporativo') {
+      if (!cloned.packages || cloned.packages.length === 0) {
+        cloned.packages = JSON.parse(JSON.stringify(STANDARD_TEMPLATES.corporativo.packages || []));
+      }
+      if (!cloned.videoPackages || cloned.videoPackages.length === 0) {
+        cloned.videoPackages = JSON.parse(JSON.stringify(STANDARD_TEMPLATES.corporativo.videoPackages || []));
+      }
+      if (!cloned.conteudoPackages || cloned.conteudoPackages.length === 0) {
+        cloned.conteudoPackages = JSON.parse(JSON.stringify(STANDARD_TEMPLATES.corporativo.conteudoPackages || []));
+      }
     }
     if (!cloned.status) cloned.status = 'nova';
     setEditingProposal(cloned);
@@ -1277,7 +1296,7 @@ export default function ProposalManager() {
                 </div>
               </div>
 
-              {/* Packages Section: Organized exclusively for Individual Proposal, or generic for others */}
+              {/* Packages Section: Organized exclusively for Individual and Corporativo Proposals, or generic for others */}
               {editingProposal.category === 'individual' ? (
                 <>
                   {/* 1. Opções de Ensaio Fotográfico */}
@@ -1685,6 +1704,636 @@ export default function ProposalManager() {
                                     const vPkgs = [...(prev.videoPackages || [])];
                                     vPkgs[vIdx].highlight = isHigh;
                                     return { ...prev, videoPackages: vPkgs };
+                                  });
+                                }}
+                                className="rounded text-brand-wine focus:ring-brand-wine"
+                              />
+                              <span>Destacar como &ldquo;Mais Escolhido / Recomendado&rdquo;</span>
+                            </label>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </>
+              ) : editingProposal.category === 'corporativo' ? (
+                <>
+                  {/* 1. Ensaio Fotográfico */}
+                  <div className="pt-4 border-t border-brand-wine/10" id="section-modal-corp-foto">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <Camera className="w-4 h-4 text-brand-wine" />
+                          <h4 className="font-serif text-lg text-brand-text font-semibold">
+                            1. Ensaio Fotográfico
+                          </h4>
+                          <span className="text-[10px] bg-brand-wine/10 text-brand-wine px-2 py-0.5 rounded-full font-bold">
+                            {editingProposal.packages.length} opções
+                          </span>
+                        </div>
+                        <p className="text-xs text-brand-text-soft mt-0.5">
+                          Opções de ensaio fotográfico corporativo (Essencial, Clássico, Especial e Completo).
+                        </p>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setEditingProposal((prev) => {
+                            if (!prev) return null;
+                            const nextNum = prev.packages.length + 1;
+                            const newPkg: ProposalPackage = {
+                              id: `corp-foto-${Date.now()}`,
+                              name: `Ensaio Opção 0${nextNum}`,
+                              price: 'R$ 450',
+                              paymentMethod: 'Pix',
+                              duration: 'Duração de até 01 hora',
+                              features: [
+                                '15 fotos selecionadas',
+                                '01 vídeo brinde Making Of',
+                                'Prazo de entrega de até 15 dias',
+                                'Foto extra R$ 22,00'
+                              ],
+                              highlight: false,
+                            };
+                            return {
+                              ...prev,
+                              packages: [...prev.packages, newPkg]
+                            };
+                          });
+                        }}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-brand-wine/10 text-brand-wine text-xs font-semibold hover:bg-brand-wine hover:text-white transition-colors self-start sm:self-auto shrink-0 cursor-pointer"
+                        id="btn-add-corp-foto-option"
+                      >
+                        <Plus className="w-3.5 h-3.5" /> Adicionar Opção de Foto
+                      </button>
+                    </div>
+
+                    <div className="space-y-4">
+                      {editingProposal.packages.map((pkg, pIdx) => (
+                        <div
+                          key={pkg.id || pIdx}
+                          className="bg-brand-cream/30 p-4 rounded-2xl border border-brand-wine/15 space-y-3"
+                          id={`modal-corp-foto-pkg-${pIdx}`}
+                        >
+                          <div className="flex items-center justify-between gap-3 flex-wrap sm:flex-nowrap">
+                            <div className="flex items-center gap-2 shrink-0">
+                              <span className="text-[11px] font-mono font-bold px-2 py-1 rounded-md bg-brand-wine text-white">
+                                Foto 0{pIdx + 1}
+                              </span>
+                            </div>
+
+                            <div className="flex items-center gap-3 flex-1 min-w-[200px]">
+                              <input
+                                type="text"
+                                value={pkg.name}
+                                onChange={(e) => {
+                                  const val = e.target.value;
+                                  setEditingProposal((prev) => {
+                                    if (!prev) return null;
+                                    const pkgs = [...prev.packages];
+                                    pkgs[pIdx].name = val;
+                                    return { ...prev, packages: pkgs };
+                                  });
+                                }}
+                                className="font-serif font-bold text-base text-brand-text bg-white px-3 py-1.5 rounded-lg border border-brand-wine/20 flex-1"
+                                placeholder="Nome do Ensaio"
+                              />
+
+                              <input
+                                type="text"
+                                value={pkg.price}
+                                onChange={(e) => {
+                                  const val = e.target.value;
+                                  setEditingProposal((prev) => {
+                                    if (!prev) return null;
+                                    const pkgs = [...prev.packages];
+                                    pkgs[pIdx].price = val;
+                                    return { ...prev, packages: pkgs };
+                                  });
+                                }}
+                                className="font-bold text-brand-wine text-sm bg-white px-3 py-1.5 rounded-lg border border-brand-wine/20 w-32"
+                                placeholder="Preço (Ex: R$ 257)"
+                              />
+                            </div>
+
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setEditingProposal((prev) => {
+                                  if (!prev) return null;
+                                  return {
+                                    ...prev,
+                                    packages: prev.packages.filter((_, i) => i !== pIdx)
+                                  };
+                                });
+                              }}
+                              className="text-red-500 hover:text-red-700 p-1.5 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
+                              title="Excluir opção de foto"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </div>
+
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div>
+                              <label className="block text-[10px] uppercase font-bold text-brand-text-soft mb-1">
+                                Duração / Horas
+                              </label>
+                              <input
+                                type="text"
+                                value={pkg.duration}
+                                onChange={(e) => {
+                                  const val = e.target.value;
+                                  setEditingProposal((prev) => {
+                                    if (!prev) return null;
+                                    const pkgs = [...prev.packages];
+                                    pkgs[pIdx].duration = val;
+                                    return { ...prev, packages: pkgs };
+                                  });
+                                }}
+                                className="w-full text-xs bg-white px-3 py-1.5 rounded-lg border border-brand-wine/20"
+                                placeholder="Ex: Duração de até 01 hora"
+                              />
+                            </div>
+
+                            <div>
+                              <label className="block text-[10px] uppercase font-bold text-brand-text-soft mb-1">
+                                Forma de Pagamento
+                              </label>
+                              <input
+                                type="text"
+                                value={pkg.paymentMethod}
+                                onChange={(e) => {
+                                  const val = e.target.value;
+                                  setEditingProposal((prev) => {
+                                    if (!prev) return null;
+                                    const pkgs = [...prev.packages];
+                                    pkgs[pIdx].paymentMethod = val;
+                                    return { ...prev, packages: pkgs };
+                                  });
+                                }}
+                                className="w-full text-xs bg-white px-3 py-1.5 rounded-lg border border-brand-wine/20"
+                                placeholder="Ex: Pix"
+                              />
+                            </div>
+                          </div>
+
+                          {/* Features list */}
+                          <div>
+                            <label className="block text-[10px] uppercase font-bold text-brand-text-soft mb-1">
+                              Itens Inclusos (um por linha)
+                            </label>
+                            <textarea
+                              rows={3}
+                              value={pkg.features.join('\n')}
+                              onChange={(e) => {
+                                const lines = e.target.value.split('\n');
+                                setEditingProposal((prev) => {
+                                  if (!prev) return null;
+                                  const pkgs = [...prev.packages];
+                                  pkgs[pIdx].features = lines;
+                                  return { ...prev, packages: pkgs };
+                                });
+                              }}
+                              className="w-full text-xs bg-white px-3 py-2 rounded-lg border border-brand-wine/20 font-sans leading-relaxed"
+                              placeholder="Digite um item por linha"
+                            />
+                          </div>
+
+                          <div className="flex items-center gap-2">
+                            <label className="flex items-center gap-2 text-xs text-brand-text cursor-pointer">
+                              <input
+                                type="checkbox"
+                                checked={pkg.highlight || false}
+                                onChange={(e) => {
+                                  const isHigh = e.target.checked;
+                                  setEditingProposal((prev) => {
+                                    if (!prev) return null;
+                                    const pkgs = [...prev.packages];
+                                    pkgs[pIdx].highlight = isHigh;
+                                    return { ...prev, packages: pkgs };
+                                  });
+                                }}
+                                className="rounded text-brand-wine focus:ring-brand-wine"
+                              />
+                              <span>Destacar como &ldquo;Mais Escolhido / Recomendado&rdquo;</span>
+                            </label>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* 2. Produção de Vídeo */}
+                  <div className="pt-6 border-t border-brand-wine/10" id="section-modal-corp-video">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <Video className="w-4 h-4 text-brand-wine" />
+                          <h4 className="font-serif text-lg text-brand-text font-semibold">
+                            2. Produção de Vídeo
+                          </h4>
+                          <span className="text-[10px] bg-brand-wine text-white px-2 py-0.5 rounded-full font-bold">
+                            {(editingProposal.videoPackages || []).length} opções
+                          </span>
+                        </div>
+                        <p className="text-xs text-brand-text-soft mt-0.5">
+                          4 formatos de produção de vídeo (Prático, Essencial, Presença e Autoridade).
+                        </p>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setEditingProposal((prev) => {
+                            if (!prev) return null;
+                            const currentVideos = prev.videoPackages || [];
+                            const nextNum = currentVideos.length + 1;
+                            const newVideo: ProposalPackage = {
+                              id: `corp-video-${Date.now()}`,
+                              name: `Formato de Vídeo 0${nextNum}`,
+                              price: 'R$ 587',
+                              paymentMethod: 'Pix',
+                              duration: '04 vídeos até 1:30seg',
+                              features: [
+                                '04 vídeos até 1:30seg',
+                                '04 capas pra vídeo',
+                                'Roteirização, direção e posicionamento',
+                                'Edição dinâmica, cortes essenciais, legenda e trilha sonora'
+                              ],
+                              highlight: false,
+                            };
+                            return {
+                              ...prev,
+                              videoPackages: [...currentVideos, newVideo]
+                            };
+                          });
+                        }}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-brand-wine text-white text-xs font-semibold hover:bg-brand-wine-dark transition-colors self-start sm:self-auto shrink-0 cursor-pointer shadow-xs"
+                        id="btn-add-corp-video-option"
+                      >
+                        <Plus className="w-3.5 h-3.5" /> Adicionar Opção de Vídeo
+                      </button>
+                    </div>
+
+                    <div className="space-y-4">
+                      {(editingProposal.videoPackages || []).map((vPkg, vIdx) => (
+                        <div
+                          key={vPkg.id || vIdx}
+                          className="bg-brand-cream/30 p-4 rounded-2xl border border-brand-wine/15 space-y-3"
+                          id={`modal-corp-video-pkg-${vIdx}`}
+                        >
+                          <div className="flex items-center justify-between gap-3 flex-wrap sm:flex-nowrap">
+                            <div className="flex items-center gap-2 shrink-0">
+                              <span className="text-[11px] font-mono font-bold px-2 py-1 rounded-md bg-brand-wine text-white">
+                                Vídeo 0{vIdx + 1}
+                              </span>
+                            </div>
+
+                            <div className="flex items-center gap-3 flex-1 min-w-[200px]">
+                              <input
+                                type="text"
+                                value={vPkg.name}
+                                onChange={(e) => {
+                                  const val = e.target.value;
+                                  setEditingProposal((prev) => {
+                                    if (!prev) return null;
+                                    const vPkgs = [...(prev.videoPackages || [])];
+                                    vPkgs[vIdx].name = val;
+                                    return { ...prev, videoPackages: vPkgs };
+                                  });
+                                }}
+                                className="font-serif font-bold text-base text-brand-text bg-white px-3 py-1.5 rounded-lg border border-brand-wine/20 flex-1"
+                                placeholder="Nome do Formato de Vídeo"
+                              />
+
+                              <input
+                                type="text"
+                                value={vPkg.price}
+                                onChange={(e) => {
+                                  const val = e.target.value;
+                                  setEditingProposal((prev) => {
+                                    if (!prev) return null;
+                                    const vPkgs = [...(prev.videoPackages || [])];
+                                    vPkgs[vIdx].price = val;
+                                    return { ...prev, videoPackages: vPkgs };
+                                  });
+                                }}
+                                className="font-bold text-brand-wine text-sm bg-white px-3 py-1.5 rounded-lg border border-brand-wine/20 w-32"
+                                placeholder="Preço (Ex: R$ 587)"
+                              />
+                            </div>
+
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setEditingProposal((prev) => {
+                                  if (!prev) return null;
+                                  const vPkgs = prev.videoPackages || [];
+                                  return {
+                                    ...prev,
+                                    videoPackages: vPkgs.filter((_, i) => i !== vIdx)
+                                  };
+                                });
+                              }}
+                              className="text-red-500 hover:text-red-700 p-1.5 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
+                              title="Excluir opção de vídeo"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </div>
+
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div>
+                              <label className="block text-[10px] uppercase font-bold text-brand-text-soft mb-1">
+                                Formato / Quantidade de Vídeos
+                              </label>
+                              <input
+                                type="text"
+                                value={vPkg.duration}
+                                onChange={(e) => {
+                                  const val = e.target.value;
+                                  setEditingProposal((prev) => {
+                                    if (!prev) return null;
+                                    const vPkgs = [...(prev.videoPackages || [])];
+                                    vPkgs[vIdx].duration = val;
+                                    return { ...prev, videoPackages: vPkgs };
+                                  });
+                                }}
+                                className="w-full text-xs bg-white px-3 py-1.5 rounded-lg border border-brand-wine/20"
+                                placeholder="Ex: 04 vídeos até 1:30seg"
+                              />
+                            </div>
+
+                            <div>
+                              <label className="block text-[10px] uppercase font-bold text-brand-text-soft mb-1">
+                                Forma de Pagamento
+                              </label>
+                              <input
+                                type="text"
+                                value={vPkg.paymentMethod}
+                                onChange={(e) => {
+                                  const val = e.target.value;
+                                  setEditingProposal((prev) => {
+                                    if (!prev) return null;
+                                    const vPkgs = [...(prev.videoPackages || [])];
+                                    vPkgs[vIdx].paymentMethod = val;
+                                    return { ...prev, videoPackages: vPkgs };
+                                  });
+                                }}
+                                className="w-full text-xs bg-white px-3 py-1.5 rounded-lg border border-brand-wine/20"
+                                placeholder="Ex: Pix"
+                              />
+                            </div>
+                          </div>
+
+                          {/* Features list */}
+                          <div>
+                            <label className="block text-[10px] uppercase font-bold text-brand-text-soft mb-1">
+                              Itens Inclusos (um por linha)
+                            </label>
+                            <textarea
+                              rows={3}
+                              value={vPkg.features.join('\n')}
+                              onChange={(e) => {
+                                const lines = e.target.value.split('\n');
+                                setEditingProposal((prev) => {
+                                  if (!prev) return null;
+                                  const vPkgs = [...(prev.videoPackages || [])];
+                                  vPkgs[vIdx].features = lines;
+                                  return { ...prev, videoPackages: vPkgs };
+                                });
+                              }}
+                              className="w-full text-xs bg-white px-3 py-2 rounded-lg border border-brand-wine/20 font-sans leading-relaxed"
+                              placeholder="Digite um item por linha"
+                            />
+                          </div>
+
+                          <div className="flex items-center gap-2">
+                            <label className="flex items-center gap-2 text-xs text-brand-text cursor-pointer">
+                              <input
+                                type="checkbox"
+                                checked={vPkg.highlight || false}
+                                onChange={(e) => {
+                                  const isHigh = e.target.checked;
+                                  setEditingProposal((prev) => {
+                                    if (!prev) return null;
+                                    const vPkgs = [...(prev.videoPackages || [])];
+                                    vPkgs[vIdx].highlight = isHigh;
+                                    return { ...prev, videoPackages: vPkgs };
+                                  });
+                                }}
+                                className="rounded text-brand-wine focus:ring-brand-wine"
+                              />
+                              <span>Destacar como &ldquo;Mais Escolhido / Recomendado&rdquo;</span>
+                            </label>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* 3. Produção de Conteúdo */}
+                  <div className="pt-6 border-t border-brand-wine/10" id="section-modal-corp-conteudo">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <Sparkles className="w-4 h-4 text-brand-wine" />
+                          <h4 className="font-serif text-lg text-brand-text font-semibold">
+                            3. Produção de Conteúdo
+                          </h4>
+                          <span className="text-[10px] bg-brand-wine text-white px-2 py-0.5 rounded-full font-bold">
+                            {(editingProposal.conteudoPackages || []).length} opções
+                          </span>
+                        </div>
+                        <p className="text-xs text-brand-text-soft mt-0.5">
+                          4 formatos de produção de conteúdo recorrente (Prático, Essencial, Presença e Autoridade).
+                        </p>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setEditingProposal((prev) => {
+                            if (!prev) return null;
+                            const currentConteudo = prev.conteudoPackages || [];
+                            const nextNum = currentConteudo.length + 1;
+                            const newConteudo: ProposalPackage = {
+                              id: `corp-cont-${Date.now()}`,
+                              name: `Plano de Conteúdo 0${nextNum}`,
+                              price: 'R$ 777',
+                              paymentMethod: 'Pix',
+                              duration: 'Entrega mensal',
+                              features: [
+                                '04 vídeos até 1:30seg (Feed)',
+                                'Capas para vídeos (Feed)',
+                                '08 vídeos até 20seg ou cards (Story)',
+                                'Gerenciamento de postagens e análise dos melhores dias e horários',
+                                'Acompanhamento, roteirização, direção e posicionamento',
+                                'Edição dinâmica, cortes essenciais, legenda e trilha sonora',
+                                'Entrega mensal'
+                              ],
+                              highlight: false,
+                            };
+                            return {
+                              ...prev,
+                              conteudoPackages: [...currentConteudo, newConteudo]
+                            };
+                          });
+                        }}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-brand-wine text-white text-xs font-semibold hover:bg-brand-wine-dark transition-colors self-start sm:self-auto shrink-0 cursor-pointer shadow-xs"
+                        id="btn-add-corp-conteudo-option"
+                      >
+                        <Plus className="w-3.5 h-3.5" /> Adicionar Opção de Conteúdo
+                      </button>
+                    </div>
+
+                    <div className="space-y-4">
+                      {(editingProposal.conteudoPackages || []).map((cPkg, cIdx) => (
+                        <div
+                          key={cPkg.id || cIdx}
+                          className="bg-brand-cream/30 p-4 rounded-2xl border border-brand-wine/15 space-y-3"
+                          id={`modal-corp-conteudo-pkg-${cIdx}`}
+                        >
+                          <div className="flex items-center justify-between gap-3 flex-wrap sm:flex-nowrap">
+                            <div className="flex items-center gap-2 shrink-0">
+                              <span className="text-[11px] font-mono font-bold px-2 py-1 rounded-md bg-brand-wine text-white">
+                                Conteúdo 0{cIdx + 1}
+                              </span>
+                            </div>
+
+                            <div className="flex items-center gap-3 flex-1 min-w-[200px]">
+                              <input
+                                type="text"
+                                value={cPkg.name}
+                                onChange={(e) => {
+                                  const val = e.target.value;
+                                  setEditingProposal((prev) => {
+                                    if (!prev) return null;
+                                    const cPkgs = [...(prev.conteudoPackages || [])];
+                                    cPkgs[cIdx].name = val;
+                                    return { ...prev, conteudoPackages: cPkgs };
+                                  });
+                                }}
+                                className="font-serif font-bold text-base text-brand-text bg-white px-3 py-1.5 rounded-lg border border-brand-wine/20 flex-1"
+                                placeholder="Nome do Plano de Conteúdo"
+                              />
+
+                              <input
+                                type="text"
+                                value={cPkg.price}
+                                onChange={(e) => {
+                                  const val = e.target.value;
+                                  setEditingProposal((prev) => {
+                                    if (!prev) return null;
+                                    const cPkgs = [...(prev.conteudoPackages || [])];
+                                    cPkgs[cIdx].price = val;
+                                    return { ...prev, conteudoPackages: cPkgs };
+                                  });
+                                }}
+                                className="font-bold text-brand-wine text-sm bg-white px-3 py-1.5 rounded-lg border border-brand-wine/20 w-32"
+                                placeholder="Preço (Ex: R$ 777)"
+                              />
+                            </div>
+
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setEditingProposal((prev) => {
+                                  if (!prev) return null;
+                                  const cPkgs = prev.conteudoPackages || [];
+                                  return {
+                                    ...prev,
+                                    conteudoPackages: cPkgs.filter((_, i) => i !== cIdx)
+                                  };
+                                });
+                              }}
+                              className="text-red-500 hover:text-red-700 p-1.5 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
+                              title="Excluir opção de conteúdo"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </div>
+
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div>
+                              <label className="block text-[10px] uppercase font-bold text-brand-text-soft mb-1">
+                                Frequência / Entrega
+                              </label>
+                              <input
+                                type="text"
+                                value={cPkg.duration}
+                                onChange={(e) => {
+                                  const val = e.target.value;
+                                  setEditingProposal((prev) => {
+                                    if (!prev) return null;
+                                    const cPkgs = [...(prev.conteudoPackages || [])];
+                                    cPkgs[cIdx].duration = val;
+                                    return { ...prev, conteudoPackages: cPkgs };
+                                  });
+                                }}
+                                className="w-full text-xs bg-white px-3 py-1.5 rounded-lg border border-brand-wine/20"
+                                placeholder="Ex: Entrega mensal"
+                              />
+                            </div>
+
+                            <div>
+                              <label className="block text-[10px] uppercase font-bold text-brand-text-soft mb-1">
+                                Forma de Pagamento
+                              </label>
+                              <input
+                                type="text"
+                                value={cPkg.paymentMethod}
+                                onChange={(e) => {
+                                  const val = e.target.value;
+                                  setEditingProposal((prev) => {
+                                    if (!prev) return null;
+                                    const cPkgs = [...(prev.conteudoPackages || [])];
+                                    cPkgs[cIdx].paymentMethod = val;
+                                    return { ...prev, conteudoPackages: cPkgs };
+                                  });
+                                }}
+                                className="w-full text-xs bg-white px-3 py-1.5 rounded-lg border border-brand-wine/20"
+                                placeholder="Ex: Pix"
+                              />
+                            </div>
+                          </div>
+
+                          {/* Features list */}
+                          <div>
+                            <label className="block text-[10px] uppercase font-bold text-brand-text-soft mb-1">
+                              Itens Inclusos (um por linha)
+                            </label>
+                            <textarea
+                              rows={3}
+                              value={cPkg.features.join('\n')}
+                              onChange={(e) => {
+                                const lines = e.target.value.split('\n');
+                                setEditingProposal((prev) => {
+                                  if (!prev) return null;
+                                  const cPkgs = [...(prev.conteudoPackages || [])];
+                                  cPkgs[cIdx].features = lines;
+                                  return { ...prev, conteudoPackages: cPkgs };
+                                });
+                              }}
+                              className="w-full text-xs bg-white px-3 py-2 rounded-lg border border-brand-wine/20 font-sans leading-relaxed"
+                              placeholder="Digite um item por linha"
+                            />
+                          </div>
+
+                          <div className="flex items-center gap-2">
+                            <label className="flex items-center gap-2 text-xs text-brand-text cursor-pointer">
+                              <input
+                                type="checkbox"
+                                checked={cPkg.highlight || false}
+                                onChange={(e) => {
+                                  const isHigh = e.target.checked;
+                                  setEditingProposal((prev) => {
+                                    if (!prev) return null;
+                                    const cPkgs = [...(prev.conteudoPackages || [])];
+                                    cPkgs[cIdx].highlight = isHigh;
+                                    return { ...prev, conteudoPackages: cPkgs };
                                   });
                                 }}
                                 className="rounded text-brand-wine focus:ring-brand-wine"

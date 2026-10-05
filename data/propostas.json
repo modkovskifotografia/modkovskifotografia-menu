@@ -87,6 +87,8 @@
     "validityDays": 10,
     "createdAt": "2026-09-30T15:27:58.760Z",
     "investmentNote": "Garantia de reserva mediante sinal de 30% do valor contratado, com os 70% restantes quitados no dia do ensaio. Facilitamos o pagamento em até 12x no cartão de crédito.",
+    "beforeImage": "/images/corporativoantes.jpeg",
+    "afterImage": "/images/corporativodepois.jpeg",
     "isTemplate": false,
     "packages": [
       {
@@ -100,7 +102,196 @@
           "10 fotos selecionadas",
           "01 vídeo brinde Making Of",
           "Prazo de entrega de até 10 dias",
-          "Foto extra R$ 25,00"
+          "Foto extra R$ 25,00 (desconto a partir de 13 extras)"
+        ]
+      },
+      {
+        "id": "corp-02",
+        "name": "Ensaio Clássico",
+        "highlight": false,
+        "price": "R$ 357",
+        "paymentMethod": "Pix",
+        "duration": "Duração de até 01 hora",
+        "features": [
+          "15 fotos selecionadas",
+          "01 vídeo brinde Making Of",
+          "Prazo de entrega de até 15 dias",
+          "Foto extra R$ 23,00 (desconto a partir de 13 extras)"
+        ]
+      },
+      {
+        "id": "corp-03",
+        "name": "Ensaio Especial",
+        "highlight": false,
+        "price": "R$ 447",
+        "paymentMethod": "Pix",
+        "duration": "Duração de até 02 horas",
+        "features": [
+          "20 fotos selecionadas",
+          "01 vídeo brinde Making Of",
+          "Prazo de entrega de até 15 dias",
+          "Foto extra R$ 22,00 (desconto a partir de 13 extras)"
+        ]
+      },
+      {
+        "id": "corp-04",
+        "name": "Ensaio Completo",
+        "highlight": true,
+        "price": "R$ 597",
+        "paymentMethod": "Pix",
+        "duration": "Duração de até 02 horas",
+        "features": [
+          "35 fotos selecionadas",
+          "01 vídeo brinde Making Of",
+          "Prazo de entrega de até 20 dias",
+          "Foto extra R$ 19,00 (desconto a partir de 13 extras)"
+        ]
+      }
+    ],
+    "videoPackages": [
+      {
+        "id": "vid-co-01",
+        "name": "Prático",
+        "highlight": false,
+        "price": "R$ 157",
+        "paymentMethod": "Pix",
+        "duration": "01 vídeo até 1:30seg",
+        "features": [
+          "01 vídeo até 1:30seg",
+          "01 capa pra vídeo",
+          "Roteirização, direção e posicionamento",
+          "Edição dinâmica, cortes essenciais, legenda e trilha sonora",
+          "Prazo de entrega de até 72 horas"
+        ]
+      },
+      {
+        "id": "vid-co-02",
+        "name": "Essencial",
+        "highlight": false,
+        "price": "R$ 587",
+        "paymentMethod": "Pix",
+        "duration": "04 vídeos até 1:30seg",
+        "features": [
+          "04 vídeos até 1:30seg",
+          "04 capas pra vídeo",
+          "Roteirização, direção e posicionamento",
+          "Edição dinâmica, cortes essenciais, legenda e trilha sonora",
+          "02 vídeos brindes curtos até 15seg",
+          "Prazo de entrega de até 10 dias"
+        ]
+      },
+      {
+        "id": "vid-co-03",
+        "name": "Presença",
+        "highlight": false,
+        "price": "R$ 1.087",
+        "paymentMethod": "Pix",
+        "duration": "08 vídeos até 1:30seg",
+        "features": [
+          "08 vídeos até 1:30seg",
+          "08 capas pra vídeo",
+          "Roteirização, direção e posicionamento",
+          "Edição dinâmica, cortes essenciais, legenda e trilha sonora",
+          "03 vídeos brindes curtos até 15seg",
+          "Prazo de entrega de até 15 dias"
+        ]
+      },
+      {
+        "id": "vid-co-04",
+        "name": "Autoridade",
+        "highlight": true,
+        "price": "R$ 1.487",
+        "paymentMethod": "Pix",
+        "duration": "12 vídeos até 1:30seg",
+        "features": [
+          "12 vídeos até 1:30seg",
+          "12 capas pra vídeo",
+          "Roteirização, direção e posicionamento",
+          "Edição dinâmica, cortes essenciais, legenda e trilha sonora",
+          "04 vídeos brindes curtos até 15seg",
+          "Prazo de entrega de até 20 dias"
+        ]
+      }
+    ],
+    "conteudoPackages": [
+      {
+        "id": "cont-01",
+        "name": "Prático",
+        "highlight": false,
+        "price": "R$ 667",
+        "paymentMethod": "Pix",
+        "duration": "Entrega mensal",
+        "features": [
+          "04 vídeos até 1:30seg (Feed)",
+          "Capas para vídeos (Feed)",
+          "04 vídeos até 20seg ou cards (Story)",
+          "Gerenciamento de postagens e análise dos melhores dias e horários",
+          "Acompanhamento, roteirização, direção e posicionamento",
+          "Edição dinâmica, cortes essenciais, legenda e trilha sonora",
+          "Entrega mensal, postagem média de 1x feed por semana"
+        ]
+      },
+      {
+        "id": "cont-02",
+        "name": "Essencial",
+        "highlight": false,
+        "price": "R$ 777",
+        "paymentMethod": "Pix",
+        "duration": "Entrega mensal",
+        "features": [
+          "04 vídeos até 1:30seg (Feed)",
+          "04 vídeos até 20seg ou cards/carrossel (Feed)",
+          "Capas para vídeos (Feed)",
+          "08 vídeos até 20seg ou cards (Story)",
+          "Gerenciamento de postagens e área de Destaques do Instagram, análise dos melhores dias e horários",
+          "Acompanhamento, roteirização, direção e posicionamento",
+          "Edição dinâmica, cortes essenciais, legenda e trilha sonora",
+          "Entrega mensal, postagem média de 2x feed e 3x story na semana",
+          "__DIVIDER__",
+          "*Bônus: 05 capas para Destaques do Instagram.",
+          "Card ou vídeo curto extra em caso de faltar."
+        ]
+      },
+      {
+        "id": "cont-03",
+        "name": "Presença",
+        "highlight": false,
+        "price": "R$ 1.267",
+        "paymentMethod": "Pix",
+        "duration": "Entrega mensal",
+        "features": [
+          "08 vídeos até 1:30seg (Feed)",
+          "04 vídeos até 20seg ou cards/carrossel (Feed)",
+          "Capas para vídeos (Feed)",
+          "12 vídeos até 20seg ou cards (Story)",
+          "Gerenciamento de postagens e área de Destaques do Instagram, análise dos melhores dias e horários",
+          "Acompanhamento, roteirização, direção e posicionamento",
+          "Edição dinâmica, cortes essenciais, legenda e trilha sonora",
+          "Entrega mensal, postagem média de 3x feed e 3x story na semana",
+          "__DIVIDER__",
+          "*Bônus: 05 capas para Destaques do Instagram.",
+          "Card ou vídeo curto extra em caso de faltar."
+        ]
+      },
+      {
+        "id": "cont-04",
+        "name": "Autoridade",
+        "highlight": true,
+        "price": "R$ 1.547",
+        "paymentMethod": "Pix",
+        "duration": "Entrega mensal",
+        "features": [
+          "12 vídeos até 1:30seg (Feed)",
+          "04 vídeos até 20seg ou cards/carrossel (Feed)",
+          "Capas para vídeos (Feed)",
+          "20 vídeos até 20seg ou cards (Story)",
+          "Gerenciamento de postagens e área de Destaques do Instagram, análise dos melhores dias e horários",
+          "Acompanhamento, roteirização, direção e posicionamento",
+          "Edição dinâmica, cortes essenciais, legenda e trilha sonora",
+          "Entrega mensal, postagem média de 4x feed e 5x story na semana",
+          "__DIVIDER__",
+          "*Bônus: 05 capas para Destaques do Instagram.",
+          "Card ou vídeo curto extra em caso de faltar."
         ]
       }
     ]

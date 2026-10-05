@@ -4,7 +4,19 @@ import React, { useState, useRef, useCallback, useEffect } from 'react';
 import Image from 'next/image';
 import { ArrowLeftRight } from 'lucide-react';
 
-export default function BeforeAfterSlider() {
+interface BeforeAfterSliderProps {
+  beforeImage?: string;
+  afterImage?: string;
+  beforeAlt?: string;
+  afterAlt?: string;
+}
+
+export default function BeforeAfterSlider({
+  beforeImage = '/images/antes.jpg',
+  afterImage = '/images/depois.jpg',
+  beforeAlt = 'Foto Sem Edição (Original)',
+  afterAlt = 'Foto com Edição Final',
+}: BeforeAfterSliderProps = {}) {
   const [sliderPosition, setSliderPosition] = useState(50);
   const [isDragging, setIsDragging] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -79,7 +91,7 @@ export default function BeforeAfterSlider() {
 
         <div 
           ref={containerRef}
-          className="relative w-full aspect-[3/4] max-w-[480px] mx-auto rounded-2xl overflow-hidden shadow-[0_20px_60px_rgba(0,0,0,0.15)] select-none cursor-ew-resize border border-brand-wine/20 bg-neutral-900"
+          className="relative w-full aspect-[2/3] max-w-[440px] mx-auto rounded-2xl overflow-hidden shadow-[0_20px_60px_rgba(0,0,0,0.15)] select-none cursor-ew-resize border border-brand-wine/20 bg-neutral-900"
           onClick={handleContainerClick}
           onMouseMove={handleMouseMove}
           onTouchMove={handleTouchMove}
@@ -89,17 +101,27 @@ export default function BeforeAfterSlider() {
           {/* Layer 1: After Image (Com Edição Final - Full Canvas) */}
           <div className="absolute inset-0 w-full h-full pointer-events-none">
             <Image
-              src="/images/depois.jpg"
-              alt="Foto com Edição Final"
+              src={afterImage}
+              alt={afterAlt}
               fill
-              sizes="(max-width: 768px) 100vw, 500px"
-              className="object-cover pointer-events-none select-none"
+              sizes="(max-width: 768px) 100vw, 440px"
+              className="object-cover object-center pointer-events-none select-none"
               priority
               unoptimized
               referrerPolicy="no-referrer"
             />
-            <div className="absolute top-4 sm:top-6 right-4 sm:right-6 bg-black/80 backdrop-blur-md text-white text-[10px] sm:text-xs font-semibold tracking-[0.2em] px-3.5 sm:px-4 py-1.5 rounded-full uppercase border border-white/25 shadow-lg z-10 select-none">
-              Com Edição Final
+            {/* Badge Com Edição Final - Clipped to only show when slider reveals this side */}
+            <div 
+              className="absolute inset-0 w-full h-full pointer-events-none transition-opacity duration-150"
+              style={{ 
+                clipPath: `polygon(${sliderPosition}% 0, 100% 0, 100% 100%, ${sliderPosition}% 100%)`,
+                WebkitClipPath: `polygon(${sliderPosition}% 0, 100% 0, 100% 100%, ${sliderPosition}% 100%)`,
+                opacity: sliderPosition > 88 ? 0 : 1
+              }}
+            >
+              <div className="absolute top-4 sm:top-6 right-4 sm:right-6 bg-black/80 backdrop-blur-md text-white text-[10px] sm:text-xs font-semibold tracking-[0.2em] px-3.5 sm:px-4 py-1.5 rounded-full uppercase border border-white/25 shadow-lg z-10 select-none whitespace-nowrap">
+                Com Edição Final
+              </div>
             </div>
           </div>
 
@@ -112,16 +134,22 @@ export default function BeforeAfterSlider() {
             }}
           >
             <Image
-              src="/images/antes.jpg"
-              alt="Foto Sem Edição (Original)"
+              src={beforeImage}
+              alt={beforeAlt}
               fill
-              sizes="(max-width: 768px) 100vw, 500px"
-              className="object-cover pointer-events-none select-none"
+              sizes="(max-width: 768px) 100vw, 440px"
+              className="object-cover object-center pointer-events-none select-none"
               priority
               unoptimized
               referrerPolicy="no-referrer"
             />
-            <div className="absolute top-4 sm:top-6 left-4 sm:left-6 bg-white/95 backdrop-blur-md text-brand-wine text-[10px] sm:text-xs font-semibold tracking-[0.2em] px-3.5 sm:px-4 py-1.5 rounded-full uppercase border border-brand-wine/25 shadow-lg z-10 whitespace-nowrap select-none">
+            {/* Badge Original / Sem Edição - Hidden when slider is pushed to the left */}
+            <div 
+              className="absolute top-4 sm:top-6 left-4 sm:left-6 bg-white/95 backdrop-blur-md text-brand-wine text-[10px] sm:text-xs font-semibold tracking-[0.2em] px-3.5 sm:px-4 py-1.5 rounded-full uppercase border border-brand-wine/25 shadow-lg z-10 whitespace-nowrap select-none transition-opacity duration-150"
+              style={{
+                opacity: sliderPosition < 12 ? 0 : 1
+              }}
+            >
               Original / Sem Edição
             </div>
           </div>

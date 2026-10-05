@@ -33,10 +33,13 @@ export interface Proposal {
   investmentNote: string;
   packages: ProposalPackage[];
   videoPackages?: ProposalPackage[];
+  conteudoPackages?: ProposalPackage[];
   customObservations?: string;
   isTemplate?: boolean;
   status?: ProposalStatus;
   viewedAt?: string;
+  beforeImage?: string;
+  afterImage?: string;
 }
 
 export const STATUS_LABELS: Record<string, string> = {
@@ -400,6 +403,8 @@ export const STANDARD_TEMPLATES: Record<ProposalCategory, Proposal> = {
     validityDays: 10,
     createdAt: new Date().toISOString(),
     investmentNote: 'Garantia de reserva mediante sinal de 30% do valor contratado, com os 70% restantes quitados no dia do ensaio. Facilitamos o pagamento em até 12x no cartão de crédito.',
+    beforeImage: '/images/corporativoantes.jpeg',
+    afterImage: '/images/corporativodepois.jpeg',
     isTemplate: true,
     packages: [
       {
@@ -530,6 +535,92 @@ export const STANDARD_TEMPLATES: Record<ProposalCategory, Proposal> = {
           'Prazo de entrega de até 20 dias'
         ],
         installments: calculateDefaultInstallments('R$ 1.487')
+      }
+    ],
+    conteudoPackages: [
+      {
+        id: 'cont-01',
+        name: 'Prático',
+        highlight: false,
+        price: 'R$ 667',
+        paymentMethod: 'Pix',
+        duration: 'Entrega mensal',
+        features: [
+          '04 vídeos até 1:30seg (Feed)',
+          'Capas para vídeos (Feed)',
+          '04 vídeos até 20seg ou cards (Story)',
+          'Gerenciamento de postagens e análise dos melhores dias e horários',
+          'Acompanhamento, roteirização, direção e posicionamento',
+          'Edição dinâmica, cortes essenciais, legenda e trilha sonora',
+          'Entrega mensal, postagem média de 1x feed por semana'
+        ],
+        installments: calculateDefaultInstallments('R$ 667')
+      },
+      {
+        id: 'cont-02',
+        name: 'Essencial',
+        highlight: false,
+        price: 'R$ 777',
+        paymentMethod: 'Pix',
+        duration: 'Entrega mensal',
+        features: [
+          '04 vídeos até 1:30seg (Feed)',
+          '04 vídeos até 20seg ou cards/carrossel (Feed)',
+          'Capas para vídeos (Feed)',
+          '08 vídeos até 20seg ou cards (Story)',
+          'Gerenciamento de postagens e área de Destaques do Instagram, análise dos melhores dias e horários',
+          'Acompanhamento, roteirização, direção e posicionamento',
+          'Edição dinâmica, cortes essenciais, legenda e trilha sonora',
+          'Entrega mensal, postagem média de 2x feed e 3x story na semana',
+          '__DIVIDER__',
+          '*Bônus: 05 capas para Destaques do Instagram.',
+          'Card ou vídeo curto extra em caso de faltar.'
+        ],
+        installments: calculateDefaultInstallments('R$ 777')
+      },
+      {
+        id: 'cont-03',
+        name: 'Presença',
+        highlight: false,
+        price: 'R$ 1.267',
+        paymentMethod: 'Pix',
+        duration: 'Entrega mensal',
+        features: [
+          '08 vídeos até 1:30seg (Feed)',
+          '04 vídeos até 20seg ou cards/carrossel (Feed)',
+          'Capas para vídeos (Feed)',
+          '12 vídeos até 20seg ou cards (Story)',
+          'Gerenciamento de postagens e área de Destaques do Instagram, análise dos melhores dias e horários',
+          'Acompanhamento, roteirização, direção e posicionamento',
+          'Edição dinâmica, cortes essenciais, legenda e trilha sonora',
+          'Entrega mensal, postagem média de 3x feed e 3x story na semana',
+          '__DIVIDER__',
+          '*Bônus: 05 capas para Destaques do Instagram.',
+          'Card ou vídeo curto extra em caso de faltar.'
+        ],
+        installments: calculateDefaultInstallments('R$ 1.267')
+      },
+      {
+        id: 'cont-04',
+        name: 'Autoridade',
+        highlight: true,
+        price: 'R$ 1.547',
+        paymentMethod: 'Pix',
+        duration: 'Entrega mensal',
+        features: [
+          '12 vídeos até 1:30seg (Feed)',
+          '04 vídeos até 20seg ou cards/carrossel (Feed)',
+          'Capas para vídeos (Feed)',
+          '20 vídeos até 20seg ou cards (Story)',
+          'Gerenciamento de postagens e área de Destaques do Instagram, análise dos melhores dias e horários',
+          'Acompanhamento, roteirização, direção e posicionamento',
+          'Edição dinâmica, cortes essenciais, legenda e trilha sonora',
+          'Entrega mensal, postagem média de 4x feed e 5x story na semana',
+          '__DIVIDER__',
+          '*Bônus: 05 capas para Destaques do Instagram.',
+          'Card ou vídeo curto extra em caso de faltar.'
+        ],
+        installments: calculateDefaultInstallments('R$ 1.547')
       }
     ]
   },

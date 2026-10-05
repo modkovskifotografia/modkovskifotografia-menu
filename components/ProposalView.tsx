@@ -18,7 +18,8 @@ import {
   AlertCircle,
   CreditCard,
   ChevronDown,
-  Download
+  Download,
+  MapPin
 } from 'lucide-react';
 import { 
   Proposal, 
@@ -780,6 +781,16 @@ export default function ProposalView({ category, slug }: ProposalViewProps) {
               })}
             </div>
 
+            {/* Observação de Local do Ensaio em vermelho vinho */}
+            {proposal.category === 'corporativo' && (
+              <div className="max-w-4xl mx-auto mb-6 bg-brand-wine/5 border border-brand-wine/20 rounded-2xl p-4 sm:p-4.5 flex items-start sm:items-center gap-3 text-brand-wine shadow-xs">
+                <MapPin className="w-4 h-4 text-brand-wine shrink-0 mt-0.5 sm:mt-0" />
+                <p className="text-xs sm:text-sm font-medium leading-relaxed">
+                  <strong>Local do ensaio:</strong> No espaço de trabalho do cliente ou locação externa. Caso opte por estúdio, será acrescido o valor de R$ 100/hora.
+                </p>
+              </div>
+            )}
+
             {/* Garantias e Condições Comerciais */}
             <div className="bg-brand-cream/40 rounded-3xl p-6 sm:p-8 border border-brand-wine/10 max-w-4xl mx-auto">
               <div className="flex items-center gap-2 mb-2">
@@ -840,7 +851,18 @@ export default function ProposalView({ category, slug }: ProposalViewProps) {
       )}
 
       {/* Campo Antes e Depois da Edição (Para corporativo e outros) */}
-      {(!isRestricted || proposal.category === 'corporativo') && proposal.category !== 'evento' && <BeforeAfterSlider />}
+      {(!isRestricted || proposal.category === 'corporativo') && proposal.category !== 'evento' && (
+        <BeforeAfterSlider 
+          beforeImage={
+            proposal.beforeImage || 
+            (proposal.category === 'corporativo' ? '/images/corporativoantes.jpeg' : '/images/antes.jpg')
+          }
+          afterImage={
+            proposal.afterImage || 
+            (proposal.category === 'corporativo' ? '/images/corporativodepois.jpeg' : '/images/depois.jpg')
+          }
+        />
+      )}
 
       {/* Campo Produção de vídeo (Para corporativo e evento) */}
       {(proposal.category === 'corporativo' || (!isRestricted && proposal.category === 'evento')) && (() => {
@@ -1093,84 +1115,11 @@ export default function ProposalView({ category, slug }: ProposalViewProps) {
 
       {/* Segunda Seção: Produção de Conteúdo (Exclusiva para Corporativo, acima de Como funciona o processo) */}
       {proposal.category === 'corporativo' && (() => {
-        const conteudoList = [
-          {
-            id: 'cont-01',
-            name: 'Prático',
-            highlight: false,
-            price: 'R$ 667',
-            features: [
-              '04 vídeos até 1:30seg (Feed)',
-              'Capas para vídeos (Feed)',
-              '04 vídeos até 20seg ou cards (Story)',
-              'Gerenciamento de postagens e análise dos melhores dias e horários',
-              'Acompanhamento, roteirização, direção e posicionamento',
-              'Edição dinâmica, cortes essenciais, legenda e trilha sonora',
-              'Entrega mensal, postagem média de 1x feed por semana',
-            ],
-            installments: calculateDefaultInstallments('R$ 667'),
-          },
-          {
-            id: 'cont-02',
-            name: 'Essencial',
-            highlight: false,
-            price: 'R$ 777',
-            features: [
-              '04 vídeos até 1:30seg (Feed)',
-              '04 vídeos até 20seg ou cards/carrossel (Feed)',
-              'Capas para vídeos (Feed)',
-              '08 vídeos até 20seg ou cards (Story)',
-              'Gerenciamento de postagens e área de Destaques do Instagram, análise dos melhores dias e horários',
-              'Acompanhamento, roteirização, direção e posicionamento',
-              'Edição dinâmica, cortes essenciais, legenda e trilha sonora',
-              'Entrega mensal, postagem média de 2x feed e 3x story na semana',
-              '__DIVIDER__',
-              '*Bônus: 05 capas para Destaques do Instagram.',
-              'Card ou vídeo curto extra em caso de faltar.',
-            ],
-            installments: calculateDefaultInstallments('R$ 777'),
-          },
-          {
-            id: 'cont-03',
-            name: 'Presença',
-            highlight: false,
-            price: 'R$ 1.267',
-            features: [
-              '08 vídeos até 1:30seg (Feed)',
-              '04 vídeos até 20seg ou cards/carrossel (Feed)',
-              'Capas para vídeos (Feed)',
-              '12 vídeos até 20seg ou cards (Story)',
-              'Gerenciamento de postagens e área de Destaques do Instagram, análise dos melhores dias e horários',
-              'Acompanhamento, roteirização, direção e posicionamento',
-              'Edição dinâmica, cortes essenciais, legenda e trilha sonora',
-              'Entrega mensal, postagem média de 3x feed e 3x story na semana',
-              '__DIVIDER__',
-              '*Bônus: 05 capas para Destaques do Instagram.',
-              'Card ou vídeo curto extra em caso de faltar.',
-            ],
-            installments: calculateDefaultInstallments('R$ 1.267'),
-          },
-          {
-            id: 'cont-04',
-            name: 'Autoridade',
-            highlight: true,
-            price: 'R$ 1.547',
-            features: [
-              '12 vídeos até 1:30seg (Feed)',
-              '04 vídeos até 20seg ou cards/carrossel (Feed)',
-              'Capas para vídeos (Feed)',
-              '20 vídeos até 20seg ou cards (Story)',
-              'Gerenciamento de postagens e área de Destaques do Instagram, análise dos melhores dias e horários',
-              'Acompanhamento, roteirização, direção e posicionamento',
-              'Edição dinâmica, cortes essenciais, legenda e trilha sonora',
-              'Entrega mensal, postagem média de 4x feed e 5x story na semana',
-              '__DIVIDER__',
-              '*Bônus: 05 capas para Destaques do Instagram.',
-              'Card ou vídeo curto extra em caso de faltar.',
-            ],
-            installments: calculateDefaultInstallments('R$ 1.547'),
-          },
-        ];
+        const conteudoList = (proposal.conteudoPackages && proposal.conteudoPackages.length > 0)
+          ? proposal.conteudoPackages
+          : (STANDARD_TEMPLATES.corporativo?.conteudoPackages || []);
+
+        if (!conteudoList || conteudoList.length === 0) return null;
 
         return (
           <section className="py-20 md:py-28 lg:py-32 bg-white border-b border-brand-wine/10 w-full" id="producao-de-conteudo">
