@@ -378,8 +378,12 @@ function deleteFromLocalCache(id: string, category?: string, clientSlug?: string
     if (cached) {
       let list: Proposal[] = JSON.parse(cached);
       list = list.filter((p) => {
-        if (p.id === id) return false;
-        if (category && clientSlug && p.category === category && p.clientSlug.toLowerCase() === clientSlug.toLowerCase()) return false;
+        if (id && p.id === id) return false;
+        if (category && clientSlug && p.category.toLowerCase() === category.toLowerCase() && (
+          p.clientSlug.toLowerCase() === clientSlug.toLowerCase() ||
+          p.clientSlug.toLowerCase().includes(clientSlug.toLowerCase()) ||
+          clientSlug.toLowerCase().includes(p.clientSlug.toLowerCase())
+        )) return false;
         return true;
       });
       localStorage.setItem(STORAGE_KEY, JSON.stringify(list));

@@ -133,11 +133,6 @@ function ensureDataFile(): Proposal[] {
     } else {
       const content = fs.readFileSync(DATA_FILE, 'utf-8');
       list = JSON.parse(content || '[]');
-      const hasMaysa = list.some(p => p.clientSlug.toLowerCase() === 'maysa-rickely' && p.category === 'casamento');
-      if (!hasMaysa) {
-        list.unshift(maysaProposal);
-        fs.writeFileSync(DATA_FILE, JSON.stringify(list, null, 2), 'utf-8');
-      }
     }
     return list;
   } catch (err) {
@@ -304,7 +299,11 @@ export async function DELETE(req: NextRequest) {
     if (id || (category && slug)) {
       list = list.filter((p) => {
         if (id && p.id === id) return false;
-        if (category && slug && p.category === category && p.clientSlug.toLowerCase() === slug.toLowerCase()) return false;
+        if (category && slug && p.category.toLowerCase() === category.toLowerCase() && (
+          p.clientSlug.toLowerCase() === slug.toLowerCase() ||
+          p.clientSlug.toLowerCase().includes(slug.toLowerCase()) ||
+          slug.toLowerCase().includes(p.clientSlug.toLowerCase())
+        )) return false;
         return true;
       });
     } else {

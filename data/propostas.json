@@ -2,12 +2,12 @@
   {
     "id": "prop-rosangela-ro-estetica",
     "category": "corporativo",
-    "clientName": "Rosângela (Rô Estética)",
+    "clientName": "Rosangela | Rô Estética",
     "clientSlug": "rosangela-ro-estetica",
     "title": "Proposta de Posicionamento de Imagem & Conteúdo Corporativo",
     "subtitle": "Fotografia e vídeos estratégicos para elevar a percepção de autoridade e credibilidade da sua marca.",
     "welcomeMessage": "Olá Rô Estética! Foi um prazer conversar com você. Esta proposta foi desenhada especialmente para destacar os procedimentos, o ambiente e a autoridade da sua clínica no digital.",
-    "proposalDate": "05/10/2026",
+    "proposalDate": "06/10/2026",
     "validityDays": 10,
     "createdAt": "2026-10-05T14:30:00.000Z",
     "investmentNote": "Garantia de reserva mediante sinal de 30% do valor contratado, com os 70% restantes quitados no dia do ensaio. Facilitamos o pagamento em até 12x no cartão de crédito.",
@@ -15,9 +15,9 @@
     "afterImage": "/images/corporativodepois.jpeg",
     "isTemplate": false,
     "hidePhotoSection": false,
-    "hideVideoSection": false,
+    "hideVideoSection": true,
     "hideConteudoSection": false,
-    "status": "nova",
+    "status": "visualizada",
     "packages": [
       {
         "id": "corp-01",
@@ -31,6 +31,56 @@
           "01 vídeo brinde Making Of",
           "Prazo de entrega de até 10 dias",
           "Foto extra R$ 25,00 (desconto a partir de 13 extras)"
+        ],
+        "installments": [
+          {
+            "times": "1x",
+            "value": "R$ 268,26"
+          },
+          {
+            "times": "2x",
+            "value": "R$ 136,84 (R$ 273,68)"
+          },
+          {
+            "times": "3x",
+            "value": "R$ 92,13 (R$ 276,38)"
+          },
+          {
+            "times": "4x",
+            "value": "R$ 69,78 (R$ 279,10)"
+          },
+          {
+            "times": "5x",
+            "value": "R$ 56,36 (R$ 281,80)"
+          },
+          {
+            "times": "6x",
+            "value": "R$ 47,42 (R$ 284,52)"
+          },
+          {
+            "times": "7x",
+            "value": "R$ 42,00 (R$ 294,01)"
+          },
+          {
+            "times": "8x",
+            "value": "R$ 37,10 (R$ 296,84)"
+          },
+          {
+            "times": "9x",
+            "value": "R$ 33,30 (R$ 299,66)"
+          },
+          {
+            "times": "10x",
+            "value": "R$ 30,25 (R$ 302,49)"
+          },
+          {
+            "times": "11x",
+            "value": "R$ 27,78 (R$ 305,57)"
+          },
+          {
+            "times": "12x",
+            "value": "R$ 25,70 (R$ 308,40)"
+          }
         ]
       },
       {
@@ -45,6 +95,56 @@
           "01 vídeo brinde Making Of",
           "Prazo de entrega de até 15 dias",
           "Foto extra R$ 23,00 (desconto a partir de 13 extras)"
+        ],
+        "installments": [
+          {
+            "times": "1x",
+            "value": "R$ 372,64"
+          },
+          {
+            "times": "2x",
+            "value": "R$ 190,08 (R$ 380,17)"
+          },
+          {
+            "times": "3x",
+            "value": "R$ 127,97 (R$ 383,92)"
+          },
+          {
+            "times": "4x",
+            "value": "R$ 96,93 (R$ 387,70)"
+          },
+          {
+            "times": "5x",
+            "value": "R$ 78,29 (R$ 391,45)"
+          },
+          {
+            "times": "6x",
+            "value": "R$ 65,87 (R$ 395,23)"
+          },
+          {
+            "times": "7x",
+            "value": "R$ 58,34 (R$ 408,41)"
+          },
+          {
+            "times": "8x",
+            "value": "R$ 51,54 (R$ 412,34)"
+          },
+          {
+            "times": "9x",
+            "value": "R$ 46,25 (R$ 416,26)"
+          },
+          {
+            "times": "10x",
+            "value": "R$ 42,02 (R$ 420,19)"
+          },
+          {
+            "times": "11x",
+            "value": "R$ 38,59 (R$ 424,47)"
+          },
+          {
+            "times": "12x",
+            "value": "R$ 35,70 (R$ 428,40)"
+          }
         ]
       },
       {
@@ -59,6 +159,56 @@
           "01 vídeo brinde Making Of",
           "Prazo de entrega de até 15 dias",
           "Foto extra R$ 22,00 (desconto a partir de 13 extras)"
+        ],
+        "installments": [
+          {
+            "times": "1x",
+            "value": "R$ 466,58"
+          },
+          {
+            "times": "2x",
+            "value": "R$ 238,01 (R$ 476,01)"
+          },
+          {
+            "times": "3x",
+            "value": "R$ 160,23 (R$ 480,70)"
+          },
+          {
+            "times": "4x",
+            "value": "R$ 121,36 (R$ 485,44)"
+          },
+          {
+            "times": "5x",
+            "value": "R$ 98,03 (R$ 490,14)"
+          },
+          {
+            "times": "6x",
+            "value": "R$ 82,48 (R$ 494,87)"
+          },
+          {
+            "times": "7x",
+            "value": "R$ 73,05 (R$ 511,37)"
+          },
+          {
+            "times": "8x",
+            "value": "R$ 64,54 (R$ 516,29)"
+          },
+          {
+            "times": "9x",
+            "value": "R$ 57,91 (R$ 521,20)"
+          },
+          {
+            "times": "10x",
+            "value": "R$ 52,61 (R$ 526,12)"
+          },
+          {
+            "times": "11x",
+            "value": "R$ 48,32 (R$ 531,48)"
+          },
+          {
+            "times": "12x",
+            "value": "R$ 44,70 (R$ 536,40)"
+          }
         ]
       },
       {
@@ -73,6 +223,56 @@
           "01 vídeo brinde Making Of",
           "Prazo de entrega de até 20 dias",
           "Foto extra R$ 19,00 (desconto a partir de 13 extras)"
+        ],
+        "installments": [
+          {
+            "times": "1x",
+            "value": "R$ 623,15"
+          },
+          {
+            "times": "2x",
+            "value": "R$ 317,87 (R$ 635,75)"
+          },
+          {
+            "times": "3x",
+            "value": "R$ 214,00 (R$ 642,01)"
+          },
+          {
+            "times": "4x",
+            "value": "R$ 162,09 (R$ 648,34)"
+          },
+          {
+            "times": "5x",
+            "value": "R$ 130,92 (R$ 654,61)"
+          },
+          {
+            "times": "6x",
+            "value": "R$ 110,16 (R$ 660,94)"
+          },
+          {
+            "times": "7x",
+            "value": "R$ 97,57 (R$ 682,97)"
+          },
+          {
+            "times": "8x",
+            "value": "R$ 86,19 (R$ 689,54)"
+          },
+          {
+            "times": "9x",
+            "value": "R$ 77,34 (R$ 696,10)"
+          },
+          {
+            "times": "10x",
+            "value": "R$ 70,27 (R$ 702,67)"
+          },
+          {
+            "times": "11x",
+            "value": "R$ 64,53 (R$ 709,83)"
+          },
+          {
+            "times": "12x",
+            "value": "R$ 59,70 (R$ 716,40)"
+          }
         ]
       }
     ],
@@ -90,6 +290,56 @@
           "Roteirização, direção e posicionamento",
           "Edição dinâmica, cortes essenciais, legenda e trilha sonora",
           "Prazo de entrega de até 72 horas"
+        ],
+        "installments": [
+          {
+            "times": "1x",
+            "value": "R$ 163,88"
+          },
+          {
+            "times": "2x",
+            "value": "R$ 83,59 (R$ 167,19)"
+          },
+          {
+            "times": "3x",
+            "value": "R$ 56,28 (R$ 168,84)"
+          },
+          {
+            "times": "4x",
+            "value": "R$ 42,63 (R$ 170,50)"
+          },
+          {
+            "times": "5x",
+            "value": "R$ 34,43 (R$ 172,15)"
+          },
+          {
+            "times": "6x",
+            "value": "R$ 28,97 (R$ 173,81)"
+          },
+          {
+            "times": "7x",
+            "value": "R$ 25,66 (R$ 179,61)"
+          },
+          {
+            "times": "8x",
+            "value": "R$ 22,67 (R$ 181,34)"
+          },
+          {
+            "times": "9x",
+            "value": "R$ 20,34 (R$ 183,06)"
+          },
+          {
+            "times": "10x",
+            "value": "R$ 18,48 (R$ 184,79)"
+          },
+          {
+            "times": "11x",
+            "value": "R$ 16,97 (R$ 186,67)"
+          },
+          {
+            "times": "12x",
+            "value": "R$ 15,70 (R$ 188,40)"
+          }
         ]
       },
       {
@@ -106,6 +356,56 @@
           "Edição dinâmica, cortes essenciais, legenda e trilha sonora",
           "02 vídeos brindes curtos até 15seg",
           "Prazo de entrega de até 10 dias"
+        ],
+        "installments": [
+          {
+            "times": "1x",
+            "value": "R$ 612,71"
+          },
+          {
+            "times": "2x",
+            "value": "R$ 312,55 (R$ 625,10)"
+          },
+          {
+            "times": "3x",
+            "value": "R$ 210,42 (R$ 631,26)"
+          },
+          {
+            "times": "4x",
+            "value": "R$ 159,37 (R$ 637,48)"
+          },
+          {
+            "times": "5x",
+            "value": "R$ 128,73 (R$ 643,65)"
+          },
+          {
+            "times": "6x",
+            "value": "R$ 108,31 (R$ 649,87)"
+          },
+          {
+            "times": "7x",
+            "value": "R$ 95,93 (R$ 671,53)"
+          },
+          {
+            "times": "8x",
+            "value": "R$ 84,75 (R$ 677,99)"
+          },
+          {
+            "times": "9x",
+            "value": "R$ 76,05 (R$ 684,44)"
+          },
+          {
+            "times": "10x",
+            "value": "R$ 69,09 (R$ 690,90)"
+          },
+          {
+            "times": "11x",
+            "value": "R$ 63,45 (R$ 697,94)"
+          },
+          {
+            "times": "12x",
+            "value": "R$ 58,70 (R$ 704,40)"
+          }
         ]
       },
       {
@@ -122,6 +422,56 @@
           "Edição dinâmica, cortes essenciais, legenda e trilha sonora",
           "03 vídeos brindes curtos até 15seg",
           "Prazo de entrega de até 15 dias"
+        ],
+        "installments": [
+          {
+            "times": "1x",
+            "value": "R$ 1.134,61"
+          },
+          {
+            "times": "2x",
+            "value": "R$ 578,77 (R$ 1.157,55)"
+          },
+          {
+            "times": "3x",
+            "value": "R$ 389,65 (R$ 1.168,96)"
+          },
+          {
+            "times": "4x",
+            "value": "R$ 295,12 (R$ 1.180,48)"
+          },
+          {
+            "times": "5x",
+            "value": "R$ 238,38 (R$ 1.191,90)"
+          },
+          {
+            "times": "6x",
+            "value": "R$ 200,57 (R$ 1.203,42)"
+          },
+          {
+            "times": "7x",
+            "value": "R$ 177,65 (R$ 1.243,53)"
+          },
+          {
+            "times": "8x",
+            "value": "R$ 156,94 (R$ 1.255,49)"
+          },
+          {
+            "times": "9x",
+            "value": "R$ 140,83 (R$ 1.267,44)"
+          },
+          {
+            "times": "10x",
+            "value": "R$ 127,94 (R$ 1.279,40)"
+          },
+          {
+            "times": "11x",
+            "value": "R$ 117,49 (R$ 1.292,44)"
+          },
+          {
+            "times": "12x",
+            "value": "R$ 108,70 (R$ 1.304,40)"
+          }
         ]
       },
       {
@@ -138,6 +488,56 @@
           "Edição dinâmica, cortes essenciais, legenda e trilha sonora",
           "04 vídeos brindes curtos até 15seg",
           "Prazo de entrega de até 20 dias"
+        ],
+        "installments": [
+          {
+            "times": "1x",
+            "value": "R$ 1.552,13"
+          },
+          {
+            "times": "2x",
+            "value": "R$ 791,75 (R$ 1.583,51)"
+          },
+          {
+            "times": "3x",
+            "value": "R$ 533,04 (R$ 1.599,12)"
+          },
+          {
+            "times": "4x",
+            "value": "R$ 403,72 (R$ 1.614,88)"
+          },
+          {
+            "times": "5x",
+            "value": "R$ 326,10 (R$ 1.630,50)"
+          },
+          {
+            "times": "6x",
+            "value": "R$ 274,38 (R$ 1.646,26)"
+          },
+          {
+            "times": "7x",
+            "value": "R$ 243,02 (R$ 1.701,13)"
+          },
+          {
+            "times": "8x",
+            "value": "R$ 214,69 (R$ 1.717,49)"
+          },
+          {
+            "times": "9x",
+            "value": "R$ 192,65 (R$ 1.733,84)"
+          },
+          {
+            "times": "10x",
+            "value": "R$ 175,02 (R$ 1.750,20)"
+          },
+          {
+            "times": "11x",
+            "value": "R$ 160,73 (R$ 1.768,04)"
+          },
+          {
+            "times": "12x",
+            "value": "R$ 148,70 (R$ 1.784,40)"
+          }
         ]
       }
     ],
@@ -157,6 +557,56 @@
           "Acompanhamento, roteirização, direção e posicionamento",
           "Edição dinâmica, cortes essenciais, legenda e trilha sonora",
           "Entrega mensal, postagem média de 1x feed por semana"
+        ],
+        "installments": [
+          {
+            "times": "1x",
+            "value": "R$ 696,21"
+          },
+          {
+            "times": "2x",
+            "value": "R$ 355,14 (R$ 710,29)"
+          },
+          {
+            "times": "3x",
+            "value": "R$ 239,10 (R$ 717,29)"
+          },
+          {
+            "times": "4x",
+            "value": "R$ 181,09 (R$ 724,36)"
+          },
+          {
+            "times": "5x",
+            "value": "R$ 146,27 (R$ 731,37)"
+          },
+          {
+            "times": "6x",
+            "value": "R$ 123,07 (R$ 738,44)"
+          },
+          {
+            "times": "7x",
+            "value": "R$ 109,01 (R$ 763,05)"
+          },
+          {
+            "times": "8x",
+            "value": "R$ 96,30 (R$ 770,39)"
+          },
+          {
+            "times": "9x",
+            "value": "R$ 86,41 (R$ 777,72)"
+          },
+          {
+            "times": "10x",
+            "value": "R$ 78,51 (R$ 785,06)"
+          },
+          {
+            "times": "11x",
+            "value": "R$ 72,10 (R$ 793,06)"
+          },
+          {
+            "times": "12x",
+            "value": "R$ 66,70 (R$ 800,40)"
+          }
         ]
       },
       {
@@ -174,10 +624,60 @@
           "Gerenciamento de postagens e área de Destaques do Instagram, análise dos melhores dias e horários",
           "Acompanhamento, roteirização, direção e posicionamento",
           "Edição dinâmica, cortes essenciais, legenda e trilha sonora",
-          "Entrega mensal, postagem média de 2x feed e 3x story na semana",
+          "Entrega mensal, postagem média de 2x feed e 2x story na semana",
           "__DIVIDER__",
           "*Bônus: 05 capas para Destaques do Instagram.",
           "Card ou vídeo curto extra em caso de faltar."
+        ],
+        "installments": [
+          {
+            "times": "1x",
+            "value": "R$ 811,03"
+          },
+          {
+            "times": "2x",
+            "value": "R$ 413,71 (R$ 827,43)"
+          },
+          {
+            "times": "3x",
+            "value": "R$ 278,53 (R$ 835,59)"
+          },
+          {
+            "times": "4x",
+            "value": "R$ 210,96 (R$ 843,82)"
+          },
+          {
+            "times": "5x",
+            "value": "R$ 170,40 (R$ 851,98)"
+          },
+          {
+            "times": "6x",
+            "value": "R$ 143,37 (R$ 860,22)"
+          },
+          {
+            "times": "7x",
+            "value": "R$ 126,98 (R$ 888,89)"
+          },
+          {
+            "times": "8x",
+            "value": "R$ 112,18 (R$ 897,44)"
+          },
+          {
+            "times": "9x",
+            "value": "R$ 100,66 (R$ 905,98)"
+          },
+          {
+            "times": "10x",
+            "value": "R$ 91,45 (R$ 914,53)"
+          },
+          {
+            "times": "11x",
+            "value": "R$ 83,99 (R$ 923,85)"
+          },
+          {
+            "times": "12x",
+            "value": "R$ 77,70 (R$ 932,40)"
+          }
         ]
       },
       {
@@ -199,6 +699,56 @@
           "__DIVIDER__",
           "*Bônus: 05 capas para Destaques do Instagram.",
           "Card ou vídeo curto extra em caso de faltar."
+        ],
+        "installments": [
+          {
+            "times": "1x",
+            "value": "R$ 1.322,49"
+          },
+          {
+            "times": "2x",
+            "value": "R$ 674,61 (R$ 1.349,23)"
+          },
+          {
+            "times": "3x",
+            "value": "R$ 454,18 (R$ 1.362,53)"
+          },
+          {
+            "times": "4x",
+            "value": "R$ 343,99 (R$ 1.375,96)"
+          },
+          {
+            "times": "5x",
+            "value": "R$ 277,85 (R$ 1.389,27)"
+          },
+          {
+            "times": "6x",
+            "value": "R$ 233,78 (R$ 1.402,70)"
+          },
+          {
+            "times": "7x",
+            "value": "R$ 207,06 (R$ 1.449,45)"
+          },
+          {
+            "times": "8x",
+            "value": "R$ 182,92 (R$ 1.463,39)"
+          },
+          {
+            "times": "9x",
+            "value": "R$ 164,15 (R$ 1.477,32)"
+          },
+          {
+            "times": "10x",
+            "value": "R$ 149,13 (R$ 1.491,26)"
+          },
+          {
+            "times": "11x",
+            "value": "R$ 136,95 (R$ 1.506,46)"
+          },
+          {
+            "times": "12x",
+            "value": "R$ 126,70 (R$ 1.520,40)"
+          }
         ]
       },
       {
@@ -220,234 +770,60 @@
           "__DIVIDER__",
           "*Bônus: 05 capas para Destaques do Instagram.",
           "Card ou vídeo curto extra em caso de faltar."
-        ]
-      }
-    ]
-  },
-  {
-    "id": "prop-ro-estetica",
-    "category": "corporativo",
-    "clientName": "Rô Estética",
-    "clientSlug": "ro-estetica",
-    "title": "Proposta de Posicionamento de Imagem & Conteúdo Corporativo",
-    "subtitle": "Fotografia e vídeos estratégicos para elevar a percepção de autoridade e credibilidade da sua marca.",
-    "welcomeMessage": "Olá Rô Estética! Foi um prazer conversar com você. Esta proposta foi desenhada especialmente para destacar os procedimentos, o ambiente e a autoridade da sua clínica no digital.",
-    "proposalDate": "05/10/2026",
-    "validityDays": 10,
-    "createdAt": "2026-10-05T14:30:00.000Z",
-    "investmentNote": "Garantia de reserva mediante sinal de 30% do valor contratado, com os 70% restantes quitados no dia do ensaio. Facilitamos o pagamento em até 12x no cartão de crédito.",
-    "beforeImage": "/images/corporativoantes.jpeg",
-    "afterImage": "/images/corporativodepois.jpeg",
-    "isTemplate": false,
-    "hidePhotoSection": false,
-    "hideVideoSection": false,
-    "hideConteudoSection": false,
-    "status": "nova",
-    "packages": [
-      {
-        "id": "corp-01",
-        "name": "Ensaio Essencial",
-        "highlight": false,
-        "price": "R$ 257",
-        "paymentMethod": "Pix",
-        "duration": "Duração de até 01 hora",
-        "features": [
-          "10 fotos selecionadas",
-          "01 vídeo brinde Making Of",
-          "Prazo de entrega de até 10 dias",
-          "Foto extra R$ 25,00 (desconto a partir de 13 extras)"
-        ]
-      },
-      {
-        "id": "corp-02",
-        "name": "Ensaio Clássico",
-        "highlight": false,
-        "price": "R$ 357",
-        "paymentMethod": "Pix",
-        "duration": "Duração de até 01 hora",
-        "features": [
-          "15 fotos selecionadas",
-          "01 vídeo brinde Making Of",
-          "Prazo de entrega de até 15 dias",
-          "Foto extra R$ 23,00 (desconto a partir de 13 extras)"
-        ]
-      },
-      {
-        "id": "corp-03",
-        "name": "Ensaio Especial",
-        "highlight": false,
-        "price": "R$ 447",
-        "paymentMethod": "Pix",
-        "duration": "Duração de até 02 horas",
-        "features": [
-          "20 fotos selecionadas",
-          "01 vídeo brinde Making Of",
-          "Prazo de entrega de até 15 dias",
-          "Foto extra R$ 22,00 (desconto a partir de 13 extras)"
-        ]
-      },
-      {
-        "id": "corp-04",
-        "name": "Ensaio Completo",
-        "highlight": true,
-        "price": "R$ 597",
-        "paymentMethod": "Pix",
-        "duration": "Duração de até 02 horas",
-        "features": [
-          "35 fotos selecionadas",
-          "01 vídeo brinde Making Of",
-          "Prazo de entrega de até 20 dias",
-          "Foto extra R$ 19,00 (desconto a partir de 13 extras)"
+        ],
+        "installments": [
+          {
+            "times": "1x",
+            "value": "R$ 1.614,76"
+          },
+          {
+            "times": "2x",
+            "value": "R$ 823,70 (R$ 1.647,40)"
+          },
+          {
+            "times": "3x",
+            "value": "R$ 554,55 (R$ 1.663,64)"
+          },
+          {
+            "times": "4x",
+            "value": "R$ 420,01 (R$ 1.680,04)"
+          },
+          {
+            "times": "5x",
+            "value": "R$ 339,26 (R$ 1.696,29)"
+          },
+          {
+            "times": "6x",
+            "value": "R$ 285,45 (R$ 1.712,68)"
+          },
+          {
+            "times": "7x",
+            "value": "R$ 252,82 (R$ 1.769,77)"
+          },
+          {
+            "times": "8x",
+            "value": "R$ 223,35 (R$ 1.786,79)"
+          },
+          {
+            "times": "9x",
+            "value": "R$ 200,42 (R$ 1.803,80)"
+          },
+          {
+            "times": "10x",
+            "value": "R$ 182,08 (R$ 1.820,82)"
+          },
+          {
+            "times": "11x",
+            "value": "R$ 167,22 (R$ 1.839,38)"
+          },
+          {
+            "times": "12x",
+            "value": "R$ 154,70 (R$ 1.856,40)"
+          }
         ]
       }
     ],
-    "videoPackages": [
-      {
-        "id": "vid-co-01",
-        "name": "Prático",
-        "highlight": false,
-        "price": "R$ 157",
-        "paymentMethod": "Pix",
-        "duration": "01 vídeo até 1:30seg",
-        "features": [
-          "01 vídeo até 1:30seg",
-          "01 capa pra vídeo",
-          "Roteirização, direção e posicionamento",
-          "Edição dinâmica, cortes essenciais, legenda e trilha sonora",
-          "Prazo de entrega de até 72 horas"
-        ]
-      },
-      {
-        "id": "vid-co-02",
-        "name": "Essencial",
-        "highlight": false,
-        "price": "R$ 587",
-        "paymentMethod": "Pix",
-        "duration": "04 vídeos até 1:30seg",
-        "features": [
-          "04 vídeos até 1:30seg",
-          "04 capas pra vídeo",
-          "Roteirização, direção e posicionamento",
-          "Edição dinâmica, cortes essenciais, legenda e trilha sonora",
-          "02 vídeos brindes curtos até 15seg",
-          "Prazo de entrega de até 10 dias"
-        ]
-      },
-      {
-        "id": "vid-co-03",
-        "name": "Presença",
-        "highlight": false,
-        "price": "R$ 1.087",
-        "paymentMethod": "Pix",
-        "duration": "08 vídeos até 1:30seg",
-        "features": [
-          "08 vídeos até 1:30seg",
-          "08 capas pra vídeo",
-          "Roteirização, direção e posicionamento",
-          "Edição dinâmica, cortes essenciais, legenda e trilha sonora",
-          "03 vídeos brindes curtos até 15seg",
-          "Prazo de entrega de até 15 dias"
-        ]
-      },
-      {
-        "id": "vid-co-04",
-        "name": "Autoridade",
-        "highlight": true,
-        "price": "R$ 1.487",
-        "paymentMethod": "Pix",
-        "duration": "12 vídeos até 1:30seg",
-        "features": [
-          "12 vídeos até 1:30seg",
-          "12 capas pra vídeo",
-          "Roteirização, direção e posicionamento",
-          "Edição dinâmica, cortes essenciais, legenda e trilha sonora",
-          "04 vídeos brindes curtos até 15seg",
-          "Prazo de entrega de até 20 dias"
-        ]
-      }
-    ],
-    "conteudoPackages": [
-      {
-        "id": "cont-01",
-        "name": "Prático",
-        "highlight": false,
-        "price": "R$ 667",
-        "paymentMethod": "Pix",
-        "duration": "Entrega mensal",
-        "features": [
-          "04 vídeos até 1:30seg (Feed)",
-          "Capas para vídeos (Feed)",
-          "04 vídeos até 20seg ou cards (Story)",
-          "Gerenciamento de postagens e análise dos melhores dias e horários",
-          "Acompanhamento, roteirização, direção e posicionamento",
-          "Edição dinâmica, cortes essenciais, legenda e trilha sonora",
-          "Entrega mensal, postagem média de 1x feed por semana"
-        ]
-      },
-      {
-        "id": "cont-02",
-        "name": "Essencial",
-        "highlight": false,
-        "price": "R$ 777",
-        "paymentMethod": "Pix",
-        "duration": "Entrega mensal",
-        "features": [
-          "04 vídeos até 1:30seg (Feed)",
-          "04 vídeos até 20seg ou cards/carrossel (Feed)",
-          "Capas para vídeos (Feed)",
-          "08 vídeos até 20seg ou cards (Story)",
-          "Gerenciamento de postagens e área de Destaques do Instagram, análise dos melhores dias e horários",
-          "Acompanhamento, roteirização, direção e posicionamento",
-          "Edição dinâmica, cortes essenciais, legenda e trilha sonora",
-          "Entrega mensal, postagem média de 2x feed e 3x story na semana",
-          "__DIVIDER__",
-          "*Bônus: 05 capas para Destaques do Instagram.",
-          "Card ou vídeo curto extra em caso de faltar."
-        ]
-      },
-      {
-        "id": "cont-03",
-        "name": "Presença",
-        "highlight": false,
-        "price": "R$ 1.267",
-        "paymentMethod": "Pix",
-        "duration": "Entrega mensal",
-        "features": [
-          "08 vídeos até 1:30seg (Feed)",
-          "04 vídeos até 20seg ou cards/carrossel (Feed)",
-          "Capas para vídeos (Feed)",
-          "12 vídeos até 20seg ou cards (Story)",
-          "Gerenciamento de postagens e área de Destaques do Instagram, análise dos melhores dias e horários",
-          "Acompanhamento, roteirização, direção e posicionamento",
-          "Edição dinâmica, cortes essenciais, legenda e trilha sonora",
-          "Entrega mensal, postagem média de 3x feed e 3x story na semana",
-          "__DIVIDER__",
-          "*Bônus: 05 capas para Destaques do Instagram.",
-          "Card ou vídeo curto extra em caso de faltar."
-        ]
-      },
-      {
-        "id": "cont-04",
-        "name": "Autoridade",
-        "highlight": true,
-        "price": "R$ 1.547",
-        "paymentMethod": "Pix",
-        "duration": "Entrega mensal",
-        "features": [
-          "12 vídeos até 1:30seg (Feed)",
-          "04 vídeos até 20seg ou cards/carrossel (Feed)",
-          "Capas para vídeos (Feed)",
-          "20 vídeos até 20seg ou cards (Story)",
-          "Gerenciamento de postagens e área de Destaques do Instagram, análise dos melhores dias e horários",
-          "Acompanhamento, roteirização, direção e posicionamento",
-          "Edição dinâmica, cortes essenciais, legenda e trilha sonora",
-          "Entrega mensal, postagem média de 4x feed e 5x story na semana",
-          "__DIVIDER__",
-          "*Bônus: 05 capas para Destaques do Instagram.",
-          "Card ou vídeo curto extra em caso de faltar."
-        ]
-      }
-    ]
+    "viewedAt": "2026-10-06T18:01:10.052Z"
   },
   {
     "id": "prop-maysa-rickely",

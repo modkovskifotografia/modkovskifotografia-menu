@@ -75,6 +75,15 @@ export default function ProposalManager() {
   // Modal / Form state
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingProposal, setEditingProposal] = useState<Proposal | null>(null);
+
+  // Delete modal confirmation state
+  const [deleteConfirmTarget, setDeleteConfirmTarget] = useState<{
+    id: string;
+    category: string;
+    clientSlug: string;
+    clientName: string;
+  } | null>(null);
+  const [deleteLoading, setDeleteLoading] = useState(false);
   
   // Feedback and Filter states
   const [copiedId, setCopiedId] = useState<string | null>(null);
@@ -362,15 +371,24 @@ export default function ProposalManager() {
     setIsModalOpen(true);
   };
 
-  // Delete proposal
-  const handleDeleteProposal = async (id: string, category: string, clientSlug: string, clientName: string) => {
-    const confirmed = window.confirm(
-      `Deseja realmente apagar a proposta de "${clientName}"?\n\nApós apagar, o link deixará de existir imediatamente para o cliente.`
-    );
-    if (confirmed) {
+  // Delete proposal handlers (Modal confirmation instead of window.confirm for reliable execution in all environments)
+  const openDeleteModal = (id: string, category: string, clientSlug: string, clientName: string) => {
+    setDeleteConfirmTarget({ id, category, clientSlug, clientName });
+  };
+
+  const confirmDeleteProposal = async () => {
+    if (!deleteConfirmTarget) return;
+    setDeleteLoading(true);
+    const { id, category, clientSlug } = deleteConfirmTarget;
+    try {
       await deleteProposalAction(id, category, clientSlug);
       setProposals((prev) => prev.filter((p) => p.id !== id && !(p.category === category && p.clientSlug === clientSlug)));
       loadProposals();
+    } catch (err) {
+      console.error('Erro ao excluir proposta:', err);
+    } finally {
+      setDeleteLoading(false);
+      setDeleteConfirmTarget(null);
     }
   };
 
@@ -1028,7 +1046,7 @@ export default function ProposalManager() {
             </div>
           ) : (
             <div className="space-y-3">
-              {filteredProposals.map((p) => {
+              {filteredProposals.map((p, pIdx) => {
                 const isCopied = copiedId === p.id;
                 const formattedDate = new Date(p.createdAt).toLocaleDateString('pt-BR');
                 const pathUrl = `/propostas/${p.category}/${p.clientSlug}`;
@@ -1036,7 +1054,7 @@ export default function ProposalManager() {
 
                 return (
                   <div
-                    key={p.id}
+                    key={`${p.id || 'prop'}-${p.category || ''}-${p.clientSlug || ''}-${pIdx}`}
                     className="bg-white rounded-2xl p-5 border border-brand-wine/15 shadow-sm hover:border-brand-wine/30 transition-all flex flex-col md:flex-row md:items-center justify-between gap-4"
                   >
                     {/* Left: Info */}
@@ -1191,8 +1209,9 @@ export default function ProposalManager() {
 
                       {/* Excluir */}
                       <button
-                        onClick={() => handleDeleteProposal(p.id, p.category, p.clientSlug, p.clientName)}
-                        className="p-1.5 rounded-xl border border-red-200 text-red-600 hover:bg-red-50 transition-colors"
+                        type="button"
+                        onClick={() => openDeleteModal(p.id, p.category, p.clientSlug, p.clientName)}
+                        className="p-1.5 rounded-xl border border-red-200 text-red-600 hover:bg-red-50 transition-colors cursor-pointer"
                         title="Apagar proposta (não aparecerá mais para o cliente)"
                       >
                         <Trash2 className="w-4 h-4" />
@@ -2931,6 +2950,67 @@ export default function ProposalManager() {
 
       {/* MODAL: Alterar Senha */}
       {isChangePasswordOpen && renderChangePasswordModal()}
+
+      {/* MODAL: Confirmação de Exclusão de Proposta */}
+      {deleteConfirmTarget && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/60 backdrop-blur-sm animate-fade-in">
+          <div className="bg-white w-full max-w-md rounded-3xl p-6 sm:p-8 shadow-2xl border border-rose-200 text-left">
+            <div className="flex items-center gap-3 pb-3 mb-4 border-b border-rose-100">
+              <div className="w-10 h-10 rounded-full bg-rose-100 text-rose-700 flex items-center justify-center shrink-0">
+                <Trash2 className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="font-serif text-xl text-brand-text font-bold">
+                  Excluir Proposta
+                </h3>
+                <p className="text-xs text-brand-text-soft">
+                  Esta ação removerá a proposta permanentemente.
+                </p>
+              </div>
+            </div>
+
+            <p className="text-sm text-brand-text mb-4 leading-relaxed">
+              Tem certeza que deseja excluir a proposta de <strong className="text-brand-wine font-semibold">&ldquo;{deleteConfirmTarget.clientName}&rdquo;</strong>?
+            </p>
+
+            <div className="text-xs text-rose-800 bg-rose-50 p-3 rounded-2xl border border-rose-200 mb-6 flex items-start gap-2">
+              <AlertCircle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
+              <div>
+                <strong>Atenção:</strong> O link <code className="font-mono font-bold bg-white/70 px-1 py-0.5 rounded text-[11px]">/propostas/{deleteConfirmTarget.category}/{deleteConfirmTarget.clientSlug}</code> deixará de funcionar imediatamente para o cliente.
+              </div>
+            </div>
+
+            <div className="flex items-center justify-end gap-3">
+              <button
+                type="button"
+                onClick={() => setDeleteConfirmTarget(null)}
+                disabled={deleteLoading}
+                className="px-5 py-2.5 rounded-full border border-brand-wine/20 text-brand-text hover:bg-brand-cream text-xs font-semibold tracking-wider uppercase transition-all cursor-pointer"
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                onClick={confirmDeleteProposal}
+                disabled={deleteLoading}
+                className="px-6 py-2.5 rounded-full bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold tracking-wider uppercase transition-all shadow-md cursor-pointer flex items-center gap-2"
+              >
+                {deleteLoading ? (
+                  <>
+                    <Clock className="w-4 h-4 animate-spin" />
+                    <span>Excluindo...</span>
+                  </>
+                ) : (
+                  <>
+                    <Trash2 className="w-4 h-4" />
+                    <span>Sim, Excluir Proposta</span>
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   );
