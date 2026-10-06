@@ -470,10 +470,16 @@ export default function ProposalView({ category, slug }: ProposalViewProps) {
       <Hero 
         fotoTargetId={proposal.category === 'individual' ? 'ensaio-fotografico' : 'orcamento-personalizado'}
         videoTargetId="producao-de-video"
+        conteudoTargetId="producao-de-conteudo"
         videoButtonWine={proposal.category === 'individual' || proposal.category === 'personalizado' || proposal.category === 'corporativo'}
+        conteudoButtonWine={proposal.category === 'corporativo'}
         fotoButtonText={proposal.category === 'casamento' || proposal.category === 'personalizado' ? 'VER PROPOSTA' : 'VER PROPOSTA FOTOGRÁFICA'}
         hideFotoButton={!!proposal.hidePhotoSection}
         hideVideoButton={!!proposal.hideVideoSection || proposal.category === 'casamento'}
+        hideConteudoButton={
+          !!proposal.hideConteudoSection || 
+          !(proposal.category === 'corporativo' || (proposal.conteudoPackages && proposal.conteudoPackages.length > 0))
+        }
         hideProposalButtons={false}
         customImage={
           proposal.category === 'personalizado'
@@ -1115,8 +1121,8 @@ export default function ProposalView({ category, slug }: ProposalViewProps) {
         );
       })()}
 
-      {/* Segunda Seção: Produção de Conteúdo (Exclusiva para Corporativo, acima de Como funciona o processo) */}
-      {!proposal.hideConteudoSection && proposal.category === 'corporativo' && (() => {
+      {/* Segunda Seção: Produção de Conteúdo (Exclusiva para Corporativo ou com pacotes de conteúdo, acima de Como funciona o processo) */}
+      {!proposal.hideConteudoSection && (proposal.category === 'corporativo' || (proposal.conteudoPackages && proposal.conteudoPackages.length > 0)) && (() => {
         const conteudoList = (proposal.conteudoPackages && proposal.conteudoPackages.length > 0)
           ? proposal.conteudoPackages
           : (STANDARD_TEMPLATES.corporativo?.conteudoPackages || []);

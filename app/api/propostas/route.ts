@@ -8,6 +8,9 @@ const DATA_FILE = path.join(process.cwd(), 'data', 'propostas.json');
 function enrichProposal(proposal: Proposal): Proposal {
   return {
     ...proposal,
+    hidePhotoSection: proposal.hidePhotoSection ?? false,
+    hideVideoSection: proposal.hideVideoSection ?? false,
+    hideConteudoSection: proposal.hideConteudoSection ?? false,
     packages: (proposal.packages || []).map(pkg => ({
       ...pkg,
       installments: calculateDefaultInstallments(pkg.price)

@@ -68,7 +68,11 @@ export function getInitialProposalSnapshot(category: string, slug: string): Prop
       if (cached) {
         const list: Proposal[] = JSON.parse(cached);
         const found = list.find(
-          (p) => p.category.toLowerCase() === cleanCategory && p.clientSlug.toLowerCase() === cleanSlug
+          (p) => p.category.toLowerCase() === cleanCategory && (
+            p.clientSlug.toLowerCase() === cleanSlug ||
+            p.clientSlug.toLowerCase().includes(cleanSlug) ||
+            cleanSlug.includes(p.clientSlug.toLowerCase())
+          )
         );
         if (found) {
           return enrichProposal({
@@ -206,7 +210,11 @@ export async function fetchProposalBySlug(
       if (cached) {
         const list: Proposal[] = JSON.parse(cached);
         const found = list.find(
-          (p) => p.category.toLowerCase() === cleanCategory && p.clientSlug.toLowerCase() === cleanSlug
+          (p) => p.category.toLowerCase() === cleanCategory && (
+            p.clientSlug.toLowerCase() === cleanSlug ||
+            p.clientSlug.toLowerCase().includes(cleanSlug) ||
+            cleanSlug.includes(p.clientSlug.toLowerCase())
+          )
         );
         if (found) {
           foundProposal = found;

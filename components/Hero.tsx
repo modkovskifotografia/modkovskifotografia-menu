@@ -3,17 +3,20 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import { motion } from 'motion/react';
-import { Camera, Video } from 'lucide-react';
+import { Camera, Video, Sparkles } from 'lucide-react';
 import { brandConfig } from '@/lib/config';
 import Logo from './Logo';
 
 interface HeroProps {
   fotoTargetId?: string;
   videoTargetId?: string;
+  conteudoTargetId?: string;
   videoButtonWine?: boolean;
+  conteudoButtonWine?: boolean;
   fotoButtonText?: string;
   hideFotoButton?: boolean;
   hideVideoButton?: boolean;
+  hideConteudoButton?: boolean;
   hideProposalButtons?: boolean;
   customImage?: string;
   customTitle?: string;
@@ -23,10 +26,13 @@ interface HeroProps {
 export default function Hero({
   fotoTargetId = 'experiencias-sec-1',
   videoTargetId = 'experiencias-sec-2',
+  conteudoTargetId = 'producao-de-conteudo',
   videoButtonWine = false,
+  conteudoButtonWine = false,
   fotoButtonText = 'VER PROPOSTA FOTOGRÁFICA',
   hideFotoButton = false,
   hideVideoButton = false,
+  hideConteudoButton = true,
   hideProposalButtons = false,
   customImage,
   customTitle,
@@ -47,6 +53,8 @@ export default function Hero({
         el = document.getElementById('ensaio-fotografico') || document.getElementById('orcamento-personalizado') || document.getElementById('experiencias-sec-1');
       } else if (id === 'experiencias-sec-2' || id === 'producao-de-video') {
         el = document.getElementById('producao-de-video') || document.getElementById('experiencias-sec-2');
+      } else if (id === 'producao-de-conteudo' || id === 'conteudo') {
+        el = document.getElementById('producao-de-conteudo');
       }
     }
     if (el) {
@@ -94,12 +102,12 @@ export default function Hero({
               &ldquo;{customQuote || brandConfig.hero.quote}&rdquo;
             </motion.p>
 
-            {!hideProposalButtons && (!hideFotoButton || !hideVideoButton) && (
+            {!hideProposalButtons && (!hideFotoButton || !hideVideoButton || !hideConteudoButton) && (
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.7 }}
-                className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4"
+                className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 flex-wrap"
               >
                 {!hideFotoButton && (
                   <motion.button
@@ -126,6 +134,22 @@ export default function Hero({
                   >
                     <Video className="w-4 h-4 shrink-0" strokeWidth={1.8} />
                     <span>VER PROPOSTA DE VÍDEOS</span>
+                  </motion.button>
+                )}
+
+                {!hideConteudoButton && (
+                  <motion.button
+                    whileTap={{ scale: 0.98 }}
+                    onClick={() => scrollToSection(conteudoTargetId)}
+                    className={`flex items-center justify-center gap-2 py-4 px-6 rounded-full text-xs font-semibold tracking-[0.15em] uppercase transition-all duration-300 shadow-sm cursor-pointer active:scale-[0.98] ${
+                      conteudoButtonWine
+                        ? 'bg-brand-wine text-white hover:bg-brand-wine-dark'
+                        : 'bg-white text-brand-wine border border-brand-wine/20 hover:bg-brand-wine hover:text-white'
+                    }`}
+                    id="hero-btn-prop-conteudo"
+                  >
+                    <Sparkles className="w-4 h-4 shrink-0" strokeWidth={1.8} />
+                    <span>VER PROPOSTA DE CONTEÚDO</span>
                   </motion.button>
                 )}
               </motion.div>
