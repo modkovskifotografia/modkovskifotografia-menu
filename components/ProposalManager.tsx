@@ -17,6 +17,7 @@ import {
   FileText, 
   CheckCircle2, 
   Clock, 
+  Calendar,
   AlertCircle,
   ArrowRight,
   ShieldAlert,
@@ -272,8 +273,12 @@ export default function ProposalManager() {
       clientName: '',
       clientSlug: '',
       createdAt: new Date().toISOString(),
+      proposalDate: new Date().toLocaleDateString('pt-BR'),
       isTemplate: false,
       status: 'nova',
+      hidePhotoSection: false,
+      hideVideoSection: false,
+      hideConteudoSection: false,
       packages: JSON.parse(JSON.stringify(template.packages)), // deep clone
       videoPackages: template.videoPackages 
         ? JSON.parse(JSON.stringify(template.videoPackages))
@@ -321,6 +326,18 @@ export default function ProposalManager() {
   // Open edit modal for existing proposal
   const handleEditProposal = (p: Proposal) => {
     const cloned: Proposal = JSON.parse(JSON.stringify(p));
+    const tmpl = STANDARD_TEMPLATES[cloned.category];
+    if (!cloned.beforeImage && tmpl?.beforeImage) cloned.beforeImage = tmpl.beforeImage;
+    if (!cloned.afterImage && tmpl?.afterImage) cloned.afterImage = tmpl.afterImage;
+    if (cloned.hidePhotoSection === undefined) cloned.hidePhotoSection = false;
+    if (cloned.hideVideoSection === undefined) cloned.hideVideoSection = false;
+    if (cloned.hideConteudoSection === undefined) cloned.hideConteudoSection = false;
+    if (!cloned.proposalDate) {
+      cloned.proposalDate = cloned.createdAt 
+        ? new Date(cloned.createdAt).toLocaleDateString('pt-BR') 
+        : new Date().toLocaleDateString('pt-BR');
+    }
+
     if (cloned.category === 'individual') {
       if (!cloned.packages || cloned.packages.length === 0) {
         cloned.packages = JSON.parse(JSON.stringify(STANDARD_TEMPLATES.individual.packages || []));
@@ -1061,6 +1078,23 @@ export default function ProposalManager() {
                         <span className="text-[11px] text-brand-text-soft font-mono bg-brand-cream/80 px-2 py-0.5 rounded border border-brand-wine/10">
                           www.modkovskifotografia.com.br/propostas/{p.category}/{p.clientSlug}
                         </span>
+
+                        {p.hidePhotoSection && (
+                          <span className="text-[9.5px] font-semibold px-2 py-0.5 rounded-full bg-rose-50 text-rose-700 border border-rose-200">
+                            Foto Desativada
+                          </span>
+                        )}
+                        {p.hideVideoSection && (
+                          <span className="text-[9.5px] font-semibold px-2 py-0.5 rounded-full bg-rose-50 text-rose-700 border border-rose-200">
+                            Vídeo Desativado
+                          </span>
+                        )}
+                        {p.hideConteudoSection && (
+                          <span className="text-[9.5px] font-semibold px-2 py-0.5 rounded-full bg-rose-50 text-rose-700 border border-rose-200">
+                            Conteúdo Desativado
+                          </span>
+                        )}
+
                         <span className="text-[10px] text-brand-text-soft flex items-center gap-1">
                           <Clock className="w-3 h-3 text-brand-wine" />
                           Criado em {formattedDate}
@@ -1200,8 +1234,8 @@ export default function ProposalManager() {
 
             <form onSubmit={handleSaveProposal} className="space-y-6">
               
-              {/* Client Name, Slug and Status */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              {/* Client Name, Slug, Date and Status */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div>
                   <label className="block text-xs font-bold uppercase tracking-wider text-brand-text mb-1.5">
                     Nome do Cliente ou Empresa *
@@ -1246,6 +1280,23 @@ export default function ProposalManager() {
                       className="w-full px-3 py-2.5 rounded-r-xl border border-brand-wine/20 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-brand-wine/30"
                     />
                   </div>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-brand-text mb-1.5 flex items-center gap-1">
+                    <Calendar className="w-3.5 h-3.5 text-brand-wine" />
+                    Data da Proposta
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Ex: 06/10/2026"
+                    value={editingProposal.proposalDate || ''}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setEditingProposal((prev) => prev ? { ...prev, proposalDate: val } : null);
+                    }}
+                    className="w-full px-4 py-2.5 rounded-xl border border-brand-wine/20 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-brand-wine/30 bg-white"
+                  />
                 </div>
 
                 <div>
@@ -1301,58 +1352,107 @@ export default function ProposalManager() {
                 <>
                   {/* 1. Opções de Ensaio Fotográfico */}
                   <div className="pt-4 border-t border-brand-wine/10" id="section-modal-foto">
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
                       <div>
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 flex-wrap">
                           <Camera className="w-4 h-4 text-brand-wine" />
                           <h4 className="font-serif text-lg text-brand-text font-semibold">
                             1. Ensaio Fotográfico (Proposta Fotográfica)
                           </h4>
-                          <span className="text-[10px] bg-brand-wine/10 text-brand-wine px-2 py-0.5 rounded-full font-bold">
-                            {editingProposal.packages.length} opções
+                          <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${
+                            editingProposal.hidePhotoSection
+                              ? 'bg-rose-100 text-rose-800 border border-rose-300'
+                              : 'bg-emerald-100 text-emerald-800 border border-emerald-300'
+                          }`}>
+                            {editingProposal.hidePhotoSection ? '✕ Desativada' : `✓ Ativa (${editingProposal.packages.length} opções)`}
                           </span>
                         </div>
                         <p className="text-xs text-brand-text-soft mt-0.5">
-                          4 opções de ensaio fotográfico (Essencial, Clássico, Especial e Completo). Você pode editar valores, itens, adicionar mais opções ou excluir.
+                          Opções de ensaio fotográfico. Você pode desativar para não exibir nesta proposta, sem alterar o padrão.
                         </p>
                       </div>
 
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setEditingProposal((prev) => {
-                            if (!prev) return null;
-                            const nextNum = prev.packages.length + 1;
-                            const newPkg: ProposalPackage = {
-                              id: `ind-foto-${Date.now()}`,
-                              name: `Ensaio Opção 0${nextNum}`,
-                              price: 'R$ 450',
-                              paymentMethod: 'Pix',
-                              duration: 'Duração de até 01 hora',
-                              features: [
-                                '20 fotos selecionadas e tratadas',
-                                '01 vídeo brinde Making Of',
-                                'Galeria online privada para download',
-                                'Prazo de entrega em até 15 dias úteis',
-                                'Foto extra R$ 20,00'
-                              ],
-                              highlight: false,
-                            };
-                            return {
-                              ...prev,
-                              packages: [...prev.packages, newPkg]
-                            };
-                          });
-                        }}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-brand-wine/10 text-brand-wine text-xs font-semibold hover:bg-brand-wine hover:text-white transition-colors self-start sm:self-auto shrink-0 cursor-pointer"
-                        id="btn-add-foto-option"
-                      >
-                        <Plus className="w-3.5 h-3.5" /> Adicionar Opção de Foto
-                      </button>
+                      <div className="flex items-center gap-2 flex-wrap shrink-0">
+                        {/* Botão de Ativar/Desativar Seção */}
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setEditingProposal((prev) => prev ? { ...prev, hidePhotoSection: !prev.hidePhotoSection } : null);
+                          }}
+                          className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer shadow-2xs ${
+                            editingProposal.hidePhotoSection
+                              ? 'bg-rose-50 hover:bg-rose-100 text-rose-800 border border-rose-300'
+                              : 'bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-300'
+                          }`}
+                          title={editingProposal.hidePhotoSection ? 'Clique para reativar esta seção na proposta' : 'Clique para desativar esta seção na proposta'}
+                        >
+                          {editingProposal.hidePhotoSection ? (
+                            <>
+                              <EyeOff className="w-3.5 h-3.5 text-rose-600" />
+                              <span>Seção Desativada</span>
+                            </>
+                          ) : (
+                            <>
+                              <Eye className="w-3.5 h-3.5 text-emerald-600" />
+                              <span>Seção Ativa</span>
+                            </>
+                          )}
+                        </button>
+
+                        {!editingProposal.hidePhotoSection && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setEditingProposal((prev) => {
+                                if (!prev) return null;
+                                const nextNum = prev.packages.length + 1;
+                                const newPkg: ProposalPackage = {
+                                  id: `ind-foto-${Date.now()}`,
+                                  name: `Ensaio Opção 0${nextNum}`,
+                                  price: 'R$ 450',
+                                  paymentMethod: 'Pix',
+                                  duration: 'Duração de até 01 hora',
+                                  features: [
+                                    '20 fotos selecionadas e tratadas',
+                                    '01 vídeo brinde Making Of',
+                                    'Galeria online privada para download',
+                                    'Prazo de entrega em até 15 dias úteis',
+                                    'Foto extra R$ 20,00'
+                                  ],
+                                  highlight: false,
+                                };
+                                return {
+                                  ...prev,
+                                  packages: [...prev.packages, newPkg]
+                                };
+                              });
+                            }}
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-brand-wine/10 text-brand-wine text-xs font-semibold hover:bg-brand-wine hover:text-white transition-colors self-start sm:self-auto shrink-0 cursor-pointer"
+                            id="btn-add-foto-option"
+                          >
+                            <Plus className="w-3.5 h-3.5" /> Adicionar Opção de Foto
+                          </button>
+                        )}
+                      </div>
                     </div>
 
-                    <div className="space-y-4">
-                      {editingProposal.packages.map((pkg, pIdx) => (
+                    {editingProposal.hidePhotoSection ? (
+                      <div className="bg-rose-50/80 border border-rose-200 text-rose-800 text-xs px-4 py-3 rounded-2xl flex items-center justify-between gap-3 mb-2">
+                        <div className="flex items-center gap-2">
+                          <EyeOff className="w-4 h-4 text-rose-600 shrink-0" />
+                          <span><strong>Esta seção está desativada.</strong> A seção de ensaio fotográfico não será exibida na proposta criada para o cliente.</span>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => setEditingProposal((prev) => prev ? { ...prev, hidePhotoSection: false } : null)}
+                          className="text-xs font-bold text-rose-900 underline hover:text-rose-950 shrink-0 cursor-pointer"
+                        >
+                          Ativar Seção
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="space-y-4">
+                        {editingProposal.packages.map((pkg, pIdx) => (
                         <div
                           key={pkg.id || pIdx}
                           className="bg-brand-cream/30 p-4 rounded-2xl border border-brand-wine/15 space-y-3"
@@ -1505,62 +1605,112 @@ export default function ProposalManager() {
                         </div>
                       ))}
                     </div>
+                  )}
                   </div>
 
                   {/* 2. Opções de Produção de Vídeo */}
                   <div className="pt-6 border-t border-brand-wine/10" id="section-modal-video">
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
                       <div>
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 flex-wrap">
                           <Video className="w-4 h-4 text-brand-wine" />
                           <h4 className="font-serif text-lg text-brand-text font-semibold">
                             2. Produção de Vídeo (Proposta de Vídeos)
                           </h4>
-                          <span className="text-[10px] bg-brand-wine text-white px-2 py-0.5 rounded-full font-bold">
-                            {(editingProposal.videoPackages || []).length} opções
+                          <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${
+                            editingProposal.hideVideoSection
+                              ? 'bg-rose-100 text-rose-800 border border-rose-300'
+                              : 'bg-emerald-100 text-emerald-800 border border-emerald-300'
+                          }`}>
+                            {editingProposal.hideVideoSection ? '✕ Desativada' : `✓ Ativa (${(editingProposal.videoPackages || []).length} opções)`}
                           </span>
                         </div>
                         <p className="text-xs text-brand-text-soft mt-0.5">
-                          4 formatos de produção de vídeo (Prático, Essencial, Presença e Autoridade). Você pode editar valores, itens, adicionar mais opções ou excluir.
+                          Formatos de produção de vídeo. Você pode desativar para não exibir nesta proposta, sem alterar o padrão.
                         </p>
                       </div>
 
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setEditingProposal((prev) => {
-                            if (!prev) return null;
-                            const currentVideos = prev.videoPackages || [];
-                            const nextNum = currentVideos.length + 1;
-                            const newVideo: ProposalPackage = {
-                              id: `ind-video-${Date.now()}`,
-                              name: `Formato de Vídeo 0${nextNum}`,
-                              price: 'R$ 350',
-                              paymentMethod: 'Pix',
-                              duration: '02 vídeos até 1:30seg',
-                              features: [
-                                '02 vídeos até 1:30seg',
-                                '02 capas pra vídeo',
-                                'Roteirização, direção e posicionamento',
-                                'Edição dinâmica, cortes essenciais, legenda e trilha sonora'
-                              ],
-                              highlight: false,
-                            };
-                            return {
-                              ...prev,
-                              videoPackages: [...currentVideos, newVideo]
-                            };
-                          });
-                        }}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-brand-wine text-white text-xs font-semibold hover:bg-brand-wine-dark transition-colors self-start sm:self-auto shrink-0 cursor-pointer shadow-xs"
-                        id="btn-add-video-option"
-                      >
-                        <Plus className="w-3.5 h-3.5" /> Adicionar Opção de Vídeo
-                      </button>
+                      <div className="flex items-center gap-2 flex-wrap shrink-0">
+                        {/* Botão de Ativar/Desativar Seção */}
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setEditingProposal((prev) => prev ? { ...prev, hideVideoSection: !prev.hideVideoSection } : null);
+                          }}
+                          className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer shadow-2xs ${
+                            editingProposal.hideVideoSection
+                              ? 'bg-rose-50 hover:bg-rose-100 text-rose-800 border border-rose-300'
+                              : 'bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-300'
+                          }`}
+                          title={editingProposal.hideVideoSection ? 'Clique para reativar esta seção na proposta' : 'Clique para desativar esta seção na proposta'}
+                        >
+                          {editingProposal.hideVideoSection ? (
+                            <>
+                              <EyeOff className="w-3.5 h-3.5 text-rose-600" />
+                              <span>Seção Desativada</span>
+                            </>
+                          ) : (
+                            <>
+                              <Eye className="w-3.5 h-3.5 text-emerald-600" />
+                              <span>Seção Ativa</span>
+                            </>
+                          )}
+                        </button>
+
+                        {!editingProposal.hideVideoSection && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setEditingProposal((prev) => {
+                                if (!prev) return null;
+                                const currentVideos = prev.videoPackages || [];
+                                const nextNum = currentVideos.length + 1;
+                                const newVideo: ProposalPackage = {
+                                  id: `ind-video-${Date.now()}`,
+                                  name: `Formato de Vídeo 0${nextNum}`,
+                                  price: 'R$ 350',
+                                  paymentMethod: 'Pix',
+                                  duration: '02 vídeos até 1:30seg',
+                                  features: [
+                                    '02 vídeos até 1:30seg',
+                                    '02 capas pra vídeo',
+                                    'Roteirização, direção e posicionamento',
+                                    'Edição dinâmica, cortes essenciais, legenda e trilha sonora'
+                                  ],
+                                  highlight: false,
+                                };
+                                return {
+                                  ...prev,
+                                  videoPackages: [...currentVideos, newVideo]
+                                };
+                              });
+                            }}
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-brand-wine text-white text-xs font-semibold hover:bg-brand-wine-dark transition-colors self-start sm:self-auto shrink-0 cursor-pointer shadow-xs"
+                            id="btn-add-video-option"
+                          >
+                            <Plus className="w-3.5 h-3.5" /> Adicionar Opção de Vídeo
+                          </button>
+                        )}
+                      </div>
                     </div>
 
-                    <div className="space-y-4">
-                      {(editingProposal.videoPackages || []).map((vPkg, vIdx) => (
+                    {editingProposal.hideVideoSection ? (
+                      <div className="bg-rose-50/80 border border-rose-200 text-rose-800 text-xs px-4 py-3 rounded-2xl flex items-center justify-between gap-3 mb-2">
+                        <div className="flex items-center gap-2">
+                          <EyeOff className="w-4 h-4 text-rose-600 shrink-0" />
+                          <span><strong>Esta seção está desativada.</strong> A seção de produção de vídeo não será exibida na proposta criada para o cliente.</span>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => setEditingProposal((prev) => prev ? { ...prev, hideVideoSection: false } : null)}
+                          className="text-xs font-bold text-rose-900 underline hover:text-rose-950 shrink-0 cursor-pointer"
+                        >
+                          Ativar Seção
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="space-y-4">
+                        {(editingProposal.videoPackages || []).map((vPkg, vIdx) => (
                         <div
                           key={vPkg.id || vIdx}
                           className="bg-brand-cream/30 p-4 rounded-2xl border border-brand-wine/15 space-y-3"
@@ -1603,7 +1753,7 @@ export default function ProposalManager() {
                                   });
                                 }}
                                 className="font-bold text-brand-wine text-sm bg-white px-3 py-1.5 rounded-lg border border-brand-wine/20 w-32"
-                                placeholder="Preço (Ex: R$ 560)"
+                                placeholder="Preço (Ex: R$ 350)"
                               />
                             </div>
 
@@ -1714,21 +1864,26 @@ export default function ProposalManager() {
                         </div>
                       ))}
                     </div>
+                  )}
                   </div>
                 </>
               ) : editingProposal.category === 'corporativo' ? (
                 <>
                   {/* 1. Ensaio Fotográfico */}
                   <div className="pt-4 border-t border-brand-wine/10" id="section-modal-corp-foto">
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
                       <div>
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 flex-wrap">
                           <Camera className="w-4 h-4 text-brand-wine" />
                           <h4 className="font-serif text-lg text-brand-text font-semibold">
                             1. Ensaio Fotográfico
                           </h4>
-                          <span className="text-[10px] bg-brand-wine/10 text-brand-wine px-2 py-0.5 rounded-full font-bold">
-                            {editingProposal.packages.length} opções
+                          <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${
+                            editingProposal.hidePhotoSection
+                              ? 'bg-rose-100 text-rose-800 border border-rose-300'
+                              : 'bg-emerald-100 text-emerald-800 border border-emerald-300'
+                          }`}>
+                            {editingProposal.hidePhotoSection ? '✕ Desativada' : `✓ Ativa (${editingProposal.packages.length} opções)`}
                           </span>
                         </div>
                         <p className="text-xs text-brand-text-soft mt-0.5">
@@ -1736,41 +1891,86 @@ export default function ProposalManager() {
                         </p>
                       </div>
 
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setEditingProposal((prev) => {
-                            if (!prev) return null;
-                            const nextNum = prev.packages.length + 1;
-                            const newPkg: ProposalPackage = {
-                              id: `corp-foto-${Date.now()}`,
-                              name: `Ensaio Opção 0${nextNum}`,
-                              price: 'R$ 450',
-                              paymentMethod: 'Pix',
-                              duration: 'Duração de até 01 hora',
-                              features: [
-                                '15 fotos selecionadas',
-                                '01 vídeo brinde Making Of',
-                                'Prazo de entrega de até 15 dias',
-                                'Foto extra R$ 22,00'
-                              ],
-                              highlight: false,
-                            };
-                            return {
-                              ...prev,
-                              packages: [...prev.packages, newPkg]
-                            };
-                          });
-                        }}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-brand-wine/10 text-brand-wine text-xs font-semibold hover:bg-brand-wine hover:text-white transition-colors self-start sm:self-auto shrink-0 cursor-pointer"
-                        id="btn-add-corp-foto-option"
-                      >
-                        <Plus className="w-3.5 h-3.5" /> Adicionar Opção de Foto
-                      </button>
+                      <div className="flex items-center gap-2 flex-wrap shrink-0">
+                        {/* Botão de Ativar/Desativar Seção */}
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setEditingProposal((prev) => prev ? { ...prev, hidePhotoSection: !prev.hidePhotoSection } : null);
+                          }}
+                          className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer shadow-2xs ${
+                            editingProposal.hidePhotoSection
+                              ? 'bg-rose-50 hover:bg-rose-100 text-rose-800 border border-rose-300'
+                              : 'bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-300'
+                          }`}
+                          title={editingProposal.hidePhotoSection ? 'Clique para reativar esta seção na proposta' : 'Clique para desativar esta seção na proposta'}
+                        >
+                          {editingProposal.hidePhotoSection ? (
+                            <>
+                              <EyeOff className="w-3.5 h-3.5 text-rose-600" />
+                              <span>Seção Desativada</span>
+                            </>
+                          ) : (
+                            <>
+                              <Eye className="w-3.5 h-3.5 text-emerald-600" />
+                              <span>Seção Ativa</span>
+                            </>
+                          )}
+                        </button>
+
+                        {!editingProposal.hidePhotoSection && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setEditingProposal((prev) => {
+                                if (!prev) return null;
+                                const nextNum = prev.packages.length + 1;
+                                const newPkg: ProposalPackage = {
+                                  id: `corp-foto-${Date.now()}`,
+                                  name: `Ensaio Opção 0${nextNum}`,
+                                  price: 'R$ 450',
+                                  paymentMethod: 'Pix',
+                                  duration: 'Duração de até 01 hora',
+                                  features: [
+                                    '15 fotos selecionadas',
+                                    '01 vídeo brinde Making Of',
+                                    'Prazo de entrega de até 15 dias',
+                                    'Foto extra R$ 22,00'
+                                  ],
+                                  highlight: false,
+                                };
+                                return {
+                                  ...prev,
+                                  packages: [...prev.packages, newPkg]
+                                };
+                              });
+                            }}
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-brand-wine/10 text-brand-wine text-xs font-semibold hover:bg-brand-wine hover:text-white transition-colors self-start sm:self-auto shrink-0 cursor-pointer"
+                            id="btn-add-corp-foto-option"
+                          >
+                            <Plus className="w-3.5 h-3.5" /> Adicionar Opção de Foto
+                          </button>
+                        )}
+                      </div>
                     </div>
 
-                    <div className="space-y-4">
-                      {editingProposal.packages.map((pkg, pIdx) => (
+                    {editingProposal.hidePhotoSection ? (
+                      <div className="bg-rose-50/80 border border-rose-200 text-rose-800 text-xs px-4 py-3 rounded-2xl flex items-center justify-between gap-3 mb-2">
+                        <div className="flex items-center gap-2">
+                          <EyeOff className="w-4 h-4 text-rose-600 shrink-0" />
+                          <span><strong>Esta seção está desativada.</strong> A seção de ensaio fotográfico não será exibida na proposta criada para o cliente. O modelo padrão permanece inalterado.</span>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => setEditingProposal((prev) => prev ? { ...prev, hidePhotoSection: false } : null)}
+                          className="text-xs font-bold text-rose-900 underline hover:text-rose-950 shrink-0 cursor-pointer"
+                        >
+                          Ativar Seção
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="space-y-4">
+                        {editingProposal.packages.map((pkg, pIdx) => (
                         <div
                           key={pkg.id || pIdx}
                           className="bg-brand-cream/30 p-4 rounded-2xl border border-brand-wine/15 space-y-3"
@@ -1923,19 +2123,24 @@ export default function ProposalManager() {
                         </div>
                       ))}
                     </div>
+                  )}
                   </div>
 
                   {/* 2. Produção de Vídeo */}
                   <div className="pt-6 border-t border-brand-wine/10" id="section-modal-corp-video">
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
                       <div>
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 flex-wrap">
                           <Video className="w-4 h-4 text-brand-wine" />
                           <h4 className="font-serif text-lg text-brand-text font-semibold">
                             2. Produção de Vídeo
                           </h4>
-                          <span className="text-[10px] bg-brand-wine text-white px-2 py-0.5 rounded-full font-bold">
-                            {(editingProposal.videoPackages || []).length} opções
+                          <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${
+                            editingProposal.hideVideoSection
+                              ? 'bg-rose-100 text-rose-800 border border-rose-300'
+                              : 'bg-emerald-100 text-emerald-800 border border-emerald-300'
+                          }`}>
+                            {editingProposal.hideVideoSection ? '✕ Desativada' : `✓ Ativa (${(editingProposal.videoPackages || []).length} opções)`}
                           </span>
                         </div>
                         <p className="text-xs text-brand-text-soft mt-0.5">
@@ -1943,42 +2148,87 @@ export default function ProposalManager() {
                         </p>
                       </div>
 
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setEditingProposal((prev) => {
-                            if (!prev) return null;
-                            const currentVideos = prev.videoPackages || [];
-                            const nextNum = currentVideos.length + 1;
-                            const newVideo: ProposalPackage = {
-                              id: `corp-video-${Date.now()}`,
-                              name: `Formato de Vídeo 0${nextNum}`,
-                              price: 'R$ 587',
-                              paymentMethod: 'Pix',
-                              duration: '04 vídeos até 1:30seg',
-                              features: [
-                                '04 vídeos até 1:30seg',
-                                '04 capas pra vídeo',
-                                'Roteirização, direção e posicionamento',
-                                'Edição dinâmica, cortes essenciais, legenda e trilha sonora'
-                              ],
-                              highlight: false,
-                            };
-                            return {
-                              ...prev,
-                              videoPackages: [...currentVideos, newVideo]
-                            };
-                          });
-                        }}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-brand-wine text-white text-xs font-semibold hover:bg-brand-wine-dark transition-colors self-start sm:self-auto shrink-0 cursor-pointer shadow-xs"
-                        id="btn-add-corp-video-option"
-                      >
-                        <Plus className="w-3.5 h-3.5" /> Adicionar Opção de Vídeo
-                      </button>
+                      <div className="flex items-center gap-2 flex-wrap shrink-0">
+                        {/* Botão de Ativar/Desativar Seção */}
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setEditingProposal((prev) => prev ? { ...prev, hideVideoSection: !prev.hideVideoSection } : null);
+                          }}
+                          className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer shadow-2xs ${
+                            editingProposal.hideVideoSection
+                              ? 'bg-rose-50 hover:bg-rose-100 text-rose-800 border border-rose-300'
+                              : 'bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-300'
+                          }`}
+                          title={editingProposal.hideVideoSection ? 'Clique para reativar esta seção na proposta' : 'Clique para desativar esta seção na proposta'}
+                        >
+                          {editingProposal.hideVideoSection ? (
+                            <>
+                              <EyeOff className="w-3.5 h-3.5 text-rose-600" />
+                              <span>Seção Desativada</span>
+                            </>
+                          ) : (
+                            <>
+                              <Eye className="w-3.5 h-3.5 text-emerald-600" />
+                              <span>Seção Ativa</span>
+                            </>
+                          )}
+                        </button>
+
+                        {!editingProposal.hideVideoSection && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setEditingProposal((prev) => {
+                                if (!prev) return null;
+                                const currentVideos = prev.videoPackages || [];
+                                const nextNum = currentVideos.length + 1;
+                                const newVideo: ProposalPackage = {
+                                  id: `corp-video-${Date.now()}`,
+                                  name: `Formato de Vídeo 0${nextNum}`,
+                                  price: 'R$ 587',
+                                  paymentMethod: 'Pix',
+                                  duration: '04 vídeos até 1:30seg',
+                                  features: [
+                                    '04 vídeos até 1:30seg',
+                                    '04 capas pra vídeo',
+                                    'Roteirização, direção e posicionamento',
+                                    'Edição dinâmica, cortes essenciais, legenda e trilha sonora'
+                                  ],
+                                  highlight: false,
+                                };
+                                return {
+                                  ...prev,
+                                  videoPackages: [...currentVideos, newVideo]
+                                };
+                              });
+                            }}
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-brand-wine text-white text-xs font-semibold hover:bg-brand-wine-dark transition-colors self-start sm:self-auto shrink-0 cursor-pointer shadow-xs"
+                            id="btn-add-corp-video-option"
+                          >
+                            <Plus className="w-3.5 h-3.5" /> Adicionar Opção de Vídeo
+                          </button>
+                        )}
+                      </div>
                     </div>
 
-                    <div className="space-y-4">
-                      {(editingProposal.videoPackages || []).map((vPkg, vIdx) => (
+                    {editingProposal.hideVideoSection ? (
+                      <div className="bg-rose-50/80 border border-rose-200 text-rose-800 text-xs px-4 py-3 rounded-2xl flex items-center justify-between gap-3 mb-2">
+                        <div className="flex items-center gap-2">
+                          <EyeOff className="w-4 h-4 text-rose-600 shrink-0" />
+                          <span><strong>Esta seção está desativada.</strong> A seção de produção de vídeo não será exibida na proposta criada para o cliente. O modelo padrão permanece inalterado.</span>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => setEditingProposal((prev) => prev ? { ...prev, hideVideoSection: false } : null)}
+                          className="text-xs font-bold text-rose-900 underline hover:text-rose-950 shrink-0 cursor-pointer"
+                        >
+                          Ativar Seção
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="space-y-4">
+                        {(editingProposal.videoPackages || []).map((vPkg, vIdx) => (
                         <div
                           key={vPkg.id || vIdx}
                           className="bg-brand-cream/30 p-4 rounded-2xl border border-brand-wine/15 space-y-3"
@@ -2132,19 +2382,24 @@ export default function ProposalManager() {
                         </div>
                       ))}
                     </div>
+                  )}
                   </div>
 
                   {/* 3. Produção de Conteúdo */}
                   <div className="pt-6 border-t border-brand-wine/10" id="section-modal-corp-conteudo">
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
                       <div>
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 flex-wrap">
                           <Sparkles className="w-4 h-4 text-brand-wine" />
                           <h4 className="font-serif text-lg text-brand-text font-semibold">
                             3. Produção de Conteúdo
                           </h4>
-                          <span className="text-[10px] bg-brand-wine text-white px-2 py-0.5 rounded-full font-bold">
-                            {(editingProposal.conteudoPackages || []).length} opções
+                          <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${
+                            editingProposal.hideConteudoSection
+                              ? 'bg-rose-100 text-rose-800 border border-rose-300'
+                              : 'bg-emerald-100 text-emerald-800 border border-emerald-300'
+                          }`}>
+                            {editingProposal.hideConteudoSection ? '✕ Desativada' : `✓ Ativa (${(editingProposal.conteudoPackages || []).length} opções)`}
                           </span>
                         </div>
                         <p className="text-xs text-brand-text-soft mt-0.5">
@@ -2152,45 +2407,90 @@ export default function ProposalManager() {
                         </p>
                       </div>
 
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setEditingProposal((prev) => {
-                            if (!prev) return null;
-                            const currentConteudo = prev.conteudoPackages || [];
-                            const nextNum = currentConteudo.length + 1;
-                            const newConteudo: ProposalPackage = {
-                              id: `corp-cont-${Date.now()}`,
-                              name: `Plano de Conteúdo 0${nextNum}`,
-                              price: 'R$ 777',
-                              paymentMethod: 'Pix',
-                              duration: 'Entrega mensal',
-                              features: [
-                                '04 vídeos até 1:30seg (Feed)',
-                                'Capas para vídeos (Feed)',
-                                '08 vídeos até 20seg ou cards (Story)',
-                                'Gerenciamento de postagens e análise dos melhores dias e horários',
-                                'Acompanhamento, roteirização, direção e posicionamento',
-                                'Edição dinâmica, cortes essenciais, legenda e trilha sonora',
-                                'Entrega mensal'
-                              ],
-                              highlight: false,
-                            };
-                            return {
-                              ...prev,
-                              conteudoPackages: [...currentConteudo, newConteudo]
-                            };
-                          });
-                        }}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-brand-wine text-white text-xs font-semibold hover:bg-brand-wine-dark transition-colors self-start sm:self-auto shrink-0 cursor-pointer shadow-xs"
-                        id="btn-add-corp-conteudo-option"
-                      >
-                        <Plus className="w-3.5 h-3.5" /> Adicionar Opção de Conteúdo
-                      </button>
+                      <div className="flex items-center gap-2 flex-wrap shrink-0">
+                        {/* Botão de Ativar/Desativar Seção */}
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setEditingProposal((prev) => prev ? { ...prev, hideConteudoSection: !prev.hideConteudoSection } : null);
+                          }}
+                          className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer shadow-2xs ${
+                            editingProposal.hideConteudoSection
+                              ? 'bg-rose-50 hover:bg-rose-100 text-rose-800 border border-rose-300'
+                              : 'bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-300'
+                          }`}
+                          title={editingProposal.hideConteudoSection ? 'Clique para reativar esta seção na proposta' : 'Clique para desativar esta seção na proposta'}
+                        >
+                          {editingProposal.hideConteudoSection ? (
+                            <>
+                              <EyeOff className="w-3.5 h-3.5 text-rose-600" />
+                              <span>Seção Desativada</span>
+                            </>
+                          ) : (
+                            <>
+                              <Eye className="w-3.5 h-3.5 text-emerald-600" />
+                              <span>Seção Ativa</span>
+                            </>
+                          )}
+                        </button>
+
+                        {!editingProposal.hideConteudoSection && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setEditingProposal((prev) => {
+                                if (!prev) return null;
+                                const currentConteudo = prev.conteudoPackages || [];
+                                const nextNum = currentConteudo.length + 1;
+                                const newConteudo: ProposalPackage = {
+                                  id: `corp-cont-${Date.now()}`,
+                                  name: `Plano de Conteúdo 0${nextNum}`,
+                                  price: 'R$ 777',
+                                  paymentMethod: 'Pix',
+                                  duration: 'Entrega mensal',
+                                  features: [
+                                    '04 vídeos até 1:30seg (Feed)',
+                                    'Capas para vídeos (Feed)',
+                                    '08 vídeos até 20seg ou cards (Story)',
+                                    'Gerenciamento de postagens e análise dos melhores dias e horários',
+                                    'Acompanhamento, roteirização, direção e posicionamento',
+                                    'Edição dinâmica, cortes essenciais, legenda e trilha sonora',
+                                    'Entrega mensal'
+                                  ],
+                                  highlight: false,
+                                };
+                                return {
+                                  ...prev,
+                                  conteudoPackages: [...currentConteudo, newConteudo]
+                                };
+                              });
+                            }}
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-brand-wine text-white text-xs font-semibold hover:bg-brand-wine-dark transition-colors self-start sm:self-auto shrink-0 cursor-pointer shadow-xs"
+                            id="btn-add-corp-conteudo-option"
+                          >
+                            <Plus className="w-3.5 h-3.5" /> Adicionar Opção de Conteúdo
+                          </button>
+                        )}
+                      </div>
                     </div>
 
-                    <div className="space-y-4">
-                      {(editingProposal.conteudoPackages || []).map((cPkg, cIdx) => (
+                    {editingProposal.hideConteudoSection ? (
+                      <div className="bg-rose-50/80 border border-rose-200 text-rose-800 text-xs px-4 py-3 rounded-2xl flex items-center justify-between gap-3 mb-2">
+                        <div className="flex items-center gap-2">
+                          <EyeOff className="w-4 h-4 text-rose-600 shrink-0" />
+                          <span><strong>Esta seção está desativada.</strong> A seção de produção de conteúdo não será exibida na proposta criada para o cliente. O modelo padrão permanece inalterado.</span>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => setEditingProposal((prev) => prev ? { ...prev, hideConteudoSection: false } : null)}
+                          className="text-xs font-bold text-rose-900 underline hover:text-rose-950 shrink-0 cursor-pointer"
+                        >
+                          Ativar Seção
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="space-y-4">
+                        {(editingProposal.conteudoPackages || []).map((cPkg, cIdx) => (
                         <div
                           key={cPkg.id || cIdx}
                           className="bg-brand-cream/30 p-4 rounded-2xl border border-brand-wine/15 space-y-3"
@@ -2344,45 +2644,101 @@ export default function ProposalManager() {
                         </div>
                       ))}
                     </div>
+                  )}
                   </div>
                 </>
               ) : (
                 /* Packages Section for other categories */
                 <div className="pt-4 border-t border-brand-wine/10">
-                  <div className="flex items-center justify-between mb-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
                     <div>
-                      <h4 className="font-serif text-lg text-brand-text font-semibold">
-                        Pacotes de Investimento
-                      </h4>
-                      <p className="text-xs text-brand-text-soft">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <Camera className="w-4 h-4 text-brand-wine" />
+                        <h4 className="font-serif text-lg text-brand-text font-semibold">
+                          Pacotes de Investimento
+                        </h4>
+                        <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${
+                          editingProposal.hidePhotoSection
+                            ? 'bg-rose-100 text-rose-800 border border-rose-300'
+                            : 'bg-emerald-100 text-emerald-800 border border-emerald-300'
+                        }`}>
+                          {editingProposal.hidePhotoSection ? '✕ Desativada' : `✓ Ativa (${editingProposal.packages.length} opções)`}
+                        </span>
+                      </div>
+                      <p className="text-xs text-brand-text-soft mt-0.5">
                         Ajuste os valores, condições e itens que serão exibidos nesta proposta.
                       </p>
                     </div>
 
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const newPkg: ProposalPackage = {
-                          id: `pkg-${Date.now()}`,
-                          name: 'Novo Pacote',
-                          price: 'R$ 400',
-                          paymentMethod: 'Pix ou Cartão',
-                          duration: 'Até 1h de sessão',
-                          features: ['15 fotos tratadas em alta resolução', 'Galeria online privada'],
-                        };
-                        setEditingProposal((prev) => prev ? {
-                          ...prev,
-                          packages: [...prev.packages, newPkg]
-                        } : null);
-                      }}
-                      className="inline-flex items-center gap-1 text-xs text-brand-wine font-semibold hover:underline cursor-pointer"
-                    >
-                      <Plus className="w-3.5 h-3.5" /> Adicionar Pacote
-                    </button>
+                    <div className="flex items-center gap-2 flex-wrap shrink-0">
+                      {/* Botão de Ativar/Desativar Seção */}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setEditingProposal((prev) => prev ? { ...prev, hidePhotoSection: !prev.hidePhotoSection } : null);
+                        }}
+                        className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer shadow-2xs ${
+                          editingProposal.hidePhotoSection
+                            ? 'bg-rose-50 hover:bg-rose-100 text-rose-800 border border-rose-300'
+                            : 'bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-300'
+                        }`}
+                        title={editingProposal.hidePhotoSection ? 'Clique para reativar esta seção na proposta' : 'Clique para desativar esta seção na proposta'}
+                      >
+                        {editingProposal.hidePhotoSection ? (
+                          <>
+                            <EyeOff className="w-3.5 h-3.5 text-rose-600" />
+                            <span>Seção Desativada</span>
+                          </>
+                        ) : (
+                          <>
+                            <Eye className="w-3.5 h-3.5 text-emerald-600" />
+                            <span>Seção Ativa</span>
+                          </>
+                        )}
+                      </button>
+
+                      {!editingProposal.hidePhotoSection && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const newPkg: ProposalPackage = {
+                              id: `pkg-${Date.now()}`,
+                              name: 'Novo Pacote',
+                              price: 'R$ 400',
+                              paymentMethod: 'Pix ou Cartão',
+                              duration: 'Até 1h de sessão',
+                              features: ['15 fotos tratadas em alta resolução', 'Galeria online privada'],
+                            };
+                            setEditingProposal((prev) => prev ? {
+                              ...prev,
+                              packages: [...prev.packages, newPkg]
+                            } : null);
+                          }}
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-brand-wine/10 text-brand-wine text-xs font-semibold hover:bg-brand-wine hover:text-white transition-colors cursor-pointer"
+                        >
+                          <Plus className="w-3.5 h-3.5" /> Adicionar Pacote
+                        </button>
+                      )}
+                    </div>
                   </div>
 
-                  <div className="space-y-4">
-                    {editingProposal.packages.map((pkg, pIdx) => (
+                  {editingProposal.hidePhotoSection ? (
+                    <div className="bg-rose-50/80 border border-rose-200 text-rose-800 text-xs px-4 py-3 rounded-2xl flex items-center justify-between gap-3 mb-2">
+                      <div className="flex items-center gap-2">
+                        <EyeOff className="w-4 h-4 text-rose-600 shrink-0" />
+                        <span><strong>Esta seção está desativada.</strong> Os pacotes de investimento não serão exibidos na proposta criada para o cliente.</span>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setEditingProposal((prev) => prev ? { ...prev, hidePhotoSection: false } : null)}
+                        className="text-xs font-bold text-rose-900 underline hover:text-rose-950 shrink-0 cursor-pointer"
+                      >
+                        Ativar Seção
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      {editingProposal.packages.map((pkg, pIdx) => (
                       <div
                         key={pkg.id || pIdx}
                         className="bg-brand-cream/30 p-4 rounded-2xl border border-brand-wine/15 space-y-3"
@@ -2527,7 +2883,8 @@ export default function ProposalManager() {
                         </div>
                       </div>
                     ))}
-                  </div>
+                    </div>
+                  )}
                 </div>
               )}
 

@@ -25,6 +25,8 @@ import {
   Proposal, 
   ProposalCategory, 
   CATEGORY_LABELS,
+  CATEGORY_DEFAULT_BEFORE_AFTER,
+  STANDARD_TEMPLATES,
   calculateDefaultInstallments 
 } from '@/lib/propostas';
 import { 
@@ -364,9 +366,11 @@ export default function ProposalView({ category, slug }: ProposalViewProps) {
               )}
             </span>
             <span className="text-white/60 hidden md:inline">•</span>
-            <span className="text-[11px] text-white/80 hidden md:inline-flex items-center gap-1">
-              <Clock className="w-3 h-3 text-white/70" />
-              Válida por {proposal.validityDays} dias
+            <span className="text-[11px] text-white/80 inline-flex items-center gap-1">
+              <Clock className="w-3 h-3 text-white/70 shrink-0" />
+              <span>
+                Válida por {proposal.validityDays || 10} dias - {proposal.proposalDate || (proposal.createdAt ? new Date(proposal.createdAt).toLocaleDateString('pt-BR') : new Date().toLocaleDateString('pt-BR'))} - Enviada por comunicação oficial de Modkovski Fotografia
+              </span>
             </span>
           </div>
 
@@ -390,7 +394,7 @@ export default function ProposalView({ category, slug }: ProposalViewProps) {
             </button>
 
             <a
-              href="#orcamento-personalizado"
+              href={!proposal.hidePhotoSection ? (proposal.category === 'individual' ? '#ensaio-fotografico' : '#orcamento-personalizado') : (!proposal.hideVideoSection ? '#producao-de-video' : '#producao-de-conteudo')}
               className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-white text-brand-wine text-[11px] font-bold uppercase tracking-wider hover:bg-brand-cream transition-all shadow-sm"
             >
               Ver Valores e Pacotes ↓
@@ -468,7 +472,8 @@ export default function ProposalView({ category, slug }: ProposalViewProps) {
         videoTargetId="producao-de-video"
         videoButtonWine={proposal.category === 'individual' || proposal.category === 'personalizado' || proposal.category === 'corporativo'}
         fotoButtonText={proposal.category === 'casamento' || proposal.category === 'personalizado' ? 'VER PROPOSTA' : 'VER PROPOSTA FOTOGRÁFICA'}
-        hideVideoButton={proposal.category === 'casamento'}
+        hideFotoButton={!!proposal.hidePhotoSection}
+        hideVideoButton={!!proposal.hideVideoSection || proposal.category === 'casamento'}
         hideProposalButtons={false}
         customImage={
           proposal.category === 'personalizado'
@@ -511,7 +516,7 @@ export default function ProposalView({ category, slug }: ProposalViewProps) {
       )}
       
       {/* 7. SEÇÃO DE PACOTES E ORÇAMENTO EXCLUSIVO DO CLIENTE (Para corporativo, foto packages + condições) */}
-      {(!isRestricted || proposal.category === 'corporativo') && proposal.category !== 'evento' && (
+      {!proposal.hidePhotoSection && (!isRestricted || proposal.category === 'corporativo') && proposal.category !== 'evento' && (
         <section 
           id={proposal.category === 'individual' ? 'ensaio-fotografico' : 'orcamento-personalizado'} 
           className="w-full py-20 px-4 sm:px-6 lg:px-8 bg-white border-y border-brand-wine/10 relative"
@@ -851,21 +856,18 @@ export default function ProposalView({ category, slug }: ProposalViewProps) {
       )}
 
       {/* Campo Antes e Depois da Edição (Para corporativo e outros) */}
-      {(!isRestricted || proposal.category === 'corporativo') && proposal.category !== 'evento' && (
-        <BeforeAfterSlider 
-          beforeImage={
-            proposal.beforeImage || 
-            (proposal.category === 'corporativo' ? '/images/corporativoantes.jpeg' : '/images/antes.jpg')
-          }
-          afterImage={
-            proposal.afterImage || 
-            (proposal.category === 'corporativo' ? '/images/corporativodepois.jpeg' : '/images/depois.jpg')
-          }
-        />
-      )}
+      {(!isRestricted || proposal.category === 'corporativo') && proposal.category !== 'evento' && (() => {
+        const catDefaults = CATEGORY_DEFAULT_BEFORE_AFTER[proposal.category] || CATEGORY_DEFAULT_BEFORE_AFTER.corporativo;
+        return (
+          <BeforeAfterSlider 
+            beforeImage={proposal.beforeImage || catDefaults.before}
+            afterImage={proposal.afterImage || catDefaults.after}
+          />
+        );
+      })()}
 
       {/* Campo Produção de vídeo (Para corporativo e evento) */}
-      {(proposal.category === 'corporativo' || (!isRestricted && proposal.category === 'evento')) && (() => {
+      {!proposal.hideVideoSection && (proposal.category === 'corporativo' || (!isRestricted && proposal.category === 'evento') || (proposal.videoPackages && proposal.videoPackages.length > 0)) && (() => {
         const videoList = (proposal.videoPackages && proposal.videoPackages.length > 0)
           ? proposal.videoPackages
           : (STANDARD_TEMPLATES.corporativo?.videoPackages || videoSection?.packages || []);
@@ -1114,7 +1116,7 @@ export default function ProposalView({ category, slug }: ProposalViewProps) {
       })()}
 
       {/* Segunda Seção: Produção de Conteúdo (Exclusiva para Corporativo, acima de Como funciona o processo) */}
-      {proposal.category === 'corporativo' && (() => {
+      {!proposal.hideConteudoSection && proposal.category === 'corporativo' && (() => {
         const conteudoList = (proposal.conteudoPackages && proposal.conteudoPackages.length > 0)
           ? proposal.conteudoPackages
           : (STANDARD_TEMPLATES.corporativo?.conteudoPackages || []);

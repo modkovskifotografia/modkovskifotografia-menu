@@ -9,6 +9,9 @@ export const PROPOSAL_CUSTOM_EVENT = 'modkovski:proposal-update';
 function enrichProposal(proposal: Proposal): Proposal {
   return {
     ...proposal,
+    hidePhotoSection: proposal.hidePhotoSection ?? false,
+    hideVideoSection: proposal.hideVideoSection ?? false,
+    hideConteudoSection: proposal.hideConteudoSection ?? false,
     packages: (proposal.packages || []).map(pkg => ({
       ...pkg,
       installments: calculateDefaultInstallments(pkg.price)
@@ -71,9 +74,13 @@ export function getInitialProposalSnapshot(category: string, slug: string): Prop
           return enrichProposal({
             ...template,
             ...found,
+            hidePhotoSection: found.hidePhotoSection ?? false,
+            hideVideoSection: found.hideVideoSection ?? false,
+            hideConteudoSection: found.hideConteudoSection ?? false,
             packages: found.packages && found.packages.length > 0 ? found.packages : template.packages,
             videoPackages: found.videoPackages !== undefined ? found.videoPackages : template.videoPackages,
             conteudoPackages: found.conteudoPackages !== undefined ? found.conteudoPackages : template.conteudoPackages,
+            proposalDate: found.proposalDate || template.proposalDate,
             title: found.title || template.title,
             subtitle: found.subtitle || template.subtitle,
             investmentNote: found.investmentNote || template.investmentNote,
@@ -97,6 +104,7 @@ export function getInitialProposalSnapshot(category: string, slug: string): Prop
     category: (cleanCategory as ProposalCategory) || 'individual',
     clientName: formattedName || 'Cliente',
     clientSlug: cleanSlug,
+    proposalDate: new Date().toLocaleDateString('pt-BR'),
     isTemplate: false,
     packages: template.packages,
     videoPackages: cleanCategory === 'casamento' ? [] : template.videoPackages,
@@ -216,9 +224,13 @@ export async function fetchProposalBySlug(
     return enrichProposal({
       ...template,
       ...foundProposal,
+      hidePhotoSection: foundProposal.hidePhotoSection ?? false,
+      hideVideoSection: foundProposal.hideVideoSection ?? false,
+      hideConteudoSection: foundProposal.hideConteudoSection ?? false,
       packages: foundProposal.packages && foundProposal.packages.length > 0 ? foundProposal.packages : template.packages,
       videoPackages: foundProposal.videoPackages !== undefined ? foundProposal.videoPackages : template.videoPackages,
       conteudoPackages: foundProposal.conteudoPackages !== undefined ? foundProposal.conteudoPackages : template.conteudoPackages,
+      proposalDate: foundProposal.proposalDate || template.proposalDate,
       title: foundProposal.title || template.title,
       subtitle: foundProposal.subtitle || template.subtitle,
       investmentNote: foundProposal.investmentNote || template.investmentNote,
@@ -235,6 +247,7 @@ export async function fetchProposalBySlug(
     category: (cleanCategory as ProposalCategory) || 'individual',
     clientName: formattedName || 'Cliente',
     clientSlug: cleanSlug,
+    proposalDate: new Date().toLocaleDateString('pt-BR'),
     isTemplate: false,
     createdAt: new Date().toISOString(),
     packages: template.packages,

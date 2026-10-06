@@ -11,6 +11,13 @@ interface BeforeAfterSliderProps {
   afterAlt?: string;
 }
 
+const getExtensionAlternative = (path?: string): string | null => {
+  if (!path) return null;
+  if (path.endsWith('.jpeg')) return path.replace(/\.jpeg$/, '.jpg');
+  if (path.endsWith('.jpg')) return path.replace(/\.jpg$/, '.jpeg');
+  return null;
+};
+
 export default function BeforeAfterSlider({
   beforeImage = '/images/antes.jpg',
   afterImage = '/images/depois.jpg',
@@ -20,6 +27,74 @@ export default function BeforeAfterSlider({
   const [sliderPosition, setSliderPosition] = useState(50);
   const [isDragging, setIsDragging] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  
+  // Track current resolved src to try .jpeg, .jpg and fallback
+  const [imgState, setImgState] = useState({
+    prevBeforeImage: beforeImage,
+    beforeSrc: beforeImage,
+    beforeAttempt: 0,
+    prevAfterImage: afterImage,
+    afterSrc: afterImage,
+    afterAttempt: 0,
+  });
+
+  if (beforeImage !== imgState.prevBeforeImage) {
+    setImgState(prev => ({
+      ...prev,
+      prevBeforeImage: beforeImage,
+      beforeSrc: beforeImage,
+      beforeAttempt: 0,
+    }));
+  }
+
+  if (afterImage !== imgState.prevAfterImage) {
+    setImgState(prev => ({
+      ...prev,
+      prevAfterImage: afterImage,
+      afterSrc: afterImage,
+      afterAttempt: 0,
+    }));
+  }
+
+  const handleBeforeError = useCallback(() => {
+    setImgState(prev => {
+      if (prev.beforeAttempt === 0) {
+        const alt = getExtensionAlternative(prev.prevBeforeImage);
+        if (alt && alt !== prev.beforeSrc) {
+          return {
+            ...prev,
+            beforeAttempt: 1,
+            beforeSrc: alt,
+          };
+        }
+      }
+      return {
+        ...prev,
+        beforeAttempt: 2,
+        beforeSrc: '/images/antes.jpg',
+      };
+    });
+  }, []);
+
+  const handleAfterError = useCallback(() => {
+    setImgState(prev => {
+      if (prev.afterAttempt === 0) {
+        const alt = getExtensionAlternative(prev.prevAfterImage);
+        if (alt && alt !== prev.afterSrc) {
+          return {
+            ...prev,
+            afterAttempt: 1,
+            afterSrc: alt,
+          };
+        }
+      }
+      return {
+        ...prev,
+        afterAttempt: 2,
+        afterSrc: '/images/depois.jpg',
+      };
+    });
+  }, []);
 
   const handleMove = useCallback((clientX: number) => {
     if (!containerRef.current) return;
@@ -101,7 +176,7 @@ export default function BeforeAfterSlider({
           {/* Layer 1: After Image (Com Edição Final - Full Canvas) */}
           <div className="absolute inset-0 w-full h-full pointer-events-none">
             <Image
-              src={afterImage}
+              src={imgState.afterSrc}
               alt={afterAlt}
               fill
               sizes="(max-width: 768px) 100vw, 440px"
@@ -109,6 +184,7 @@ export default function BeforeAfterSlider({
               priority
               unoptimized
               referrerPolicy="no-referrer"
+              onError={handleAfterError}
             />
             {/* Badge Com Edição Final - Clipped to only show when slider reveals this side */}
             <div 
@@ -134,7 +210,7 @@ export default function BeforeAfterSlider({
             }}
           >
             <Image
-              src={beforeImage}
+              src={imgState.beforeSrc}
               alt={beforeAlt}
               fill
               sizes="(max-width: 768px) 100vw, 440px"
@@ -142,6 +218,7 @@ export default function BeforeAfterSlider({
               priority
               unoptimized
               referrerPolicy="no-referrer"
+              onError={handleBeforeError}
             />
             {/* Badge Original / Sem Edição - Hidden when slider is pushed to the left */}
             <div 

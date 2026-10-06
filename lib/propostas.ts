@@ -29,11 +29,15 @@ export interface Proposal {
   subtitle: string;
   welcomeMessage: string;
   validityDays: number;
+  proposalDate?: string;
   createdAt: string;
   investmentNote: string;
   packages: ProposalPackage[];
   videoPackages?: ProposalPackage[];
   conteudoPackages?: ProposalPackage[];
+  hidePhotoSection?: boolean;
+  hideVideoSection?: boolean;
+  hideConteudoSection?: boolean;
   customObservations?: string;
   isTemplate?: boolean;
   status?: ProposalStatus;
@@ -101,6 +105,33 @@ export function calculateDefaultInstallments(priceStr: string): { times: string;
   });
 }
 
+export const CATEGORY_DEFAULT_BEFORE_AFTER: Record<ProposalCategory, { before: string; after: string }> = {
+  individual: {
+    before: '/images/individualantes.jpeg',
+    after: '/images/individualdepois.jpeg'
+  },
+  casal: {
+    before: '/images/casalantes.jpeg',
+    after: '/images/casaldepois.jpeg'
+  },
+  corporativo: {
+    before: '/images/corporativoantes.jpeg',
+    after: '/images/corporativodepois.jpeg'
+  },
+  casamento: {
+    before: '/images/casamentoantes.jpeg',
+    after: '/images/casamentodepois.jpeg'
+  },
+  evento: {
+    before: '/images/eventoantes.jpeg',
+    after: '/images/eventodepois.jpeg'
+  },
+  personalizado: {
+    before: '/images/personalizadoantes.jpeg',
+    after: '/images/personalizadodepois.jpeg'
+  }
+};
+
 export const STANDARD_TEMPLATES: Record<ProposalCategory, Proposal> = {
   individual: {
     id: 'template-individual',
@@ -113,6 +144,8 @@ export const STANDARD_TEMPLATES: Record<ProposalCategory, Proposal> = {
     validityDays: 10,
     createdAt: new Date().toISOString(),
     investmentNote: 'Reserva mediante sinal de 30% e o restante no dia do ensaio, ou valor integral parcelado em até 12x no cartão de crédito.',
+    beforeImage: '/images/individualantes.jpeg',
+    afterImage: '/images/individualdepois.jpeg',
     isTemplate: true,
     packages: [
       {
@@ -258,6 +291,8 @@ export const STANDARD_TEMPLATES: Record<ProposalCategory, Proposal> = {
     validityDays: 10,
     createdAt: new Date().toISOString(),
     investmentNote: 'Reserva confirmada mediante sinal de 30% e o restante no dia do ensaio, ou valor integral parcelado em até 12x no cartão de crédito.',
+    beforeImage: '/images/casalantes.jpeg',
+    afterImage: '/images/casaldepois.jpeg',
     isTemplate: true,
     packages: [
       {
@@ -636,6 +671,8 @@ export const STANDARD_TEMPLATES: Record<ProposalCategory, Proposal> = {
     validityDays: 10,
     createdAt: new Date().toISOString(),
     investmentNote: 'Contrato formal com garantia de data. Pagamento facilitado em até 12x no cartão ou entrada de 30% + parcelas.',
+    beforeImage: '/images/casamentoantes.jpeg',
+    afterImage: '/images/casamentodepois.jpeg',
     isTemplate: true,
     packages: [
       {
@@ -719,6 +756,8 @@ export const STANDARD_TEMPLATES: Record<ProposalCategory, Proposal> = {
     validityDays: 10,
     createdAt: new Date().toISOString(),
     investmentNote: 'Reserva mediante sinal de 30% e o restante no dia do evento, ou parcelado em até 12x no cartão.',
+    beforeImage: '/images/eventoantes.jpeg',
+    afterImage: '/images/eventodepois.jpeg',
     isTemplate: true,
     packages: [
       {
@@ -864,6 +903,8 @@ export const STANDARD_TEMPLATES: Record<ProposalCategory, Proposal> = {
     validityDays: 10,
     createdAt: new Date().toISOString(),
     investmentNote: 'Valores e prazos customizados conforme acordado. Pagamento facilitado via Pix ou em até 12x no cartão de crédito.',
+    beforeImage: '/images/personalizadoantes.jpeg',
+    afterImage: '/images/personalizadodepois.jpeg',
     isTemplate: true,
     packages: [
       {

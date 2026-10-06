@@ -12,6 +12,7 @@ interface HeroProps {
   videoTargetId?: string;
   videoButtonWine?: boolean;
   fotoButtonText?: string;
+  hideFotoButton?: boolean;
   hideVideoButton?: boolean;
   hideProposalButtons?: boolean;
   customImage?: string;
@@ -24,6 +25,7 @@ export default function Hero({
   videoTargetId = 'experiencias-sec-2',
   videoButtonWine = false,
   fotoButtonText = 'VER PROPOSTA FOTOGRÁFICA',
+  hideFotoButton = false,
   hideVideoButton = false,
   hideProposalButtons = false,
   customImage,
@@ -92,22 +94,24 @@ export default function Hero({
               &ldquo;{customQuote || brandConfig.hero.quote}&rdquo;
             </motion.p>
 
-            {!hideProposalButtons && (
+            {!hideProposalButtons && (!hideFotoButton || !hideVideoButton) && (
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.7 }}
                 className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4"
               >
-                <motion.button
-                  whileTap={{ scale: 0.98 }}
-                  onClick={() => scrollToSection(fotoTargetId)}
-                  className="flex items-center justify-center gap-2 bg-brand-wine text-white hover:bg-brand-wine-dark py-4 px-6 rounded-full text-xs font-semibold tracking-[0.15em] uppercase transition-all duration-300 shadow-sm cursor-pointer active:scale-[0.98]"
-                  id="hero-btn-prop-foto"
-                >
-                  <Camera className="w-4 h-4 shrink-0" strokeWidth={1.8} />
-                  <span>{fotoButtonText}</span>
-                </motion.button>
+                {!hideFotoButton && (
+                  <motion.button
+                    whileTap={{ scale: 0.98 }}
+                    onClick={() => scrollToSection(fotoTargetId)}
+                    className="flex items-center justify-center gap-2 bg-brand-wine text-white hover:bg-brand-wine-dark py-4 px-6 rounded-full text-xs font-semibold tracking-[0.15em] uppercase transition-all duration-300 shadow-sm cursor-pointer active:scale-[0.98]"
+                    id="hero-btn-prop-foto"
+                  >
+                    <Camera className="w-4 h-4 shrink-0" strokeWidth={1.8} />
+                    <span>{fotoButtonText}</span>
+                  </motion.button>
+                )}
 
                 {!hideVideoButton && (
                   <motion.button
