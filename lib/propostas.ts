@@ -756,7 +756,7 @@ export const STANDARD_TEMPLATES: Record<ProposalCategory, Proposal> = {
     welcomeMessage: 'Seja um aniversário marcante, batizado ou celebração em família, nossa cobertura garante registros alegres, vivos e espontâneos para recordar para sempre.',
     validityDays: 10,
     createdAt: new Date().toISOString(),
-    investmentNote: 'Reserva mediante sinal de 30% e o restante no dia do evento, ou parcelado em até 12x no cartão.',
+    investmentNote: 'Reserva mediante sinal de 30% na assinatura do contrato e o restante no dia do evento, ou parcelado em até 12x no cartão. Hora extra no valor de R$ 50,00.',
     beforeImage: '/images/eventoantes.jpeg',
     afterImage: '/images/eventodepois.jpeg',
     isTemplate: true,
@@ -827,63 +827,67 @@ export const STANDARD_TEMPLATES: Record<ProposalCategory, Proposal> = {
     videoPackages: [
       {
         id: 'vid-e-01',
-        name: 'Prático',
+        name: 'Cobertura Essencial',
         highlight: false,
-        price: 'R$ 250',
+        price: 'R$ 200',
         paymentMethod: 'Pix',
-        duration: '01 vídeo teaser de até 1:30seg',
+        duration: 'Cobertura de até 1:30h',
         features: [
-          '01 vídeo teaser com destaques',
-          '01 capa personalizada para vídeo',
-          'Edição dinâmica com trilha sonora',
-          'Prazo de entrega de até 72 horas'
+          '01 vídeo de até 1 min e 30 seg',
+          '01 capa personalizada para o vídeo',
+          '01 vídeo brinde de até 20 seg',
+          'Edição dinâmica, cortes dos melhores momentos e trilha sonora',
+          'Prazo de entrega de até 48 horas úteis'
         ],
-        installments: calculateDefaultInstallments('R$ 250')
+        installments: calculateDefaultInstallments('R$ 200')
       },
       {
         id: 'vid-e-02',
-        name: 'Essencial',
+        name: 'Cobertura Clássica',
         highlight: false,
-        price: 'R$ 450',
+        price: 'R$ 390',
         paymentMethod: 'Pix',
-        duration: '02 vídeos até 1:30seg',
+        duration: 'Cobertura de até 2:30h',
         features: [
-          '02 vídeos em formato Reels/Social',
-          '02 capas para vídeo',
+          '02 vídeos de até 1 min e 30 seg',
+          '02 capas personalizadas para os vídeos',
+          '01 vídeo brinde de até 20 seg',
           'Edição dinâmica, cortes dos melhores momentos e trilha sonora',
-          'Prazo de entrega de até 10 dias'
+          'Prazo de entrega de até 72 horas úteis'
         ],
-        installments: calculateDefaultInstallments('R$ 450')
+        installments: calculateDefaultInstallments('R$ 390')
       },
       {
         id: 'vid-e-03',
-        name: 'Presença',
+        name: 'Cobertura Especial',
         highlight: false,
-        price: 'R$ 750',
+        price: 'R$ 500',
         paymentMethod: 'Pix',
-        duration: '01 Filme Resumo (3min) + 02 Reels',
+        duration: 'Cobertura de até 4h',
         features: [
-          '01 Filme resumo do evento (até 3min)',
-          '02 Vídeos verticais para redes sociais',
-          'Captação completa em alta definição',
-          'Prazo de entrega de até 15 dias'
+          '03 vídeos de até 1 min e 30 seg',
+          '03 capas personalizadas para os vídeos',
+          '01 vídeo brinde de até 20 seg',
+          'Edição dinâmica, cortes dos melhores momentos e trilha sonora',
+          'Prazo de entrega de até 72 horas úteis'
         ],
-        installments: calculateDefaultInstallments('R$ 750')
+        installments: calculateDefaultInstallments('R$ 500')
       },
       {
         id: 'vid-e-04',
-        name: 'Destaques',
+        name: 'Cobertura Completa',
         highlight: true,
-        price: 'R$ 1.100',
+        price: 'R$ 650',
         paymentMethod: 'Pix',
-        duration: 'Filme Oficial + 04 Reels de Destaques',
+        duration: 'Cobertura de até 5:30h',
         features: [
-          'Filme oficial completo do evento',
-          '04 Vídeos curtos de momentos especiais',
-          'Captação de áudio ambiente e depoimentos',
-          'Prazo de entrega de até 20 dias'
+          '04 vídeos de até 1 min e 30 seg',
+          '04 capas personalizadas para os vídeos',
+          '01 vídeo brinde de até 20 seg',
+          'Edição dinâmica, cortes dos melhores momentos e trilha sonora',
+          'Prazo de entrega de até 96 horas úteis'
         ],
-        installments: calculateDefaultInstallments('R$ 1.100')
+        installments: calculateDefaultInstallments('R$ 650')
       }
     ],
     conteudoPackages: [

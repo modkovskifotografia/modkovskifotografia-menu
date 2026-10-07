@@ -1103,9 +1103,19 @@ export default function ProposalView({ category, slug }: ProposalViewProps) {
                   })}
                 </div>
 
+                {/* Observação de permanência adicional em vermelho vinho */}
+                {proposal.category === 'evento' && (
+                  <div className="mt-12 max-w-4xl mx-auto bg-brand-wine/5 border border-brand-wine/20 rounded-2xl p-4 sm:p-4.5 flex items-start sm:items-center gap-3 text-brand-wine shadow-xs">
+                    <MapPin className="w-4 h-4 text-brand-wine shrink-0 mt-0.5 sm:mt-0" />
+                    <p className="text-xs sm:text-sm font-medium leading-relaxed">
+                      <strong>Permanência adicional:</strong> Em caso de necessidade de hora extra na locação, será cobrado R$ 50,00/hora após prévio alinhamento.
+                    </p>
+                  </div>
+                )}
+
                 {/* Condições comerciais de vídeo (Apenas para evento, não para corporativo) */}
                 {proposal.category === 'evento' && (
-                  <div className="mt-14 bg-brand-cream/40 rounded-3xl p-6 sm:p-8 border border-brand-wine/10 max-w-4xl mx-auto">
+                  <div className="mt-6 bg-brand-cream/40 rounded-3xl p-6 sm:p-8 border border-brand-wine/10 max-w-4xl mx-auto">
                     <div className="flex items-center gap-2 mb-2">
                       <FileCheck2 className="w-4 h-4 text-brand-wine" />
                       <span className="text-xs uppercase tracking-[0.2em] text-brand-wine font-semibold">
@@ -1113,7 +1123,7 @@ export default function ProposalView({ category, slug }: ProposalViewProps) {
                       </span>
                     </div>
                     <p className="text-xs sm:text-sm text-brand-text-soft leading-relaxed mb-4">
-                      {proposal.investmentNote}
+                      {proposal.investmentNote || 'Reserva mediante sinal de 30% na assinatura do contrato e o restante no dia do evento, ou parcelado em até 12x no cartão. Hora extra no valor de R$ 50,00.'}
                     </p>
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-3 border-t border-brand-wine/10 text-xs text-brand-text">
                       <div className="flex items-center gap-2">
