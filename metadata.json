@@ -1,6 +1,6 @@
 {
   "name": "Modkovski Fotografia",
-  "description": "Proposta comercial e portfólio de fotografia e vídeos.",
+  "description": "Portfólio para ensaios fotográficos, produções de vídeos, cobertura de eventos e casamentos.",
   "requestFramePermissions": [],
   "majorCapabilities": [
     "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"

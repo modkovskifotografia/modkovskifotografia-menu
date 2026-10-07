@@ -3,7 +3,7 @@ import ProposalView from '@/components/ProposalView';
 
 export const metadata = {
   title: 'Proposta Corporativa | Modkovski Fotografia',
-  description: 'Proposta oficial de produção corporativa.',
+  description: 'Portfólio para ensaios fotográficos, produções de vídeos, cobertura de eventos e casamentos.',
 };
 
 export default function CorporativoProposalDefaultPage() {
