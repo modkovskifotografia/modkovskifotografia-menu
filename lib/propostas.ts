@@ -42,6 +42,7 @@ export interface Proposal {
   isTemplate?: boolean;
   status?: ProposalStatus;
   viewedAt?: string;
+  updatedAt?: string;
   beforeImage?: string;
   afterImage?: string;
 }
@@ -602,11 +603,11 @@ export const STANDARD_TEMPLATES: Record<ProposalCategory, Proposal> = {
           '04 vídeos até 1:30seg (Feed)',
           '04 vídeos até 20seg ou cards/carrossel (Feed)',
           'Capas para vídeos (Feed)',
-          '08 vídeos até 20seg ou cards (Story)',
+          '12 vídeos até 20seg ou cards (Story)',
           'Gerenciamento de postagens e área de Destaques do Instagram, análise dos melhores dias e horários',
           'Acompanhamento, roteirização, direção e posicionamento',
           'Edição dinâmica, cortes essenciais, legenda e trilha sonora',
-          'Entrega mensal, postagem média de 2x feed e 2x story na semana',
+          'Entrega mensal, postagem média de 2x feed e 3x story na semana',
           '__DIVIDER__',
           '*Bônus: 05 capas para Destaques do Instagram.',
           'Card ou vídeo curto extra em caso de faltar.'

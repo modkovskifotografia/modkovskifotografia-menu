@@ -591,6 +591,19 @@ export default function ProposalManager() {
     URL.revokeObjectURL(url);
   };
 
+  const exportToJSON = () => {
+    const jsonContent = JSON.stringify(proposals, null, 2);
+    const blob = new Blob([jsonContent], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.setAttribute('href', url);
+    link.setAttribute('download', 'propostas.json');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <div className="min-h-screen bg-brand-cream text-brand-text selection:bg-brand-wine selection:text-white pb-24">
       
@@ -1011,15 +1024,26 @@ export default function ProposalManager() {
               </button>
             )}
 
-            {/* Exportar CSV */}
-            <button
-              onClick={exportToCSV}
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-brand-wine/25 bg-white hover:bg-brand-wine hover:text-white text-xs text-brand-wine font-semibold transition-all shadow-2xs hover:shadow-xs cursor-pointer ml-auto"
-              title="Exportar lista de propostas filtradas para planilha CSV (Excel / Planilhas Google)"
-            >
-              <FileSpreadsheet className="w-3.5 h-3.5" />
-              <span>Exportar CSV</span>
-            </button>
+            {/* Exportar CSV e JSON */}
+            <div className="flex items-center gap-2 ml-auto">
+              <button
+                onClick={exportToJSON}
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-brand-wine/25 bg-white hover:bg-brand-wine hover:text-white text-xs text-brand-wine font-semibold transition-all shadow-2xs hover:shadow-xs cursor-pointer"
+                title="Baixar arquivo propostas.json atualizado para salvar no GitHub"
+              >
+                <Download className="w-3.5 h-3.5" />
+                <span>Baixar JSON (GitHub)</span>
+              </button>
+
+              <button
+                onClick={exportToCSV}
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-brand-wine/25 bg-white hover:bg-brand-wine hover:text-white text-xs text-brand-wine font-semibold transition-all shadow-2xs hover:shadow-xs cursor-pointer"
+                title="Exportar lista de propostas filtradas para planilha CSV (Excel / Planilhas Google)"
+              >
+                <FileSpreadsheet className="w-3.5 h-3.5" />
+                <span>Exportar CSV</span>
+              </button>
+            </div>
           </div>
 
           {filteredProposals.length === 0 ? (

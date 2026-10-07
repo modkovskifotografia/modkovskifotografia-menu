@@ -3,6 +3,9 @@ import fs from 'fs';
 import path from 'path';
 import { Proposal, ProposalCategory, STANDARD_TEMPLATES, calculateDefaultInstallments } from '@/lib/propostas';
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 const DATA_FILE = path.join(process.cwd(), 'data', 'propostas.json');
 
 function enrichProposal(proposal: Proposal): Proposal {
@@ -180,7 +183,16 @@ export async function GET(req: NextRequest) {
         found.viewedAt = new Date().toISOString();
         writeDataFile(list);
       }
-      return NextResponse.json({ success: true, proposal: enrichProposal(found) });
+      return NextResponse.json(
+        { success: true, proposal: enrichProposal(found) },
+        {
+          headers: {
+            'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+            'Pragma': 'no-cache',
+            'Expires': '0',
+          },
+        }
+      );
     }
     
     // Fallback: Return a dynamic proposal based on STANDARD_TEMPLATES and save it to active proposals list
@@ -207,10 +219,28 @@ export async function GET(req: NextRequest) {
     list.unshift(enrichedDynamic);
     writeDataFile(list);
 
-    return NextResponse.json({ success: true, proposal: enrichedDynamic });
+    return NextResponse.json(
+      { success: true, proposal: enrichedDynamic },
+      {
+        headers: {
+          'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+          'Pragma': 'no-cache',
+          'Expires': '0',
+        },
+      }
+    );
   }
 
-  return NextResponse.json({ success: true, proposals: list.map(enrichProposal) });
+  return NextResponse.json(
+    { success: true, proposals: list.map(enrichProposal) },
+    {
+      headers: {
+        'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0',
+      },
+    }
+  );
 }
 
 // POST: create new proposal
@@ -236,6 +266,7 @@ export async function POST(req: NextRequest) {
       ...body,
       id: body.id || `prop-${Date.now()}-${Math.random().toString(36).substr(2, 6)}`,
       createdAt: body.createdAt || new Date().toISOString(),
+      updatedAt: body.updatedAt || new Date().toISOString(),
       isTemplate: false,
     });
 
@@ -247,7 +278,16 @@ export async function POST(req: NextRequest) {
 
     writeDataFile(list);
 
-    return NextResponse.json({ success: true, proposal: newProposal });
+    return NextResponse.json(
+      { success: true, proposal: newProposal },
+      {
+        headers: {
+          'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+          'Pragma': 'no-cache',
+          'Expires': '0',
+        },
+      }
+    );
   } catch (err) {
     console.error('Error in POST /api/propostas:', err);
     return NextResponse.json({ success: false, message: 'Erro ao salvar proposta' }, { status: 500 });

@@ -154,10 +154,18 @@ export async function fetchAllProposals(): Promise<Proposal[]> {
     if (!map.has(key)) {
       map.set(key, p);
     } else {
-      // If server has it but local has newer or edits, we can prefer or merge
-      const existing = map.get(key)!;
-      // Keep whichever has more recent createdAt or keep local if customized
-      map.set(key, { ...existing, ...p });
+      const serverProp = map.get(key)!;
+      const localUpdated = p.updatedAt ? new Date(p.updatedAt).getTime() : 0;
+      const serverUpdated = serverProp.updatedAt 
+        ? new Date(serverProp.updatedAt).getTime() 
+        : (serverProp.createdAt ? new Date(serverProp.createdAt).getTime() : 0);
+      
+      // If local is strictly newer than server, use local edits, otherwise server is authoritative
+      if (localUpdated > serverUpdated) {
+        map.set(key, { ...serverProp, ...p });
+      } else {
+        map.set(key, serverProp);
+      }
     }
   });
 
@@ -197,6 +205,7 @@ export async function fetchProposalBySlug(
       const data = await res.json();
       if (data.success && data.proposal) {
         foundProposal = data.proposal;
+        updateLocalCache(data.proposal);
       }
     }
   } catch (err) {
@@ -267,11 +276,16 @@ export async function fetchProposalBySlug(
 }
 
 export async function saveProposalAction(proposal: Proposal): Promise<Proposal> {
+  const proposalToSave: Proposal = {
+    ...proposal,
+    updatedAt: new Date().toISOString(),
+  };
+
   try {
     const res = await fetch('/api/propostas', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(proposal),
+      body: JSON.stringify(proposalToSave),
     });
     if (res.ok) {
       const data = await res.json();
@@ -286,8 +300,8 @@ export async function saveProposalAction(proposal: Proposal): Promise<Proposal> 
   }
 
   // Local fallback save
-  updateLocalCache(proposal);
-  return proposal;
+  updateLocalCache(proposalToSave);
+  return proposalToSave;
 }
 
 export async function updateProposalStatusAction(
