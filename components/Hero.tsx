@@ -21,6 +21,7 @@ interface HeroProps {
   customImage?: string;
   customTitle?: string;
   customQuote?: string;
+  imagePosition?: string;
 }
 
 export default function Hero({
@@ -37,6 +38,7 @@ export default function Hero({
   customImage,
   customTitle,
   customQuote,
+  imagePosition,
 }: HeroProps = {}) {
   const [hasImageError, setHasImageError] = useState(false);
   const targetImage = customImage || brandConfig.hero.image;
@@ -190,9 +192,9 @@ export default function Hero({
           >
             <Image
               src={imageSrc}
-              alt="Casamento Letícia Faustino - Modkovski Fotografia"
+              alt="Modkovski Fotografia"
               fill
-              className="object-cover object-center"
+              className={`object-cover ${imagePosition || 'object-center'}`}
               onError={handleImageError}
               priority
               sizes="(max-width: 1024px) 100vw, 45vw"

@@ -1,13 +1,30 @@
+import React from 'react';
 import Link from 'next/link';
+import { ArrowLeft, Home } from 'lucide-react';
 
 export default function NotFound() {
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-brand-cream text-brand-wine px-4">
-      <h2 className="text-3xl font-serif mb-4">Página não encontrada</h2>
-      <p className="text-brand-text-soft mb-6">A página que você está procurando não existe ou foi movida.</p>
-      <Link href="/" className="px-6 py-3 bg-brand-wine text-white rounded-md text-sm font-semibold tracking-wider uppercase hover:bg-brand-wine-dark transition-colors">
-        Voltar para a Página Inicial
-      </Link>
+    <div className="min-h-screen bg-brand-sand flex items-center justify-center p-6 text-center">
+      <div className="max-w-md w-full bg-white rounded-3xl p-8 shadow-xl border border-brand-wine/10 space-y-6">
+        <span className="text-xs font-semibold tracking-[0.25em] text-brand-wine uppercase block">
+          Página Não Encontrada
+        </span>
+        <h1 className="font-serif text-5xl font-light text-brand-text">
+          404
+        </h1>
+        <p className="text-sm text-brand-text-soft leading-relaxed">
+          A página ou proposta que você está procurando não existe, foi movida ou o link informado está incorreto.
+        </p>
+        <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
+          <Link
+            href="/"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-brand-wine text-white text-xs font-semibold uppercase tracking-wider hover:bg-brand-wine-dark transition-all shadow-md"
+          >
+            <Home className="w-4 h-4" />
+            Voltar ao Início
+          </Link>
+        </div>
+      </div>
     </div>
   );
 }

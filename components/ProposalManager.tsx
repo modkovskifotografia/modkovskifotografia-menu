@@ -316,14 +316,14 @@ export default function ProposalManager() {
       newProposal.packages = JSON.parse(JSON.stringify(template.packages));
       newProposal.videoPackages = template.videoPackages ? JSON.parse(JSON.stringify(template.videoPackages)) : [];
     }
-    if (cat === 'corporativo') {
+    if (cat === 'corporativo' || cat === 'evento') {
       newProposal.title = template.title;
       newProposal.subtitle = template.subtitle;
       newProposal.welcomeMessage = template.welcomeMessage;
       newProposal.investmentNote = template.investmentNote;
       newProposal.validityDays = template.validityDays || 10;
-      newProposal.beforeImage = template.beforeImage || '/images/corporativoantes.jpeg';
-      newProposal.afterImage = template.afterImage || '/images/corporativodepois.jpeg';
+      newProposal.beforeImage = template.beforeImage || (cat === 'evento' ? '/images/eventoantes.jpeg' : '/images/corporativoantes.jpeg');
+      newProposal.afterImage = template.afterImage || (cat === 'evento' ? '/images/eventodepois.jpeg' : '/images/corporativodepois.jpeg');
       newProposal.packages = JSON.parse(JSON.stringify(template.packages));
       newProposal.videoPackages = template.videoPackages ? JSON.parse(JSON.stringify(template.videoPackages)) : [];
       newProposal.conteudoPackages = template.conteudoPackages ? JSON.parse(JSON.stringify(template.conteudoPackages)) : [];
@@ -355,15 +355,16 @@ export default function ProposalManager() {
         cloned.videoPackages = JSON.parse(JSON.stringify(STANDARD_TEMPLATES.individual.videoPackages || []));
       }
     }
-    if (cloned.category === 'corporativo') {
+    if (cloned.category === 'corporativo' || cloned.category === 'evento') {
+      const tmplCategory = STANDARD_TEMPLATES[cloned.category] || STANDARD_TEMPLATES.evento;
       if (!cloned.packages || cloned.packages.length === 0) {
-        cloned.packages = JSON.parse(JSON.stringify(STANDARD_TEMPLATES.corporativo.packages || []));
+        cloned.packages = JSON.parse(JSON.stringify(tmplCategory.packages || []));
       }
       if (!cloned.videoPackages || cloned.videoPackages.length === 0) {
-        cloned.videoPackages = JSON.parse(JSON.stringify(STANDARD_TEMPLATES.corporativo.videoPackages || []));
+        cloned.videoPackages = JSON.parse(JSON.stringify(tmplCategory.videoPackages || []));
       }
       if (!cloned.conteudoPackages || cloned.conteudoPackages.length === 0) {
-        cloned.conteudoPackages = JSON.parse(JSON.stringify(STANDARD_TEMPLATES.corporativo.conteudoPackages || []));
+        cloned.conteudoPackages = JSON.parse(JSON.stringify(tmplCategory.conteudoPackages || []));
       }
     }
     if (!cloned.status) cloned.status = 'nova';
@@ -1910,16 +1911,16 @@ export default function ProposalManager() {
                   )}
                   </div>
                 </>
-              ) : editingProposal.category === 'corporativo' ? (
+              ) : (editingProposal.category === 'corporativo' || editingProposal.category === 'evento') ? (
                 <>
-                  {/* 1. Ensaio Fotográfico */}
+                  {/* 1. Ensaio Fotográfico / Cobertura Fotográfica */}
                   <div className="pt-4 border-t border-brand-wine/10" id="section-modal-corp-foto">
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
                       <div>
                         <div className="flex items-center gap-2 flex-wrap">
                           <Camera className="w-4 h-4 text-brand-wine" />
                           <h4 className="font-serif text-lg text-brand-text font-semibold">
-                            1. Ensaio Fotográfico
+                            {editingProposal.category === 'evento' ? '1. Cobertura Fotográfica' : '1. Ensaio Fotográfico'}
                           </h4>
                           <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${
                             editingProposal.hidePhotoSection
@@ -1930,7 +1931,9 @@ export default function ProposalManager() {
                           </span>
                         </div>
                         <p className="text-xs text-brand-text-soft mt-0.5">
-                          Opções de ensaio fotográfico corporativo (Essencial, Clássico, Especial e Completo).
+                          {editingProposal.category === 'evento' 
+                            ? 'Opções de cobertura fotográfica para o evento (Essencial, Clássica, Especial e Completa).'
+                            : 'Opções de ensaio fotográfico corporativo (Essencial, Clássico, Especial e Completo).'}
                         </p>
                       </div>
 
@@ -2169,14 +2172,14 @@ export default function ProposalManager() {
                   )}
                   </div>
 
-                  {/* 2. Produção de Vídeo */}
+                  {/* 2. Produção de Vídeo / Cobertura de Vídeos */}
                   <div className="pt-6 border-t border-brand-wine/10" id="section-modal-corp-video">
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
                       <div>
                         <div className="flex items-center gap-2 flex-wrap">
                           <Video className="w-4 h-4 text-brand-wine" />
                           <h4 className="font-serif text-lg text-brand-text font-semibold">
-                            2. Produção de Vídeo
+                            {editingProposal.category === 'evento' ? '2. Cobertura de Vídeos' : '2. Produção de Vídeo'}
                           </h4>
                           <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${
                             editingProposal.hideVideoSection
@@ -2187,7 +2190,9 @@ export default function ProposalManager() {
                           </span>
                         </div>
                         <p className="text-xs text-brand-text-soft mt-0.5">
-                          4 formatos de produção de vídeo (Prático, Essencial, Presença e Autoridade).
+                          {editingProposal.category === 'evento'
+                            ? 'Formatos e opções de vídeos para o evento (Prático, Essencial, Presença e Destaques).'
+                            : '4 formatos de produção de vídeo (Prático, Essencial, Presença e Autoridade).'}
                         </p>
                       </div>
 
@@ -2428,14 +2433,14 @@ export default function ProposalManager() {
                   )}
                   </div>
 
-                  {/* 3. Produção de Conteúdo */}
+                  {/* 3. Produção de Conteúdo / Cobertura do Evento */}
                   <div className="pt-6 border-t border-brand-wine/10" id="section-modal-corp-conteudo">
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
                       <div>
                         <div className="flex items-center gap-2 flex-wrap">
                           <Sparkles className="w-4 h-4 text-brand-wine" />
                           <h4 className="font-serif text-lg text-brand-text font-semibold">
-                            3. Produção de Conteúdo
+                            {editingProposal.category === 'evento' ? '3. Cobertura do Evento' : '3. Produção de Conteúdo'}
                           </h4>
                           <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${
                             editingProposal.hideConteudoSection
@@ -2446,7 +2451,9 @@ export default function ProposalManager() {
                           </span>
                         </div>
                         <p className="text-xs text-brand-text-soft mt-0.5">
-                          4 formatos de produção de conteúdo recorrente (Prático, Essencial, Presença e Autoridade).
+                          {editingProposal.category === 'evento'
+                            ? 'Pacotes e opções de cobertura combinada para o evento (Prático, Essencial, Presença e Destaques).'
+                            : '4 formatos de produção de conteúdo recorrente (Prático, Essencial, Presença e Autoridade).'}
                         </p>
                       </div>
 
