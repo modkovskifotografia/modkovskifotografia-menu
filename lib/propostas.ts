@@ -606,7 +606,7 @@ export const STANDARD_TEMPLATES: Record<ProposalCategory, Proposal> = {
           'Gerenciamento de postagens e área de Destaques do Instagram, análise dos melhores dias e horários',
           'Acompanhamento, roteirização, direção e posicionamento',
           'Edição dinâmica, cortes essenciais, legenda e trilha sonora',
-          'Entrega mensal, postagem média de 2x feed e 3x story na semana',
+          'Entrega mensal, postagem média de 2x feed e 2x story na semana',
           '__DIVIDER__',
           '*Bônus: 05 capas para Destaques do Instagram.',
           'Card ou vídeo curto extra em caso de faltar.'
