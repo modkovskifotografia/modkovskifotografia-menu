@@ -1,6 +1,7 @@
 'use client';
 
 import { Proposal, ProposalCategory, STANDARD_TEMPLATES, calculateDefaultInstallments } from './propostas';
+import rawProposalsData from '@/data/propostas.json';
 
 const STORAGE_KEY = 'modkovski_propostas_cache_v1';
 export const PROPOSAL_SYNC_CHANNEL = 'modkovski_proposals_broadcast_v1';
@@ -62,6 +63,7 @@ export function getInitialProposalSnapshot(category: string, slug: string): Prop
     return template;
   }
 
+  // 1. Check localStorage if in browser
   if (typeof window !== 'undefined') {
     try {
       const cached = localStorage.getItem(STORAGE_KEY);
@@ -96,6 +98,37 @@ export function getInitialProposalSnapshot(category: string, slug: string): Prop
       }
     } catch {}
   }
+
+  // 2. Check bundled static data/propostas.json (guaranteed across deployments and initial render)
+  try {
+    const staticList = (rawProposalsData as unknown as Proposal[]) || [];
+    const foundStatic = staticList.find(
+      (p) => p.category.toLowerCase() === cleanCategory && (
+        p.clientSlug.toLowerCase() === cleanSlug ||
+        p.clientSlug.toLowerCase().includes(cleanSlug) ||
+        cleanSlug.includes(p.clientSlug.toLowerCase())
+      )
+    );
+    if (foundStatic) {
+      return enrichProposal({
+        ...template,
+        ...foundStatic,
+        hidePhotoSection: foundStatic.hidePhotoSection ?? false,
+        hideVideoSection: foundStatic.hideVideoSection ?? false,
+        hideConteudoSection: foundStatic.hideConteudoSection ?? false,
+        packages: Array.isArray(foundStatic.packages) ? foundStatic.packages : template.packages,
+        videoPackages: Array.isArray(foundStatic.videoPackages) ? foundStatic.videoPackages : template.videoPackages,
+        conteudoPackages: Array.isArray(foundStatic.conteudoPackages) ? foundStatic.conteudoPackages : template.conteudoPackages,
+        proposalDate: foundStatic.proposalDate || template.proposalDate,
+        title: foundStatic.title || template.title,
+        subtitle: foundStatic.subtitle || template.subtitle,
+        investmentNote: foundStatic.investmentNote !== undefined ? foundStatic.investmentNote : template.investmentNote,
+        welcomeMessage: foundStatic.welcomeMessage !== undefined ? foundStatic.welcomeMessage : template.welcomeMessage,
+        clientName: foundStatic.clientName || cleanSlug,
+        clientSlug: foundStatic.clientSlug || cleanSlug,
+      });
+    }
+  } catch {}
 
   const formattedName = cleanSlug === '[nome]' ? '[nome]' : cleanSlug
     .split('-')
@@ -146,25 +179,30 @@ export async function fetchAllProposals(): Promise<Proposal[]> {
     } catch {}
   }
 
-  // Merge server and local proposals (deduplicating by category + clientSlug)
+  // Merge server, static file, and local proposals (deduplicating by category + clientSlug)
   const map = new Map<string, Proposal>();
+  
+  // 1. Static base from data/propostas.json
+  const staticList = (rawProposalsData as unknown as Proposal[]) || [];
+  staticList.forEach(p => map.set(`${p.category}:${p.clientSlug.toLowerCase()}`, enrichProposal(p)));
+
+  // 2. Server proposals (overwrite static)
   serverProposals.forEach(p => map.set(`${p.category}:${p.clientSlug.toLowerCase()}`, p));
+
+  // 3. Local proposals (if newer)
   localProposals.forEach(p => {
     const key = `${p.category}:${p.clientSlug.toLowerCase()}`;
     if (!map.has(key)) {
       map.set(key, p);
     } else {
-      const serverProp = map.get(key)!;
+      const existingProp = map.get(key)!;
       const localUpdated = p.updatedAt ? new Date(p.updatedAt).getTime() : 0;
-      const serverUpdated = serverProp.updatedAt 
-        ? new Date(serverProp.updatedAt).getTime() 
-        : (serverProp.createdAt ? new Date(serverProp.createdAt).getTime() : 0);
+      const existingUpdated = existingProp.updatedAt 
+        ? new Date(existingProp.updatedAt).getTime() 
+        : (existingProp.createdAt ? new Date(existingProp.createdAt).getTime() : 0);
       
-      // If local is strictly newer than server, use local edits, otherwise server is authoritative
-      if (localUpdated > serverUpdated) {
-        map.set(key, { ...serverProp, ...p });
-      } else {
-        map.set(key, serverProp);
+      if (localUpdated > existingUpdated) {
+        map.set(key, { ...existingProp, ...p });
       }
     }
   });
@@ -212,7 +250,7 @@ export async function fetchProposalBySlug(
     console.warn('Could not fetch proposal by slug from API:', err);
   }
 
-  // Fallback to localStorage if not found from API
+  // Fallback 1: localStorage
   if (!foundProposal && typeof window !== 'undefined') {
     try {
       const cached = localStorage.getItem(STORAGE_KEY);
@@ -228,6 +266,23 @@ export async function fetchProposalBySlug(
         if (found) {
           foundProposal = found;
         }
+      }
+    } catch {}
+  }
+
+  // Fallback 2: static data/propostas.json
+  if (!foundProposal) {
+    try {
+      const staticList = (rawProposalsData as unknown as Proposal[]) || [];
+      const foundStatic = staticList.find(
+        (p) => p.category.toLowerCase() === cleanCategory && (
+          p.clientSlug.toLowerCase() === cleanSlug ||
+          p.clientSlug.toLowerCase().includes(cleanSlug) ||
+          cleanSlug.includes(p.clientSlug.toLowerCase())
+        )
+      );
+      if (foundStatic) {
+        foundProposal = foundStatic;
       }
     } catch {}
   }

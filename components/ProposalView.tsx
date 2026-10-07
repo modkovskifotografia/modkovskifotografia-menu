@@ -55,12 +55,13 @@ import HomeView from '@/components/HomeView';
 interface ProposalViewProps {
   category: ProposalCategory;
   slug: string;
+  initialProposal?: Proposal;
 }
 
-export default function ProposalView({ category, slug }: ProposalViewProps) {
+export default function ProposalView({ category, slug, initialProposal }: ProposalViewProps) {
   // Snapshot for instant render without white flash or delay
-  const [proposal, setProposal] = useState<Proposal | null>(() => getInitialProposalSnapshot(category, slug));
-  const [loading, setLoading] = useState<boolean>(() => !getInitialProposalSnapshot(category, slug));
+  const [proposal, setProposal] = useState<Proposal | null>(() => initialProposal || getInitialProposalSnapshot(category, slug));
+  const [loading, setLoading] = useState<boolean>(() => !initialProposal && !getInitialProposalSnapshot(category, slug));
   const [copied, setCopied] = useState(false);
   const [openInstallments, setOpenInstallments] = useState<Record<string, boolean>>({});
   const [selectedInstallments, setSelectedInstallments] = useState<Record<string, InstallmentOption | null>>({});

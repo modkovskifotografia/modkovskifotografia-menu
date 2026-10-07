@@ -1,5 +1,259 @@
 [
   {
+    "id": "prop-ivete-moreira-15-anos",
+    "category": "evento",
+    "clientName": "Ivete Moreira - 15 Anos",
+    "clientSlug": "ivete-moreira-15-anos",
+    "title": "Proposta de Cobertura de Evento",
+    "subtitle": "Comemorações merecem ser vividas intensamente enquanto nós cuidamos de eternizar cada momento.",
+    "welcomeMessage": "Olá Ivete Moreira! Foi um prazer conversar com você. Esta proposta foi desenhada especialmente para registrar os 15 anos com toda a emoção, beleza e alegria que essa data inesquecível merece.",
+    "proposalDate": "07/10/2026",
+    "validityDays": 10,
+    "createdAt": "2026-10-07T12:00:00.000Z",
+    "investmentNote": "Reserva mediante sinal de 30% na assinatura do contrato e o restante no dia do evento, ou parcelado em até 12x no cartão. Hora extra no valor de R$ 50,00.",
+    "beforeImage": "/images/eventoantes.jpeg",
+    "afterImage": "/images/eventodepois.jpeg",
+    "isTemplate": false,
+    "hidePhotoSection": false,
+    "hideVideoSection": false,
+    "hideConteudoSection": true,
+    "status": "visualizada",
+    "packages": [
+      {
+        "id": "evt-01",
+        "name": "Cobertura Essencial",
+        "highlight": false,
+        "price": "R$ 350",
+        "paymentMethod": "Pix",
+        "duration": "Duração de até 02 horas",
+        "features": [
+          "50 fotos selecionadas e tratadas",
+          "01 vídeo brinde com destaques",
+          "Entrega digital em alta resolução",
+          "Prazo de entrega de até 10 dias",
+          "Foto extra R$ 20,00"
+        ],
+        "installments": [
+          { "times": "1x", "value": "R$ 365,33" },
+          { "times": "2x", "value": "R$ 186,36 (R$ 372,72)" },
+          { "times": "3x", "value": "R$ 125,46 (R$ 376,39)" },
+          { "times": "4x", "value": "R$ 95,03 (R$ 380,10)" },
+          { "times": "5x", "value": "R$ 76,76 (R$ 383,78)" },
+          { "times": "6x", "value": "R$ 64,58 (R$ 387,49)" },
+          { "times": "7x", "value": "R$ 57,20 (R$ 400,40)" },
+          { "times": "8x", "value": "R$ 50,53 (R$ 404,25)" },
+          { "times": "9x", "value": "R$ 45,34 (R$ 408,10)" },
+          { "times": "10x", "value": "R$ 41,20 (R$ 411,95)" },
+          { "times": "11x", "value": "R$ 37,83 (R$ 416,15)" },
+          { "times": "12x", "value": "R$ 35,00 (R$ 420,00)" }
+        ]
+      },
+      {
+        "id": "evt-02",
+        "name": "Cobertura Clássica",
+        "highlight": false,
+        "price": "R$ 550",
+        "paymentMethod": "Pix",
+        "duration": "Duração de até 03 horas",
+        "features": [
+          "80 fotos selecionadas e tratadas",
+          "01 vídeo brinde Making Of / Destaques",
+          "Entrega digital em alta resolução",
+          "Prazo de entrega de até 15 dias",
+          "Foto extra R$ 18,00"
+        ],
+        "installments": [
+          { "times": "1x", "value": "R$ 574,09" },
+          { "times": "2x", "value": "R$ 292,85 (R$ 585,69)" },
+          { "times": "3x", "value": "R$ 197,16 (R$ 591,47)" },
+          { "times": "4x", "value": "R$ 149,33 (R$ 597,30)" },
+          { "times": "5x", "value": "R$ 120,62 (R$ 603,08)" },
+          { "times": "6x", "value": "R$ 101,48 (R$ 608,90)" },
+          { "times": "7x", "value": "R$ 89,89 (R$ 629,20)" },
+          { "times": "8x", "value": "R$ 79,41 (R$ 635,25)" },
+          { "times": "9x", "value": "R$ 71,26 (R$ 641,30)" },
+          { "times": "10x", "value": "R$ 64,74 (R$ 647,35)" },
+          { "times": "11x", "value": "R$ 59,45 (R$ 653,95)" },
+          { "times": "12x", "value": "R$ 55,00 (R$ 660,00)" }
+        ]
+      },
+      {
+        "id": "evt-03",
+        "name": "Cobertura Especial",
+        "highlight": false,
+        "price": "R$ 750",
+        "paymentMethod": "Pix",
+        "duration": "Duração de até 04 horas",
+        "features": [
+          "120 fotos selecionadas e tratadas",
+          "Cobertura ampliada dos momentos principais",
+          "Prazo de entrega de até 15 dias",
+          "Foto extra R$ 16,00"
+        ],
+        "installments": [
+          { "times": "1x", "value": "R$ 782,85" },
+          { "times": "2x", "value": "R$ 399,34 (R$ 798,68)" },
+          { "times": "3x", "value": "R$ 268,85 (R$ 806,55)" },
+          { "times": "4x", "value": "R$ 203,63 (R$ 814,50)" },
+          { "times": "5x", "value": "R$ 164,48 (R$ 822,38)" },
+          { "times": "6x", "value": "R$ 138,39 (R$ 830,32)" },
+          { "times": "7x", "value": "R$ 122,57 (R$ 858,00)" },
+          { "times": "8x", "value": "R$ 108,28 (R$ 866,25)" },
+          { "times": "9x", "value": "R$ 97,17 (R$ 874,50)" },
+          { "times": "10x", "value": "R$ 88,28 (R$ 882,75)" },
+          { "times": "11x", "value": "R$ 81,07 (R$ 891,75)" },
+          { "times": "12x", "value": "R$ 75,00 (R$ 900,00)" }
+        ]
+      },
+      {
+        "id": "evt-04",
+        "name": "Cobertura Completa",
+        "highlight": true,
+        "price": "R$ 980",
+        "paymentMethod": "Pix",
+        "duration": "Duração de até 05 horas",
+        "features": [
+          "Todas as fotos realizadas durante o evento (média 200+)",
+          "Cobertura integral da comemoração",
+          "Galeria online privada para convidados",
+          "Prazo de entrega de até 20 dias"
+        ],
+        "installments": [
+          { "times": "1x", "value": "R$ 1.022,92" },
+          { "times": "2x", "value": "R$ 521,80 (R$ 1.043,60)" },
+          { "times": "3x", "value": "R$ 351,30 (R$ 1.053,89)" },
+          { "times": "4x", "value": "R$ 266,07 (R$ 1.064,28)" },
+          { "times": "5x", "value": "R$ 214,91 (R$ 1.074,57)" },
+          { "times": "6x", "value": "R$ 180,83 (R$ 1.084,96)" },
+          { "times": "7x", "value": "R$ 160,16 (R$ 1.121,12)" },
+          { "times": "8x", "value": "R$ 141,49 (R$ 1.131,90)" },
+          { "times": "9x", "value": "R$ 126,97 (R$ 1.142,68)" },
+          { "times": "10x", "value": "R$ 115,35 (R$ 1.153,46)" },
+          { "times": "11x", "value": "R$ 105,93 (R$ 1.165,22)" },
+          { "times": "12x", "value": "R$ 98,00 (R$ 1.176,00)" }
+        ]
+      }
+    ],
+    "videoPackages": [
+      {
+        "id": "vid-e-01",
+        "name": "Cobertura Essencial",
+        "highlight": false,
+        "price": "R$ 200",
+        "paymentMethod": "Pix",
+        "duration": "Cobertura de até 1:30h",
+        "features": [
+          "01 vídeo de até 1 min e 30 seg",
+          "01 capa personalizada para o vídeo",
+          "01 vídeo brinde de até 20 seg",
+          "Edição dinâmica, cortes dos melhores momentos e trilha sonora",
+          "Prazo de entrega de até 48 horas úteis"
+        ],
+        "installments": [
+          { "times": "1x", "value": "R$ 208,76" },
+          { "times": "2x", "value": "R$ 106,49 (R$ 212,98)" },
+          { "times": "3x", "value": "R$ 71,69 (R$ 215,08)" },
+          { "times": "4x", "value": "R$ 54,30 (R$ 217,20)" },
+          { "times": "5x", "value": "R$ 43,86 (R$ 219,30)" },
+          { "times": "6x", "value": "R$ 36,90 (R$ 221,42)" },
+          { "times": "7x", "value": "R$ 32,69 (R$ 228,80)" },
+          { "times": "8x", "value": "R$ 28,88 (R$ 231,00)" },
+          { "times": "9x", "value": "R$ 25,91 (R$ 233,20)" },
+          { "times": "10x", "value": "R$ 23,54 (R$ 235,40)" },
+          { "times": "11x", "value": "R$ 21,62 (R$ 237,80)" },
+          { "times": "12x", "value": "R$ 20,00 (R$ 240,00)" }
+        ]
+      },
+      {
+        "id": "vid-e-02",
+        "name": "Cobertura Clássica",
+        "highlight": false,
+        "price": "R$ 390",
+        "paymentMethod": "Pix",
+        "duration": "Cobertura de até 2:30h",
+        "features": [
+          "02 vídeos de até 1 min e 30 seg",
+          "02 capas personalizadas para os vídeos",
+          "01 vídeo brinde de até 20 seg",
+          "Edição dinâmica, cortes dos melhores momentos e trilha sonora",
+          "Prazo de entrega de até 72 horas úteis"
+        ],
+        "installments": [
+          { "times": "1x", "value": "R$ 407,08" },
+          { "times": "2x", "value": "R$ 207,66 (R$ 415,31)" },
+          { "times": "3x", "value": "R$ 139,80 (R$ 419,41)" },
+          { "times": "4x", "value": "R$ 105,88 (R$ 423,54)" },
+          { "times": "5x", "value": "R$ 85,53 (R$ 427,64)" },
+          { "times": "6x", "value": "R$ 71,96 (R$ 431,77)" },
+          { "times": "7x", "value": "R$ 63,74 (R$ 446,16)" },
+          { "times": "8x", "value": "R$ 56,31 (R$ 450,45)" },
+          { "times": "9x", "value": "R$ 50,53 (R$ 454,74)" },
+          { "times": "10x", "value": "R$ 45,90 (R$ 459,03)" },
+          { "times": "11x", "value": "R$ 42,16 (R$ 463,71)" },
+          { "times": "12x", "value": "R$ 39,00 (R$ 468,00)" }
+        ]
+      },
+      {
+        "id": "vid-e-03",
+        "name": "Cobertura Especial",
+        "highlight": false,
+        "price": "R$ 500",
+        "paymentMethod": "Pix",
+        "duration": "Cobertura de até 4h",
+        "features": [
+          "03 vídeos de até 1 min e 30 seg",
+          "03 capas personalizadas para os vídeos",
+          "01 vídeo brinde de até 20 seg",
+          "Edição dinâmica, cortes dos melhores momentos e trilha sonora",
+          "Prazo de entrega de até 72 horas úteis"
+        ],
+        "installments": [
+          { "times": "1x", "value": "R$ 521,90" },
+          { "times": "2x", "value": "R$ 266,23 (R$ 532,45)" },
+          { "times": "3x", "value": "R$ 179,23 (R$ 537,70)" },
+          { "times": "4x", "value": "R$ 135,75 (R$ 543,00)" },
+          { "times": "5x", "value": "R$ 109,65 (R$ 548,25)" },
+          { "times": "6x", "value": "R$ 92,26 (R$ 553,55)" },
+          { "times": "7x", "value": "R$ 81,71 (R$ 572,00)" },
+          { "times": "8x", "value": "R$ 72,19 (R$ 577,50)" },
+          { "times": "9x", "value": "R$ 64,78 (R$ 583,00)" },
+          { "times": "10x", "value": "R$ 58,85 (R$ 588,50)" },
+          { "times": "11x", "value": "R$ 54,05 (R$ 594,50)" },
+          { "times": "12x", "value": "R$ 50,00 (R$ 600,00)" }
+        ]
+      },
+      {
+        "id": "vid-e-04",
+        "name": "Cobertura Completa",
+        "highlight": true,
+        "price": "R$ 650",
+        "paymentMethod": "Pix",
+        "duration": "Cobertura de até 5:30h",
+        "features": [
+          "04 vídeos de até 1 min e 30 seg",
+          "04 capas personalizadas para os vídeos",
+          "01 vídeo brinde de até 20 seg",
+          "Edição dinâmica, cortes dos melhores momentos e trilha sonora",
+          "Prazo de entrega de até 96 horas úteis"
+        ],
+        "installments": [
+          { "times": "1x", "value": "R$ 678,47" },
+          { "times": "2x", "value": "R$ 346,09 (R$ 692,19)" },
+          { "times": "3x", "value": "R$ 233,00 (R$ 699,01)" },
+          { "times": "4x", "value": "R$ 176,48 (R$ 705,90)" },
+          { "times": "5x", "value": "R$ 142,55 (R$ 712,73)" },
+          { "times": "6x", "value": "R$ 119,94 (R$ 719,62)" },
+          { "times": "7x", "value": "R$ 106,23 (R$ 743,60)" },
+          { "times": "8x", "value": "R$ 93,84 (R$ 750,75)" },
+          { "times": "9x", "value": "R$ 84,21 (R$ 757,90)" },
+          { "times": "10x", "value": "R$ 76,51 (R$ 765,05)" },
+          { "times": "11x", "value": "R$ 70,26 (R$ 772,85)" },
+          { "times": "12x", "value": "R$ 65,00 (R$ 780,00)" }
+        ]
+      }
+    ]
+  },
+  {
     "id": "prop-rosangela-ro-estetica",
     "category": "corporativo",
     "clientName": "Rosangela | Rô Estética",
