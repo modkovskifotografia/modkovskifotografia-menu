@@ -885,10 +885,13 @@ export default function ProposalView({ category, slug }: ProposalViewProps) {
       })()}
 
       {/* Campo Produção de vídeo / Cobertura de vídeos (Para corporativo e evento) */}
-      {!proposal.hideVideoSection && (proposal.category === 'corporativo' || proposal.category === 'evento' || (proposal.videoPackages && proposal.videoPackages.length > 0)) && (() => {
+      {!proposal.hideVideoSection && (
+        (proposal.videoPackages && proposal.videoPackages.length > 0) ||
+        (proposal.isTemplate && (proposal.category === 'corporativo' || proposal.category === 'evento'))
+      ) && (() => {
         const videoList = (proposal.videoPackages && proposal.videoPackages.length > 0)
           ? proposal.videoPackages
-          : (STANDARD_TEMPLATES[proposal.category]?.videoPackages || STANDARD_TEMPLATES.corporativo?.videoPackages || videoSection?.packages || []);
+          : (proposal.isTemplate ? (STANDARD_TEMPLATES[proposal.category]?.videoPackages || STANDARD_TEMPLATES.corporativo?.videoPackages || videoSection?.packages || []) : []);
 
         if (!videoList || videoList.length === 0) return null;
 
@@ -1136,10 +1139,13 @@ export default function ProposalView({ category, slug }: ProposalViewProps) {
       })()}
 
       {/* Segunda/Terceira Seção: Produção de Conteúdo / Cobertura do Evento (Para Corporativo e Evento) */}
-      {!proposal.hideConteudoSection && (proposal.category === 'corporativo' || proposal.category === 'evento' || (proposal.conteudoPackages && proposal.conteudoPackages.length > 0)) && (() => {
+      {!proposal.hideConteudoSection && (
+        (proposal.conteudoPackages && proposal.conteudoPackages.length > 0) ||
+        (proposal.isTemplate && (proposal.category === 'corporativo' || proposal.category === 'evento'))
+      ) && (() => {
         const conteudoList = (proposal.conteudoPackages && proposal.conteudoPackages.length > 0)
           ? proposal.conteudoPackages
-          : (STANDARD_TEMPLATES[proposal.category]?.conteudoPackages || STANDARD_TEMPLATES.corporativo?.conteudoPackages || []);
+          : (proposal.isTemplate ? (STANDARD_TEMPLATES[proposal.category]?.conteudoPackages || STANDARD_TEMPLATES.corporativo?.conteudoPackages || []) : []);
 
         if (!conteudoList || conteudoList.length === 0) return null;
 

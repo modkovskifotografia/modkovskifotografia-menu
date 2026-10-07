@@ -195,32 +195,9 @@ export async function GET(req: NextRequest) {
       );
     }
     
-    // Fallback: Return a dynamic proposal based on STANDARD_TEMPLATES and save it to active proposals list
-    const template = (STANDARD_TEMPLATES as Record<string, Proposal>)[category] || STANDARD_TEMPLATES['individual'];
-    const formattedName = cleanSlug
-      .split('-')
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(' ');
-
-    const dynamicProposal: Proposal = {
-      ...template,
-      id: `prop-${Date.now()}-${Math.random().toString(36).substr(2, 6)}`,
-      category: (category as ProposalCategory) || 'individual',
-      clientName: formattedName || 'Cliente',
-      clientSlug: cleanSlug,
-      isTemplate: false,
-      createdAt: new Date().toISOString(),
-      welcomeMessage: category === 'casamento'
-        ? template.welcomeMessage
-        : `Olá ${formattedName || 'Cliente'}! Foi um prazer conversar com você. Esta proposta foi desenhada especialmente para registrar os seus momentos com sensibilidade e elegância.`,
-    };
-
-    const enrichedDynamic = enrichProposal(dynamicProposal);
-    list.unshift(enrichedDynamic);
-    writeDataFile(list);
-
+    // If not found in file, return null without creating or writing any fake proposal to disk
     return NextResponse.json(
-      { success: true, proposal: enrichedDynamic },
+      { success: true, proposal: null },
       {
         headers: {
           'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
