@@ -608,7 +608,7 @@ export default function ProposalView({ category, slug }: ProposalViewProps) {
 
                 return (
                   <div
-                    key={pkg.id}
+                    key={`pkg-foto-${pkg.id || index}-${index}`}
                     className={`card-float rounded-3xl flex flex-col justify-between transition-all duration-300 relative bg-white ${
                       isFeatured
                         ? 'border-2 border-brand-wine shadow-[0_16px_45px_rgba(78,0,0,0.12)] scale-[1.02] p-6 sm:p-7'
@@ -648,7 +648,7 @@ export default function ProposalView({ category, slug }: ProposalViewProps) {
                       {/* Lista de Itens Inclusos / Features */}
                       <ul className="mt-4 space-y-2.5 text-xs text-brand-text-soft font-light">
                         {pkg.features.map((feature, fIndex) => (
-                          <li key={fIndex} className="flex items-start gap-2 leading-relaxed">
+                          <li key={`feat-${pkg.id || index}-${fIndex}`} className="flex items-start gap-2 leading-relaxed">
                             <Check className="w-3.5 h-3.5 text-brand-wine mt-0.5 shrink-0" strokeWidth={2} />
                             <span>{feature}</span>
                           </li>
@@ -719,7 +719,7 @@ export default function ProposalView({ category, slug }: ProposalViewProps) {
                                   return (
                                     <button
                                       type="button"
-                                      key={iIdx}
+                                      key={`inst-${pkg.id || index}-${inst.times}-${iIdx}`}
                                       onClick={() => handleSelectInstallment(pkg.id, inst)}
                                       className={`flex items-center justify-between py-1.5 px-2 rounded-lg text-left border transition-all cursor-pointer ${
                                         isSelected
@@ -928,7 +928,7 @@ export default function ProposalView({ category, slug }: ProposalViewProps) {
 
                     return (
                       <div
-                        key={pkg.id}
+                        key={`pkg-video-${pkg.id || vIdx}-${vIdx}`}
                         className={`card-float rounded-3xl flex flex-col justify-between transition-all duration-300 relative bg-white ${
                           isFeatured
                             ? 'border-2 border-brand-wine shadow-[0_16px_45px_rgba(78,0,0,0.12)] scale-[1.02] p-6 sm:p-7'
@@ -961,7 +961,7 @@ export default function ProposalView({ category, slug }: ProposalViewProps) {
                           <div className="w-full h-[1px] bg-brand-wine/10 mb-4" />
                           <ul className="space-y-2.5 text-xs text-brand-text-soft font-light">
                             {pkg.features.map((feature, fIndex) => (
-                              <li key={fIndex} className="flex items-start gap-2 leading-relaxed">
+                              <li key={`vfeat-${pkg.id || vIdx}-${fIndex}`} className="flex items-start gap-2 leading-relaxed">
                                 <Check className="w-3.5 h-3.5 text-brand-wine mt-0.5 shrink-0" strokeWidth={2} />
                                 <span>{feature}</span>
                               </li>
@@ -1019,7 +1019,7 @@ export default function ProposalView({ category, slug }: ProposalViewProps) {
                                       return (
                                         <button
                                           type="button"
-                                          key={iIdx}
+                                          key={`vinst-${pkg.id || vIdx}-${inst.times}-${iIdx}`}
                                           onClick={() => handleSelectVideoInstallment(pkg.id, inst)}
                                           className={`flex items-center justify-between py-1.5 px-2 rounded-lg text-left border transition-all cursor-pointer ${
                                             isSelected
@@ -1168,7 +1168,7 @@ export default function ProposalView({ category, slug }: ProposalViewProps) {
 
                   return (
                     <div
-                      key={itemKey}
+                      key={`pkg-conteudo-${pkg.id || vIdx}-${vIdx}`}
                       className={`card-float rounded-3xl flex flex-col justify-between transition-all duration-300 relative bg-white ${
                         isFeatured
                           ? 'border-2 border-brand-wine shadow-[0_16px_45px_rgba(78,0,0,0.12)] scale-[1.02] p-6 sm:p-7'
@@ -1194,11 +1194,11 @@ export default function ProposalView({ category, slug }: ProposalViewProps) {
                         <ul className="space-y-2.5 text-xs text-brand-text-soft font-light">
                           {pkg.features.map((feature, fIndex) => {
                             if (feature === '__DIVIDER__') {
-                              return <div key={fIndex} className="w-full h-[1px] bg-brand-wine/10 my-2.5" />;
+                              return <div key={`cdivider-${pkg.id || vIdx}-${fIndex}`} className="w-full h-[1px] bg-brand-wine/10 my-2.5" />;
                             }
                             const isBold = feature.startsWith('*Bônus') || feature.includes('extra em caso de faltar');
                             return (
-                              <li key={fIndex} className="flex items-start gap-2 leading-relaxed">
+                              <li key={`cfeat-${pkg.id || vIdx}-${fIndex}`} className="flex items-start gap-2 leading-relaxed">
                                 <Check className="w-3.5 h-3.5 text-brand-wine mt-0.5 shrink-0" strokeWidth={2} />
                                 <span className={isBold ? 'font-bold text-brand-text' : 'font-light'}>
                                   {feature}
@@ -1259,7 +1259,7 @@ export default function ProposalView({ category, slug }: ProposalViewProps) {
                                     return (
                                       <button
                                         type="button"
-                                        key={iIdx}
+                                        key={`cinst-${pkg.id || vIdx}-${inst.times}-${iIdx}`}
                                         onClick={() => handleSelectVideoInstallment(itemKey, inst)}
                                         className={`flex items-center justify-between py-1.5 px-2 rounded-lg text-left border transition-all cursor-pointer ${
                                           isSelected

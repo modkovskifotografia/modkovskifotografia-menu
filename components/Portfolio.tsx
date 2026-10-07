@@ -587,13 +587,13 @@ export default function Portfolio({
           {(limitSlots ? slots.slice(0, limitSlots) : slots).map((slot, index) =>
             slot.type === 'video' ? (
               <ReelVideoCard
-                key={slot.id}
+                key={`portfolio-video-${slot.id}-${index}`}
                 slot={slot}
                 index={index}
               />
             ) : (
               <motion.div
-                key={slot.id}
+                key={`portfolio-image-${slot.id}-${index}`}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: '-50px' }}

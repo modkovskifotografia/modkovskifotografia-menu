@@ -56,7 +56,7 @@ export default function Packages() {
   return (
     <div className="w-full flex flex-col" id="experiencias-wrapper">
       {brandConfig.packageSections.map((section, sIndex) => (
-        <React.Fragment key={section.id}>
+        <React.Fragment key={`package-sec-${section.id}-${sIndex}`}>
           <section 
             className={`py-20 md:py-28 lg:py-36 w-full ${sIndex % 2 === 1 ? 'bg-brand-cream border-t border-brand-wine/10' : 'bg-brand-beige'}`} 
             id={`experiencias-${section.id}`}
@@ -89,7 +89,7 @@ export default function Packages() {
                 
                 return (
                   <motion.div
-                    key={pkg.id}
+                    key={`pkg-${section.id}-${pkg.id || index}-${index}`}
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true, margin: "-50px" }}
@@ -132,7 +132,7 @@ export default function Packages() {
                       {/* Bullet features */}
                       <ul className="mt-4 space-y-2.5 text-xs text-brand-text-soft font-light">
                         {pkg.features.map((feature, fIndex) => (
-                          <li key={fIndex} className="flex items-start gap-2 leading-relaxed">
+                          <li key={`feat-${section.id}-${pkg.id || index}-${fIndex}`} className="flex items-start gap-2 leading-relaxed">
                             <Check className="w-3.5 h-3.5 text-brand-wine mt-0.5 shrink-0" strokeWidth={2} />
                             <span>{feature}</span>
                           </li>
@@ -207,7 +207,7 @@ export default function Packages() {
                                       return (
                                         <button
                                           type="button"
-                                          key={iIdx}
+                                          key={`inst-${section.id}-${pkg.id || index}-${inst.times}-${iIdx}`}
                                           onClick={() => handleSelectInstallment(pkg.id, inst)}
                                           className={`flex items-center justify-between py-1 px-1.5 text-left border transition-all cursor-pointer ${
                                             isSelected 
