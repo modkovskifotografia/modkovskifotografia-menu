@@ -3,7 +3,6 @@ import Navbar from '@/components/Navbar';
 import Hero from '@/components/Hero';
 import About from '@/components/About';
 import Portfolio from '@/components/Portfolio';
-import Packages from '@/components/Packages';
 import Process from '@/components/Process';
 import Testimonial from '@/components/Testimonial';
 import FinalCTA from '@/components/FinalCTA';
@@ -12,7 +11,7 @@ import FloatingWhatsApp from '@/components/FloatingWhatsApp';
 
 export const metadata = {
   title: 'Individuais e Casais | Modkovski Fotografia',
-  description: 'Ensaios fotográficos individuais e de casais com direção leve, acolhedora e olhar autêntico.',
+  description: 'Portfólio para ensaios fotográficos, produções de vídeos, cobertura de eventos e casamentos.',
 };
 
 export default function IndividuaisECasaisPage() {
@@ -21,17 +20,14 @@ export default function IndividuaisECasaisPage() {
       {/* Barra de Navegação Superior */}
       <Navbar />
 
-      {/* 1. Apresentação da Marca & Proposta no Hero */}
-      <Hero />
+      {/* 1. Apresentação da Marca (Sem botões de acesso rápido a propostas) */}
+      <Hero hideProposalButtons={true} />
 
       {/* 3. Conexão com a Fotógrafa */}
       <About />
       
       {/* 4. Portfólio de Imagens e Vídeos */}
       <Portfolio />
-      
-      {/* 2 & 5. Apresentação da Proposta / Experiências e Pacotes */}
-      <Packages />
       
       {/* 7. Processo de Contratação (Como funciona) */}
       <Process />
