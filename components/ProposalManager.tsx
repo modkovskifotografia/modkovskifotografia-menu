@@ -316,7 +316,7 @@ export default function ProposalManager() {
       newProposal.packages = JSON.parse(JSON.stringify(template.packages));
       newProposal.videoPackages = template.videoPackages ? JSON.parse(JSON.stringify(template.videoPackages)) : [];
     }
-    if (cat === 'corporativo' || cat === 'evento') {
+    if (cat === 'corporativo' || cat === 'evento' || cat === 'institucional') {
       newProposal.title = template.title;
       newProposal.subtitle = template.subtitle;
       newProposal.welcomeMessage = template.welcomeMessage;
@@ -355,7 +355,7 @@ export default function ProposalManager() {
         cloned.videoPackages = JSON.parse(JSON.stringify(STANDARD_TEMPLATES.individual.videoPackages || []));
       }
     }
-    if (cloned.category === 'corporativo' || cloned.category === 'evento') {
+    if (cloned.category === 'corporativo' || cloned.category === 'evento' || cloned.category === 'institucional') {
       const tmplCategory = STANDARD_TEMPLATES[cloned.category] || STANDARD_TEMPLATES.evento;
       if (!cloned.packages || cloned.packages.length === 0) {
         cloned.packages = JSON.parse(JSON.stringify(tmplCategory.packages || []));
@@ -655,7 +655,7 @@ export default function ProposalManager() {
                 Modelos de Propostas Padrões
               </h2>
               <p className="text-xs text-brand-text-soft">
-                Clique em &ldquo;Copiar e Criar Orçamento&rdquo; em qualquer um dos 6 tipos abaixo para iniciar:
+                Clique em &ldquo;Copiar e Criar Orçamento&rdquo; em qualquer um dos modelos abaixo para iniciar:
               </p>
             </div>
           </div>
@@ -679,7 +679,7 @@ export default function ProposalManager() {
                     </div>
 
                     <h3 className="font-serif text-lg text-brand-text font-medium mb-1.5 group-hover:text-brand-wine transition-colors">
-                      {tmpl.title}
+                      {tmpl.cardTitle || tmpl.title}
                     </h3>
                     <p className="text-xs text-brand-text-soft line-clamp-2 mb-4 leading-relaxed">
                       {CATEGORY_DESCRIPTIONS[cat]}
@@ -688,9 +688,11 @@ export default function ProposalManager() {
                     <div className="text-[11px] text-brand-text-soft/80 mb-5 flex items-center gap-1.5">
                       <Sparkles className="w-3.5 h-3.5 text-brand-wine" />
                       <span>
-                        {tmpl.videoPackages && tmpl.videoPackages.length > 0
-                          ? `${tmpl.packages.length} opções foto + ${tmpl.videoPackages.length} opções vídeo`
-                          : `${tmpl.packages.length} pacote(s) configurado(s)`}
+                        {tmpl.conteudoPackages && tmpl.conteudoPackages.length > 0
+                          ? `${tmpl.packages.length} foto + ${tmpl.videoPackages?.length || 0} vídeo + ${tmpl.conteudoPackages.length} evento`
+                          : tmpl.videoPackages && tmpl.videoPackages.length > 0
+                            ? `${tmpl.packages.length} opções foto + ${tmpl.videoPackages.length} opções vídeo`
+                            : `${tmpl.packages.length} pacote(s) configurado(s)`}
                       </span>
                     </div>
                   </div>
@@ -698,7 +700,7 @@ export default function ProposalManager() {
                   <div className="pt-3 border-t border-brand-wine/10 flex items-center gap-2">
                     <button
                       onClick={() => handleCreateFromTemplate(cat)}
-                      className="flex-1 py-2.5 px-3 rounded-xl bg-brand-wine text-white text-xs font-semibold uppercase tracking-wider hover:bg-brand-wine-dark transition-all flex items-center justify-center gap-1.5 shadow-sm"
+                      className="flex-1 py-2.5 px-3 rounded-xl bg-brand-wine text-white text-xs font-semibold uppercase tracking-wider hover:bg-brand-wine-dark transition-all flex items-center justify-center gap-1.5 shadow-sm cursor-pointer"
                     >
                       <Plus className="w-3.5 h-3.5" />
                       Copiar e Criar
@@ -745,7 +747,8 @@ export default function ProposalManager() {
               corporativo: '#D4AF37',  // Gold
               casamento: '#B8860B',    // Dark Gold
               evento: '#6B4226',       // Bronze
-              personalizado: '#9E7B66' // Taupe
+              personalizado: '#9E7B66', // Taupe
+              institucional: '#85213b', // Deep Wine Burgundy
             };
 
             return (
@@ -992,6 +995,7 @@ export default function ProposalManager() {
                 <option value="casamento">Casamento</option>
                 <option value="evento">Evento</option>
                 <option value="personalizado">Personalizado</option>
+                <option value="institucional">Institucional</option>
               </select>
             </div>
 
@@ -1911,7 +1915,7 @@ export default function ProposalManager() {
                   )}
                   </div>
                 </>
-              ) : (editingProposal.category === 'corporativo' || editingProposal.category === 'evento') ? (
+              ) : (editingProposal.category === 'corporativo' || editingProposal.category === 'evento' || editingProposal.category === 'institucional') ? (
                 <>
                   {/* 1. Ensaio Fotográfico / Cobertura Fotográfica */}
                   <div className="pt-4 border-t border-brand-wine/10" id="section-modal-corp-foto">
@@ -1920,7 +1924,7 @@ export default function ProposalManager() {
                         <div className="flex items-center gap-2 flex-wrap">
                           <Camera className="w-4 h-4 text-brand-wine" />
                           <h4 className="font-serif text-lg text-brand-text font-semibold">
-                            {editingProposal.category === 'evento' ? '1. Cobertura Fotográfica' : '1. Ensaio Fotográfico'}
+                            {editingProposal.category === 'evento' || editingProposal.category === 'institucional' ? '1. Cobertura Fotográfica' : '1. Ensaio Fotográfico'}
                           </h4>
                           <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${
                             editingProposal.hidePhotoSection
@@ -1931,9 +1935,11 @@ export default function ProposalManager() {
                           </span>
                         </div>
                         <p className="text-xs text-brand-text-soft mt-0.5">
-                          {editingProposal.category === 'evento' 
-                            ? 'Opções de cobertura fotográfica para o evento (Essencial, Clássica, Especial e Completa).'
-                            : 'Opções de ensaio fotográfico corporativo (Essencial, Clássico, Especial e Completo).'}
+                          {editingProposal.category === 'institucional'
+                            ? 'Opções de cobertura fotográfica institucional para o evento.'
+                            : editingProposal.category === 'evento' 
+                              ? 'Opções de cobertura fotográfica para o evento (Essencial, Clássica, Especial e Completa).'
+                              : 'Opções de ensaio fotográfico corporativo (Essencial, Clássico, Especial e Completo).'}
                         </p>
                       </div>
 
@@ -2179,7 +2185,7 @@ export default function ProposalManager() {
                         <div className="flex items-center gap-2 flex-wrap">
                           <Video className="w-4 h-4 text-brand-wine" />
                           <h4 className="font-serif text-lg text-brand-text font-semibold">
-                            {editingProposal.category === 'evento' ? '2. Cobertura de Vídeos' : '2. Produção de Vídeo'}
+                            {editingProposal.category === 'institucional' ? '2. Cobertura de Vídeo' : editingProposal.category === 'evento' ? '2. Cobertura de Vídeos' : '2. Produção de Vídeo'}
                           </h4>
                           <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${
                             editingProposal.hideVideoSection
@@ -2190,9 +2196,11 @@ export default function ProposalManager() {
                           </span>
                         </div>
                         <p className="text-xs text-brand-text-soft mt-0.5">
-                          {editingProposal.category === 'evento'
-                            ? 'Formatos e opções de vídeos para o evento (Prático, Essencial, Presença e Destaques).'
-                            : '4 formatos de produção de vídeo (Prático, Essencial, Presença e Autoridade).'}
+                          {editingProposal.category === 'institucional'
+                            ? 'Formatos e opções de vídeos institucionais para o evento.'
+                            : editingProposal.category === 'evento'
+                              ? 'Formatos e opções de vídeos para o evento (Prático, Essencial, Presença e Destaques).'
+                              : '4 formatos de produção de vídeo (Prático, Essencial, Presença e Autoridade).'}
                         </p>
                       </div>
 
@@ -2440,7 +2448,7 @@ export default function ProposalManager() {
                         <div className="flex items-center gap-2 flex-wrap">
                           <Sparkles className="w-4 h-4 text-brand-wine" />
                           <h4 className="font-serif text-lg text-brand-text font-semibold">
-                            {editingProposal.category === 'evento' ? '3. Cobertura do Evento' : '3. Produção de Conteúdo'}
+                            {editingProposal.category === 'evento' || editingProposal.category === 'institucional' ? '3. Cobertura do Evento' : '3. Produção de Conteúdo'}
                           </h4>
                           <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${
                             editingProposal.hideConteudoSection
@@ -2451,9 +2459,11 @@ export default function ProposalManager() {
                           </span>
                         </div>
                         <p className="text-xs text-brand-text-soft mt-0.5">
-                          {editingProposal.category === 'evento'
-                            ? 'Pacotes e opções de cobertura combinada para o evento (Prático, Essencial, Presença e Destaques).'
-                            : '4 formatos de produção de conteúdo recorrente (Prático, Essencial, Presença e Autoridade).'}
+                          {editingProposal.category === 'institucional'
+                            ? 'Pacotes de cobertura combinada (foto + vídeo) institucional (Presença, Dinâmica, Premium e Percepção Completa).'
+                            : editingProposal.category === 'evento'
+                              ? 'Pacotes e opções de cobertura combinada para o evento (Prático, Essencial, Presença e Destaques).'
+                              : '4 formatos de produção de conteúdo recorrente (Prático, Essencial, Presença e Autoridade).'}
                         </p>
                       </div>
 

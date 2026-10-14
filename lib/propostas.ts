@@ -4,7 +4,8 @@ export type ProposalCategory =
   | 'corporativo' 
   | 'casamento' 
   | 'evento' 
-  | 'personalizado';
+  | 'personalizado'
+  | 'institucional';
 
 export interface ProposalPackage {
   id: string;
@@ -26,6 +27,7 @@ export interface Proposal {
   clientName: string;
   clientSlug: string; // e.g., "techcorp" or "mariana-e-joao"
   title: string;
+  cardTitle?: string;
   subtitle: string;
   welcomeMessage: string;
   validityDays: number;
@@ -63,6 +65,7 @@ export const CATEGORY_LABELS: Record<ProposalCategory, string> = {
   casamento: 'Casamento',
   evento: 'Evento',
   personalizado: 'Personalizado',
+  institucional: 'Institucional',
 };
 
 export const CATEGORY_DESCRIPTIONS: Record<ProposalCategory, string> = {
@@ -72,6 +75,7 @@ export const CATEGORY_DESCRIPTIONS: Record<ProposalCategory, string> = {
   casamento: 'Cobertura de cerimônias civis, mini-weddings e recepções completas.',
   evento: 'Aniversários, celebrações sociais, batizados e confraternizações.',
   personalizado: 'Orçamentos e propostas desenhadas sob medida para demandas específicas.',
+  institucional: 'Palestras, debates, encontros profissionais e reuniões.',
 };
 
 export function slugify(text: string): string {
@@ -130,6 +134,10 @@ export const CATEGORY_DEFAULT_BEFORE_AFTER: Record<ProposalCategory, { before: s
   personalizado: {
     before: '/images/personalizadoantes.jpeg',
     after: '/images/personalizadodepois.jpeg'
+  },
+  institucional: {
+    before: '/images/corporativoantes.jpeg',
+    after: '/images/corporativodepois.jpeg'
   }
 };
 
@@ -1097,6 +1105,226 @@ export const STANDARD_TEMPLATES: Record<ProposalCategory, Proposal> = {
           'Prazo de entrega de até 20 dias'
         ],
         installments: calculateDefaultInstallments('R$ 1.440')
+      }
+    ]
+  },
+
+  institucional: {
+    id: 'template-institucional',
+    category: 'institucional',
+    clientName: 'Cliente',
+    clientSlug: 'padrao',
+    title: 'Proposta de Evento',
+    cardTitle: 'Proposta para Cobertura de Evento Institucional',
+    subtitle: 'Palestras, debates, encontros profissionais e reuniões.',
+    welcomeMessage: 'Seu conhecimento no palco transmitido com a imponência que ele merece. Oferecemos uma cobertura fotográfica e audiovisual estratégica para capturar os melhores momentos, a entrega do palestrante e a reação da plateia com máxima qualidade.',
+    validityDays: 10,
+    createdAt: new Date().toISOString(),
+    investmentNote: 'Garantia de reserva mediante sinal de 30% do valor contratado, com os 70% restantes quitados no dia do ensaio. Facilitamos o pagamento em até 12x no cartão de crédito. Hora extra no valor de R$ 50,00.',
+    beforeImage: '/images/corporativoantes.jpeg',
+    afterImage: '/images/corporativodepois.jpeg',
+    isTemplate: true,
+    packages: [
+      {
+        id: 'inst-f-01',
+        name: 'Cobertura Essencial',
+        highlight: false,
+        price: 'R$ 297',
+        paymentMethod: 'Pix',
+        duration: 'Duração de até 02 horas',
+        features: [
+          '20 fotos selecionadas',
+          '01 vídeo brinde Making Of',
+          'Prazo de entrega de até 48 horas úteis',
+          'Foto extra R$ 10,00'
+        ],
+        installments: calculateDefaultInstallments('R$ 297')
+      },
+      {
+        id: 'inst-f-02',
+        name: 'Cobertura Clássica',
+        highlight: false,
+        price: 'R$ 407',
+        paymentMethod: 'Pix',
+        duration: 'Duração de até 02 horas',
+        features: [
+          '40 fotos selecionadas',
+          '01 vídeo brinde Making Of',
+          'Prazo de entrega de até 48 horas úteis',
+          'Foto extra R$ 9,00'
+        ],
+        installments: calculateDefaultInstallments('R$ 407')
+      },
+      {
+        id: 'inst-f-03',
+        name: 'Cobertura Especial',
+        highlight: false,
+        price: 'R$ 527',
+        paymentMethod: 'Pix',
+        duration: 'Duração de até 03 horas',
+        features: [
+          '60 fotos selecionadas',
+          '01 vídeo brinde Making Of',
+          'Prazo de entrega de até 72 horas úteis',
+          'Foto extra R$ 8,00'
+        ],
+        installments: calculateDefaultInstallments('R$ 527')
+      },
+      {
+        id: 'inst-f-04',
+        name: 'Cobertura Completa',
+        highlight: true,
+        price: 'R$ 787',
+        paymentMethod: 'Pix',
+        duration: 'Duração de até 04 horas',
+        features: [
+          'Média de 120 fotos selecionadas',
+          '01 vídeo brinde Making Of',
+          'Prazo de entrega de até 96 horas úteis'
+        ],
+        installments: calculateDefaultInstallments('R$ 787')
+      }
+    ],
+    videoPackages: [
+      {
+        id: 'inst-v-01',
+        name: 'Cobertura Institucional',
+        highlight: false,
+        price: 'R$ 197',
+        paymentMethod: 'Pix',
+        duration: 'Duração de até 02 horas',
+        features: [
+          '01 vídeo de até 1 min e 30 seg',
+          '01 capa personalizada para o vídeo',
+          '01 vídeo brinde de até 20 seg',
+          'Edição dinâmica, cortes dos melhores momentos e trilha sonora',
+          'Prazo de entrega de até 48 horas úteis'
+        ],
+        installments: calculateDefaultInstallments('R$ 197')
+      },
+      {
+        id: 'inst-v-02',
+        name: 'Cobertura Dinâmica',
+        highlight: false,
+        price: 'R$ 387',
+        paymentMethod: 'Pix',
+        duration: 'Duração de até 02 horas',
+        features: [
+          '02 vídeos de até 1 min e 30 seg',
+          '02 capas personalizadas para os vídeos',
+          '01 vídeo brinde de até 20 seg',
+          'Edição dinâmica, cortes dos melhores momentos e trilha sonora',
+          'Prazo de entrega de até 72 horas úteis'
+        ],
+        installments: calculateDefaultInstallments('R$ 387')
+      },
+      {
+        id: 'inst-v-03',
+        name: 'Cobertura Premium',
+        highlight: false,
+        price: 'R$ 497',
+        paymentMethod: 'Pix',
+        duration: 'Duração de até 03 horas',
+        features: [
+          '03 vídeos de até 1 min e 30 seg',
+          '03 capas personalizadas para os vídeos',
+          '01 vídeo brinde de até 20 seg',
+          'Edição dinâmica, cortes dos melhores momentos e trilha sonora',
+          'Prazo de entrega de até 72 horas úteis'
+        ],
+        installments: calculateDefaultInstallments('R$ 497')
+      },
+      {
+        id: 'inst-v-04',
+        name: 'Cobertura de Percepção Completa',
+        highlight: true,
+        price: 'R$ 647',
+        paymentMethod: 'Pix',
+        duration: 'Duração de até 04 horas',
+        features: [
+          '04 vídeos de até 1 min e 30 seg',
+          '04 capas personalizadas para os vídeos',
+          '01 vídeo brinde de até 20 seg',
+          'Edição dinâmica, cortes dos melhores momentos e trilha sonora',
+          'Prazo de entrega de até 96 horas úteis'
+        ],
+        installments: calculateDefaultInstallments('R$ 647')
+      }
+    ],
+    conteudoPackages: [
+      {
+        id: 'inst-c-01',
+        name: 'Cobertura Presença',
+        highlight: false,
+        price: 'R$ 477',
+        paymentMethod: 'Pix',
+        duration: 'Duração de até 02 horas',
+        features: [
+          '40 fotos selecionadas',
+          '01 vídeo de até 1 min e 30 seg',
+          '01 capa personalizada para o vídeo',
+          '01 vídeo brinde de até 20 seg',
+          'Edição dinâmica, cortes dos melhores momentos e trilha sonora',
+          'Prazo de entrega de até 48 horas úteis',
+          '__DIVIDER__',
+          'Foto extra R$ 10,00'
+        ],
+        installments: calculateDefaultInstallments('R$ 477')
+      },
+      {
+        id: 'inst-c-02',
+        name: 'Cobertura Dinâmica',
+        highlight: false,
+        price: 'R$ 587',
+        paymentMethod: 'Pix',
+        duration: 'Duração de até 02 horas',
+        features: [
+          '60 fotos selecionadas',
+          '02 vídeos de até 1 min e 30 seg',
+          '02 capas personalizadas para os vídeos',
+          '01 vídeo brinde de até 20 seg',
+          'Edição dinâmica, cortes dos melhores momentos e trilha sonora',
+          'Prazo de entrega de até 72 horas úteis',
+          '__DIVIDER__',
+          'Foto extra R$ 9,00'
+        ],
+        installments: calculateDefaultInstallments('R$ 587')
+      },
+      {
+        id: 'inst-c-03',
+        name: 'Cobertura Premium',
+        highlight: false,
+        price: 'R$ 707',
+        paymentMethod: 'Pix',
+        duration: 'Duração de até 03 horas',
+        features: [
+          '80 fotos selecionadas',
+          '03 vídeos de até 1 min e 30 seg',
+          '03 capas personalizadas para os vídeos',
+          '01 vídeo brinde de até 20 seg',
+          'Edição dinâmica, cortes dos melhores momentos e trilha sonora',
+          'Prazo de entrega de até 72 horas úteis',
+          '__DIVIDER__',
+          'Foto extra R$ 8,00'
+        ],
+        installments: calculateDefaultInstallments('R$ 707')
+      },
+      {
+        id: 'inst-c-04',
+        name: 'Cobertura de Percepção Completa',
+        highlight: true,
+        price: 'R$ 957',
+        paymentMethod: 'Pix',
+        duration: 'Duração de até 04 horas',
+        features: [
+          'Média de 120 fotos selecionadas',
+          '04 vídeos de até 1 min e 30 seg',
+          '04 capas personalizadas para os vídeos',
+          '01 vídeo brinde de até 20 seg',
+          'Edição dinâmica, cortes dos melhores momentos e trilha sonora',
+          'Prazo de entrega de até 96 horas úteis'
+        ],
+        installments: calculateDefaultInstallments('R$ 957')
       }
     ]
   }

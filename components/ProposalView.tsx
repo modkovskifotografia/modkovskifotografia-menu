@@ -354,6 +354,8 @@ export default function ProposalView({ category, slug, initialProposal }: Propos
             <span className="text-xs text-white/90">
               {proposal.category === 'corporativo' ? (
                 <>Proposta Corporativa para <strong className="text-white">{proposal.clientSlug === 'padrao' ? '[nome]' : proposal.clientName}</strong></>
+              ) : proposal.category === 'institucional' ? (
+                <>Proposta Institucional para <strong className="text-white">{proposal.clientSlug === 'padrao' ? '[nome]' : proposal.clientName}</strong></>
               ) : proposal.category === 'casamento' ? (
                 <>Cobertura de casamento para <strong className="text-white">{proposal.clientName}</strong></>
               ) : proposal.category === 'personalizado' ? (
@@ -445,13 +447,15 @@ export default function ProposalView({ category, slug, initialProposal }: Propos
               <span className="font-serif text-xl sm:text-2xl text-brand-wine font-bold mb-3">
                 {proposal.category === 'corporativo'
                   ? `Corporativo para ${proposal.clientSlug === 'padrao' ? '[nome]' : proposal.clientName}`
-                  : proposal.category === 'casamento'
-                    ? `Cobertura de casamento para ${proposal.clientName}`
-                    : proposal.category === 'personalizado'
-                      ? `Personalizada para ${proposal.clientName}`
-                      : proposal.category === 'evento'
-                        ? `Cobertura de Evento para ${proposal.clientSlug === 'padrao' ? '[nome]' : proposal.clientName}`
-                        : proposal.clientSlug === 'padrao' ? 'Ensaio Individual' : proposal.clientName}
+                  : proposal.category === 'institucional'
+                    ? `Institucional para ${proposal.clientSlug === 'padrao' ? '[nome]' : proposal.clientName}`
+                    : proposal.category === 'casamento'
+                      ? `Cobertura de casamento para ${proposal.clientName}`
+                      : proposal.category === 'personalizado'
+                        ? `Personalizada para ${proposal.clientName}`
+                        : proposal.category === 'evento'
+                          ? `Cobertura de Evento para ${proposal.clientSlug === 'padrao' ? '[nome]' : proposal.clientName}`
+                          : proposal.clientSlug === 'padrao' ? 'Ensaio Individual' : proposal.clientName}
               </span>
               <a
                 href={getWhatsAppMessageUrl()}
@@ -472,20 +476,20 @@ export default function ProposalView({ category, slug, initialProposal }: Propos
         fotoTargetId={proposal.category === 'individual' ? 'ensaio-fotografico' : 'orcamento-personalizado'}
         videoTargetId="producao-de-video"
         conteudoTargetId="producao-de-conteudo"
-        videoButtonWine={proposal.category === 'individual' || proposal.category === 'personalizado' || proposal.category === 'corporativo' || proposal.category === 'evento'}
-        conteudoButtonWine={proposal.category === 'corporativo' || proposal.category === 'evento'}
+        videoButtonWine={proposal.category === 'individual' || proposal.category === 'personalizado' || proposal.category === 'corporativo' || proposal.category === 'evento' || proposal.category === 'institucional'}
+        conteudoButtonWine={proposal.category === 'corporativo' || proposal.category === 'evento' || proposal.category === 'institucional'}
         fotoButtonText={proposal.category === 'casamento' || proposal.category === 'personalizado' ? 'VER PROPOSTA' : 'VER COBERTURA FOTOGRÁFICA'}
         hideFotoButton={!!proposal.hidePhotoSection}
         hideVideoButton={!!proposal.hideVideoSection || proposal.category === 'casamento'}
         hideConteudoButton={
           !!proposal.hideConteudoSection || 
-          !(proposal.category === 'corporativo' || proposal.category === 'evento' || (proposal.conteudoPackages && proposal.conteudoPackages.length > 0))
+          !(proposal.category === 'corporativo' || proposal.category === 'evento' || proposal.category === 'institucional' || (proposal.conteudoPackages && proposal.conteudoPackages.length > 0))
         }
         hideProposalButtons={false}
         customImage={
           proposal.category === 'personalizado'
             ? '/images/capapersonalizado.jpg'
-            : proposal.category === 'corporativo'
+            : proposal.category === 'corporativo' || proposal.category === 'institucional'
               ? '/images/capacorporativo.jpg'
               : proposal.category === 'evento'
                 ? '/images/eventocapa.jpeg'
@@ -495,25 +499,29 @@ export default function ProposalView({ category, slug, initialProposal }: Propos
         customTitle={
           proposal.category === 'corporativo'
             ? 'Credibilidade em cada detalhe.'
-            : proposal.category === 'personalizado'
-              ? 'A sua marca transmitindo autoridade.'
-              : proposal.category === 'evento'
-                ? 'Comemorações eternizadas com alma e emoção.'
-                : undefined
+            : proposal.category === 'institucional'
+              ? 'Seu conhecimento no palco com a máxima imponência.'
+              : proposal.category === 'personalizado'
+                ? 'A sua marca transmitindo autoridade.'
+                : proposal.category === 'evento'
+                  ? 'Comemorações eternizadas com alma e emoção.'
+                  : undefined
         }
         customQuote={
           proposal.category === 'corporativo'
             ? 'Antes de contratarem o seu serviço, seus clientes julgam a sua estrutura. Fortalecemos a credibilidade da sua empresa em cada detalhe visual.'
-            : proposal.category === 'personalizado'
-              ? 'O mercado avalia a sua marca em frações de segundos. Um registro estratégico garante que a primeira impressão seja de absoluta excelência.'
-              : proposal.category === 'evento'
-                ? 'Os momentos especiais acontecem em frações de segundos. Cuidamos de transformar cada sorriso, abraço e celebração em memórias vivas para sempre.'
-                : undefined
+            : proposal.category === 'institucional'
+              ? 'Seu conhecimento no palco transmitido com a imponência que ele merece. Oferecemos uma cobertura fotográfica e audiovisual estratégica para capturar os melhores momentos, a entrega do palestrante e a reação da plateia com máxima qualidade.'
+              : proposal.category === 'personalizado'
+                ? 'O mercado avalia a sua marca em frações de segundos. Um registro estratégico garante que a primeira impressão seja de absoluta excelência.'
+                : proposal.category === 'evento'
+                  ? 'Os momentos especiais acontecem em frações de segundos. Cuidamos de transformar cada sorriso, abraço e celebração em memórias vivas para sempre.'
+                  : undefined
         }
       />
 
-      {/* 5. Conexão com a Fotógrafa (About) - Exibido acima de 'Histórias reais' para corporativo, evento e casamento */}
-      {(proposal.category === 'corporativo' || proposal.category === 'evento' || !isRestricted) && <About />}
+      {/* 5. Conexão com a Fotógrafa (About) - Exibido acima de 'Histórias reais' para corporativo, evento, institucional e casamento */}
+      {(proposal.category === 'corporativo' || proposal.category === 'evento' || proposal.category === 'institucional' || !isRestricted) && <About />}
       
       {/* 6. Portfólio Completo de Imagens e Vídeos ('Histórias reais.') */}
       {proposal.category === 'individual' ? (
@@ -522,8 +530,8 @@ export default function ProposalView({ category, slug, initialProposal }: Propos
         <Portfolio showViewPortfolioButton={true} />
       )}
       
-      {/* 7. SEÇÃO DE PACOTES E ORÇAMENTO EXCLUSIVO DO CLIENTE (Para corporativo e evento, foto packages + condições) */}
-      {!proposal.hidePhotoSection && (!isRestricted || proposal.category === 'corporativo' || proposal.category === 'evento') && (
+      {/* 7. SEÇÃO DE PACOTES E ORÇAMENTO EXCLUSIVO DO CLIENTE */}
+      {!proposal.hidePhotoSection && (!isRestricted || proposal.category === 'corporativo' || proposal.category === 'evento' || proposal.category === 'institucional') && (
         <section 
           id={proposal.category === 'individual' ? 'ensaio-fotografico' : 'orcamento-personalizado'} 
           className="w-full py-20 px-4 sm:px-6 lg:px-8 bg-white border-y border-brand-wine/10 relative"
@@ -533,7 +541,19 @@ export default function ProposalView({ category, slug, initialProposal }: Propos
           <div className="max-w-7xl mx-auto">
             
             <div className="text-center max-w-3xl mx-auto mb-12">
-              {proposal.category === 'evento' ? (
+              {proposal.category === 'institucional' ? (
+                <>
+                  <span className="text-xs uppercase tracking-[0.25em] text-brand-wine font-semibold block mb-2">
+                    A PROPOSTA
+                  </span>
+                  <h2 className="font-serif text-3xl sm:text-4xl text-brand-text font-normal mb-3">
+                    Cobertura fotográfica
+                  </h2>
+                  <p className="text-brand-text-soft text-sm sm:text-base leading-relaxed">
+                    Do posicionamento executivo essencial ao registro estratégico da presença da sua marca, oferecemos a cobertura fotográfica certa para elevar o seu valor percebido perante clientes, parceiros e o mercado.
+                  </p>
+                </>
+              ) : proposal.category === 'evento' ? (
                 <>
                   <span className="text-xs uppercase tracking-[0.25em] text-brand-wine font-semibold block mb-2">
                     A PROPOSTA
@@ -885,10 +905,10 @@ export default function ProposalView({ category, slug, initialProposal }: Propos
         );
       })()}
 
-      {/* Campo Produção de vídeo / Cobertura de vídeos (Para corporativo e evento) */}
+      {/* Campo Produção de vídeo / Cobertura de vídeos (Para corporativo, evento e institucional) */}
       {!proposal.hideVideoSection && (
         (proposal.videoPackages && proposal.videoPackages.length > 0) ||
-        (proposal.isTemplate && (proposal.category === 'corporativo' || proposal.category === 'evento'))
+        (proposal.isTemplate && (proposal.category === 'corporativo' || proposal.category === 'evento' || proposal.category === 'institucional'))
       ) && (() => {
         const videoList = (proposal.videoPackages && proposal.videoPackages.length > 0)
           ? proposal.videoPackages
@@ -907,15 +927,21 @@ export default function ProposalView({ category, slug, initialProposal }: Propos
                     {videoSection?.eyebrow || 'A PROPOSTA'}
                   </span>
                   <h2 className="text-3xl md:text-4xl lg:text-5xl font-light text-brand-text tracking-tight font-serif mb-4">
-                    {proposal.category === 'evento' ? 'Cobertura de vídeos' : (videoSection?.title || 'Produção de vídeo')}
+                    {proposal.category === 'institucional'
+                      ? 'Cobertura de vídeo'
+                      : proposal.category === 'evento'
+                        ? 'Cobertura de vídeos'
+                        : (videoSection?.title || 'Produção de vídeo')}
                   </h2>
                   <div className="w-12 h-[1px] bg-brand-wine/35 mx-auto mb-6" />
                   <p className="text-sm md:text-base text-brand-text-soft leading-relaxed font-light">
-                    {proposal.category === 'evento'
-                      ? 'Registros dinâmicos e de alta qualidade em vídeo para capturar a energia, a emoção e os melhores momentos da sua comemoração.'
-                      : proposal.category === 'corporativo'
-                        ? 'Empresas que se posicionam com autoridade dominam a decisão de compra do cliente. Estruturamos quatro abordagens audiovisuais para atender desde demandas pontuais até estratégias completas de diferenciação no mercado. Estamos à disposição para adequar o volume de vídeos à necessidade da sua equipe comercial.'
-                        : (videoSection?.description || 'Preparamos quatro formatos de produção de vídeo para atender à sua estratégia, do modelo prático ao nível autoridade. Caso sua estratégia necessite de uma quantidade específica de vídeos, nos informe para ajustarmos.')}
+                    {proposal.category === 'institucional'
+                      ? 'Transmita a dimensão, a energia e o profissionalismo do seu evento com a autoridade da sua empresa e gera impacto no mercado.'
+                      : proposal.category === 'evento'
+                        ? 'Registros dinâmicos e de alta qualidade em vídeo para capturar a energia, a emoção e os melhores momentos da sua comemoração.'
+                        : proposal.category === 'corporativo'
+                          ? 'Empresas que se posicionam com autoridade dominam a decisão de compra do cliente. Estruturamos quatro abordagens audiovisuais para atender desde demandas pontuais até estratégias completas de diferenciação no mercado. Estamos à disposição para adequar o volume de vídeos à necessidade da sua equipe comercial.'
+                          : (videoSection?.description || 'Preparamos quatro formatos de produção de vídeo para atender à sua estratégia, do modelo prático ao nível autoridade. Caso sua estratégia necessite de uma quantidade específica de vídeos, nos informe para ajustarmos.')}
                   </p>
                 </div>
 
@@ -1105,7 +1131,7 @@ export default function ProposalView({ category, slug, initialProposal }: Propos
                 </div>
 
                 {/* Observação de permanência adicional em vermelho vinho */}
-                {proposal.category === 'evento' && (
+                {(proposal.category === 'evento' || proposal.category === 'institucional') && (
                   <div className="mt-12 max-w-4xl mx-auto bg-brand-wine/5 border border-brand-wine/20 rounded-2xl p-4 sm:p-4.5 flex items-start sm:items-center gap-3 text-brand-wine shadow-xs">
                     <MapPin className="w-4 h-4 text-brand-wine shrink-0 mt-0.5 sm:mt-0" />
                     <p className="text-xs sm:text-sm font-medium leading-relaxed">
@@ -1114,8 +1140,8 @@ export default function ProposalView({ category, slug, initialProposal }: Propos
                   </div>
                 )}
 
-                {/* Condições comerciais de vídeo (Apenas para evento, não para corporativo) */}
-                {proposal.category === 'evento' && (
+                {/* Condições comerciais de vídeo (Para evento e institucional) */}
+                {(proposal.category === 'evento' || proposal.category === 'institucional') && (
                   <div className="mt-6 bg-brand-cream/40 rounded-3xl p-6 sm:p-8 border border-brand-wine/10 max-w-4xl mx-auto">
                     <div className="flex items-center gap-2 mb-2">
                       <FileCheck2 className="w-4 h-4 text-brand-wine" />
@@ -1124,7 +1150,9 @@ export default function ProposalView({ category, slug, initialProposal }: Propos
                       </span>
                     </div>
                     <p className="text-xs sm:text-sm text-brand-text-soft leading-relaxed mb-4">
-                      {proposal.investmentNote || 'Reserva mediante sinal de 30% na assinatura do contrato e o restante no dia do evento, ou parcelado em até 12x no cartão. Hora extra no valor de R$ 50,00.'}
+                      {proposal.investmentNote || (proposal.category === 'institucional'
+                        ? 'Garantia de reserva mediante sinal de 30% do valor contratado, com os 70% restantes quitados no dia do ensaio. Facilitamos o pagamento em até 12x no cartão de crédito. Hora extra no valor de R$ 50,00.'
+                        : 'Reserva mediante sinal de 30% na assinatura do contrato e o restante no dia do evento, ou parcelado em até 12x no cartão. Hora extra no valor de R$ 50,00.')}
                     </p>
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-3 border-t border-brand-wine/10 text-xs text-brand-text">
                       <div className="flex items-center gap-2">
@@ -1149,10 +1177,10 @@ export default function ProposalView({ category, slug, initialProposal }: Propos
         );
       })()}
 
-      {/* Segunda/Terceira Seção: Produção de Conteúdo / Cobertura do Evento (Para Corporativo e Evento) */}
+      {/* Segunda/Terceira Seção: Produção de Conteúdo / Cobertura do Evento (Para Corporativo, Evento e Institucional) */}
       {!proposal.hideConteudoSection && (
         (proposal.conteudoPackages && proposal.conteudoPackages.length > 0) ||
-        (proposal.isTemplate && (proposal.category === 'corporativo' || proposal.category === 'evento'))
+        (proposal.isTemplate && (proposal.category === 'corporativo' || proposal.category === 'evento' || proposal.category === 'institucional'))
       ) && (() => {
         const conteudoList = (proposal.conteudoPackages && proposal.conteudoPackages.length > 0)
           ? proposal.conteudoPackages
@@ -1170,13 +1198,15 @@ export default function ProposalView({ category, slug, initialProposal }: Propos
                   A PROPOSTA
                 </span>
                 <h2 className="text-3xl md:text-4xl lg:text-5xl font-light text-brand-text tracking-tight font-serif mb-4">
-                  {proposal.category === 'evento' ? 'Cobertura do evento' : 'Produção de conteúdo'}
+                  {proposal.category === 'evento' || proposal.category === 'institucional' ? 'Cobertura do evento' : 'Produção de conteúdo'}
                 </h2>
                 <div className="w-12 h-[1px] bg-brand-wine/35 mx-auto mb-6" />
                 <p className="text-sm md:text-base text-brand-text-soft leading-relaxed font-light">
-                  {proposal.category === 'evento'
-                    ? 'Pacotes e formatos de cobertura combinada de foto e vídeo para garantir o registro perfeito de todas as etapas e celebrações do seu evento.'
-                    : 'Cuidamos de todo o processo, do planejamento ao agendamento diário. Você foca na gestão do seu negócio enquanto garantimos a constância da sua marca no digital.'}
+                  {proposal.category === 'institucional'
+                    ? 'O registro definitivo da grandeza do seu evento. Unimos fotografia  e produções audiovisuais estratégicas para posicionar sua marca no topo do segmento, evidenciar a liderança da sua empresa e impulsionar novos negócios.'
+                    : proposal.category === 'evento'
+                      ? 'Pacotes e formatos de cobertura combinada de foto e vídeo para garantir o registro perfeito de todas as etapas e celebrações do seu evento.'
+                      : 'Cuidamos de todo o processo, do planejamento ao agendamento diário. Você foca na gestão do seu negócio enquanto garantimos a constância da sua marca no digital.'}
                 </p>
               </div>
 
@@ -1190,12 +1220,13 @@ export default function ProposalView({ category, slug, initialProposal }: Propos
                   const isFeatured = pkg.highlight;
                   const propTitle = proposal?.title || 'Proposta';
                   const client = proposal?.clientName || '';
+                  const sectionExpName = (proposal.category === 'evento' || proposal.category === 'institucional') ? 'Cobertura do evento' : 'Produção de conteúdo';
                   
                   let whatsappText = '';
                   if (currentVideoInst) {
-                    whatsappText = `Olá Alessandra! Vi a ${propTitle}${proposal?.clientSlug !== 'padrao' && client ? ` para ${client}` : ''} e quero reservar a minha data para a Produção de conteúdo (${expNumber}: ${pkg.name}) com a opção de parcelamento em ${currentVideoInst.times} de ${currentVideoInst.value} no cartão de crédito.`;
+                    whatsappText = `Olá Alessandra! Vi a ${propTitle}${proposal?.clientSlug !== 'padrao' && client ? ` para ${client}` : ''} e quero reservar a minha data para a ${sectionExpName} (${expNumber}: ${pkg.name}) com a opção de parcelamento em ${currentVideoInst.times} de ${currentVideoInst.value} no cartão de crédito.`;
                   } else {
-                    whatsappText = `Olá Alessandra! Vi a ${propTitle}${proposal?.clientSlug !== 'padrao' && client ? ` para ${client}` : ''} e quero reservar a minha data para a Produção de conteúdo (${expNumber}: ${pkg.name} - ${pkg.price} via Pix).`;
+                    whatsappText = `Olá Alessandra! Vi a ${propTitle}${proposal?.clientSlug !== 'padrao' && client ? ` para ${client}` : ''} e quero reservar a minha data para a ${sectionExpName} (${expNumber}: ${pkg.name} - ${pkg.price} via Pix).`;
                   }
                   const videoWhatsAppUrl = `https://wa.me/${brandConfig.whatsApp.number}?text=${encodeURIComponent(whatsappText)}`;
 
@@ -1365,7 +1396,7 @@ export default function ProposalView({ category, slug, initialProposal }: Propos
       })()}
 
       {/* 8. Processo de Contratação (Como funciona - Igual à página Início) */}
-      {(!isRestricted || proposal.category === 'corporativo') && <Process />}
+      {(!isRestricted || proposal.category === 'corporativo' || proposal.category === 'institucional') && <Process />}
       
       {/* 9. Depoimentos das Clientes (Igual à página Início) */}
       <Testimonial buttonWine={true} />

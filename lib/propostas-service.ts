@@ -145,7 +145,7 @@ export function getInitialProposalSnapshot(category: string, slug: string): Prop
     isTemplate: false,
     packages: template.packages,
     videoPackages: cleanCategory === 'casamento' ? [] : template.videoPackages,
-    conteudoPackages: (cleanCategory === 'corporativo' || cleanCategory === 'evento') ? template.conteudoPackages : undefined,
+    conteudoPackages: (cleanCategory === 'corporativo' || cleanCategory === 'evento' || cleanCategory === 'institucional') ? template.conteudoPackages : undefined,
   });
 }
 
@@ -324,7 +324,7 @@ export async function fetchProposalBySlug(
     createdAt: new Date().toISOString(),
     packages: template.packages,
     videoPackages: cleanCategory === 'casamento' ? [] : template.videoPackages,
-    conteudoPackages: (cleanCategory === 'corporativo' || cleanCategory === 'evento') ? template.conteudoPackages : undefined,
+    conteudoPackages: (cleanCategory === 'corporativo' || cleanCategory === 'evento' || cleanCategory === 'institucional') ? template.conteudoPackages : undefined,
   });
   updateLocalCache(fallbackProp);
   return fallbackProp;
