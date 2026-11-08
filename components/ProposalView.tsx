@@ -336,7 +336,7 @@ export default function ProposalView({ category, slug, initialProposal }: Propos
         : 'Meu objetivo é transformar o nosso ensaio em um momento leve e divertido. Vou te guiar em cada passo para que a timidez vá embora e você se sinta em casa logo no primeiro clique.')
     : proposal.welcomeMessage;
 
-   const isRestricted = ['individual', 'casal'].includes(proposal.category);
+   const isRestricted = proposal.category === 'individual';
 
   return (
     <main className="w-full relative min-h-screen flex flex-col bg-brand-cream selection:bg-brand-wine selection:text-white pt-20" id="main-proposal-page">
@@ -362,6 +362,8 @@ export default function ProposalView({ category, slug, initialProposal }: Propos
                 <>Personalizada para <strong className="text-white">{proposal.clientSlug === 'padrao' ? '[nome]' : proposal.clientName}</strong></>
               ) : proposal.category === 'evento' ? (
                 <>Cobertura de Evento para <strong className="text-white">{proposal.clientSlug === 'padrao' ? '[nome]' : proposal.clientName}</strong></>
+              ) : proposal.category === 'casal' ? (
+                <>Proposta Oficial de <strong className="text-white">Ensaio de Casal</strong>{proposal.clientSlug !== 'padrao' && <> para <strong className="text-white">{proposal.clientName}</strong></>}</>
               ) : proposal.clientSlug === 'padrao' ? (
                 <>Proposta Oficial de <strong className="text-white">Ensaio Individual</strong></>
               ) : (
@@ -455,7 +457,9 @@ export default function ProposalView({ category, slug, initialProposal }: Propos
                         ? `Personalizada para ${proposal.clientName}`
                         : proposal.category === 'evento'
                           ? `Cobertura de Evento para ${proposal.clientSlug === 'padrao' ? '[nome]' : proposal.clientName}`
-                          : proposal.clientSlug === 'padrao' ? 'Ensaio Individual' : proposal.clientName}
+                          : proposal.category === 'casal'
+                            ? (proposal.clientSlug === 'padrao' ? 'Ensaio de Casal' : `Ensaio de Casal para ${proposal.clientName}`)
+                            : proposal.clientSlug === 'padrao' ? 'Ensaio Individual' : proposal.clientName}
               </span>
               <a
                 href={getWhatsAppMessageUrl()}
@@ -473,14 +477,14 @@ export default function ProposalView({ category, slug, initialProposal }: Propos
 
       {/* 4. Apresentação da Marca & Hero da Página Início */}
       <Hero 
-        fotoTargetId={proposal.category === 'individual' ? 'ensaio-fotografico' : 'orcamento-personalizado'}
+        fotoTargetId={proposal.category === 'individual' || proposal.category === 'casal' ? 'ensaio-fotografico' : 'orcamento-personalizado'}
         videoTargetId="producao-de-video"
         conteudoTargetId="producao-de-conteudo"
         videoButtonWine={proposal.category === 'individual' || proposal.category === 'personalizado' || proposal.category === 'corporativo' || proposal.category === 'evento' || proposal.category === 'institucional'}
         conteudoButtonWine={proposal.category === 'corporativo' || proposal.category === 'evento' || proposal.category === 'institucional'}
-        fotoButtonText={proposal.category === 'casamento' || proposal.category === 'personalizado' ? 'VER PROPOSTA' : 'VER COBERTURA FOTOGRÁFICA'}
+        fotoButtonText={proposal.category === 'casal' ? 'VER ENSAIO FOTOGRÁFICO' : (proposal.category === 'casamento' || proposal.category === 'personalizado' ? 'VER PROPOSTA' : 'VER COBERTURA FOTOGRÁFICA')}
         hideFotoButton={!!proposal.hidePhotoSection}
-        hideVideoButton={!!proposal.hideVideoSection || proposal.category === 'casamento'}
+        hideVideoButton={!!proposal.hideVideoSection || proposal.category === 'casamento' || proposal.category === 'casal'}
         hideConteudoButton={
           !!proposal.hideConteudoSection || 
           !(proposal.category === 'corporativo' || proposal.category === 'evento' || proposal.category === 'institucional' || (proposal.conteudoPackages && proposal.conteudoPackages.length > 0))
@@ -520,8 +524,8 @@ export default function ProposalView({ category, slug, initialProposal }: Propos
         }
       />
 
-      {/* 5. Conexão com a Fotógrafa (About) - Exibido acima de 'Histórias reais' para corporativo, evento, institucional e casamento */}
-      {(proposal.category === 'corporativo' || proposal.category === 'evento' || proposal.category === 'institucional' || !isRestricted) && <About />}
+      {/* 5. Conexão com a Fotógrafa (About) - Exibido acima de 'Histórias reais' para corporativo, evento, institucional, casamento e casal */}
+      {(proposal.category === 'corporativo' || proposal.category === 'evento' || proposal.category === 'institucional' || proposal.category === 'casal' || !isRestricted) && <About />}
       
       {/* 6. Portfólio Completo de Imagens e Vídeos ('Histórias reais.') */}
       {proposal.category === 'individual' ? (
@@ -531,9 +535,9 @@ export default function ProposalView({ category, slug, initialProposal }: Propos
       )}
       
       {/* 7. SEÇÃO DE PACOTES E ORÇAMENTO EXCLUSIVO DO CLIENTE */}
-      {!proposal.hidePhotoSection && (!isRestricted || proposal.category === 'corporativo' || proposal.category === 'evento' || proposal.category === 'institucional') && (
+      {!proposal.hidePhotoSection && (!isRestricted || proposal.category === 'corporativo' || proposal.category === 'evento' || proposal.category === 'institucional' || proposal.category === 'casal') && (
         <section 
-          id={proposal.category === 'individual' ? 'ensaio-fotografico' : 'orcamento-personalizado'} 
+          id={proposal.category === 'individual' || proposal.category === 'casal' ? 'ensaio-fotografico' : 'orcamento-personalizado'} 
           className="w-full py-20 px-4 sm:px-6 lg:px-8 bg-white border-y border-brand-wine/10 relative"
         >
           <span id="orcamento-personalizado" className="sr-only" />
@@ -575,6 +579,18 @@ export default function ProposalView({ category, slug, initialProposal }: Propos
                   </h2>
                   <p className="text-brand-text-soft text-sm sm:text-base leading-relaxed">
                     Estruturamos quatro formatos de ensaio corporativo para posicionar sua marca com a autoridade que o mercado exige. Da imagem executiva essencial ao direcionamento completo de presença de marca, oferecemos o registro certo para elevar o seu valor percebido perante clientes e parceiros.
+                  </p>
+                </>
+              ) : proposal.category === 'casal' ? (
+                <>
+                  <span className="text-xs uppercase tracking-[0.25em] text-brand-wine font-semibold block mb-2">
+                    A PROPOSTA
+                  </span>
+                  <h2 className="font-serif text-3xl sm:text-4xl text-brand-text font-normal mb-3">
+                    Ensaio fotográfico
+                  </h2>
+                  <p className="text-brand-text-soft text-sm sm:text-base leading-relaxed">
+                    Preparamos quatro possibilidades de ensaio para que vocês escolham o formato que mais combina com a história de vocês. Desde um ensaio mais objetivo até uma experiência completa a dois.
                   </p>
                 </>
               ) : proposal.category === 'individual' ? (
@@ -895,7 +911,7 @@ export default function ProposalView({ category, slug, initialProposal }: Propos
       )}
 
       {/* Campo Antes e Depois da Edição (Para corporativo e outros) */}
-      {(!isRestricted || proposal.category === 'corporativo') && proposal.category !== 'evento' && (() => {
+      {(!isRestricted || proposal.category === 'corporativo') && proposal.category !== 'evento' && proposal.category !== 'casal' && (() => {
         const catDefaults = CATEGORY_DEFAULT_BEFORE_AFTER[proposal.category] || CATEGORY_DEFAULT_BEFORE_AFTER.corporativo;
         return (
           <BeforeAfterSlider 
@@ -906,7 +922,7 @@ export default function ProposalView({ category, slug, initialProposal }: Propos
       })()}
 
       {/* Campo Produção de vídeo / Cobertura de vídeos (Para corporativo, evento e institucional) */}
-      {!proposal.hideVideoSection && (
+      {!proposal.hideVideoSection && proposal.category !== 'casal' && (
         (proposal.videoPackages && proposal.videoPackages.length > 0) ||
         (proposal.isTemplate && (proposal.category === 'corporativo' || proposal.category === 'evento' || proposal.category === 'institucional'))
       ) && (() => {

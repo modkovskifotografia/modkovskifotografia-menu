@@ -298,7 +298,7 @@ export default function ProposalManager() {
     if (cat === 'individual') {
       newProposal.welcomeMessage = 'Meu objetivo é transformar o nosso ensaio em um momento leve e divertido. Vou te guiar em cada passo para que a timidez vá embora e você se sinta em casa logo no primeiro clique.';
     }
-    if (cat === 'casamento') {
+    if (cat === 'casamento' || cat === 'casal') {
       newProposal.title = template.title;
       newProposal.subtitle = template.subtitle;
       newProposal.welcomeMessage = template.welcomeMessage;
@@ -354,6 +354,12 @@ export default function ProposalManager() {
       if (!cloned.videoPackages || cloned.videoPackages.length === 0) {
         cloned.videoPackages = JSON.parse(JSON.stringify(STANDARD_TEMPLATES.individual.videoPackages || []));
       }
+    }
+    if (cloned.category === 'casal' || cloned.category === 'casamento') {
+      if (!cloned.packages || cloned.packages.length === 0) {
+        cloned.packages = JSON.parse(JSON.stringify(tmpl?.packages || []));
+      }
+      cloned.videoPackages = [];
     }
     if (cloned.category === 'corporativo' || cloned.category === 'evento' || cloned.category === 'institucional') {
       const tmplCategory = STANDARD_TEMPLATES[cloned.category] || STANDARD_TEMPLATES.evento;
