@@ -51,7 +51,7 @@ export default function Hero({
   const scrollToSection = (id: string) => {
     let el = document.getElementById(id);
     if (!el) {
-      if (id === 'experiencias-sec-1' || id === 'ensaio-fotografico') {
+      if (id === 'experiencias-sec-1' || id === 'ensaio-fotografico' || id === 'orcamento-personalizado') {
         el = document.getElementById('ensaio-fotografico') || document.getElementById('orcamento-personalizado') || document.getElementById('experiencias-sec-1');
       } else if (id === 'experiencias-sec-2' || id === 'producao-de-video') {
         el = document.getElementById('producao-de-video') || document.getElementById('experiencias-sec-2');
@@ -60,7 +60,9 @@ export default function Hero({
       }
     }
     if (el) {
-      el.scrollIntoView({ behavior: 'smooth' });
+      const yOffset = -90;
+      const y = el.getBoundingClientRect().top + window.pageYOffset + yOffset;
+      window.scrollTo({ top: y, behavior: 'smooth' });
     }
   };
 

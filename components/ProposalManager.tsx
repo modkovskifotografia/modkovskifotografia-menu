@@ -35,7 +35,8 @@ import {
   Download,
   FileSpreadsheet,
   X,
-  Filter
+  Filter,
+  Database
 } from 'lucide-react';
 import { 
   Proposal, 
@@ -92,16 +93,67 @@ export default function ProposalManager() {
   const [filterStatus, setFilterStatus] = useState<string>('all');
   const [sortBy, setSortBy] = useState<'recent' | 'oldest' | 'name' | 'status'>('recent');
   const [saveSuccess, setSaveSuccess] = useState(false);
+  const [chartPeriod, setChartPeriod] = useState<'all' | '30' | '90' | 'year'>('all');
+  const [isSyncing, setIsSyncing] = useState(false);
+  const [isSqlModalOpen, setIsSqlModalOpen] = useState(false);
+  const [copiedSql, setCopiedSql] = useState(false);
 
-  const loadProposals = () => {
-    setLoading(true);
+  // Helper to parse dates from ISO strings or DD/MM/YYYY formats
+  const parseProposalDate = (p: Proposal): Date => {
+    if (p.createdAt) {
+      const d = new Date(p.createdAt);
+      if (!isNaN(d.getTime())) return d;
+    }
+    if (p.proposalDate) {
+      const parts = p.proposalDate.split('/');
+      if (parts.length === 3) {
+        const d = new Date(Number(parts[2]), Number(parts[1]) - 1, Number(parts[0]));
+        if (!isNaN(d.getTime())) return d;
+      }
+    }
+    return new Date();
+  };
+
+  const loadProposals = (manual = false) => {
+    if (manual) setIsSyncing(true);
+    else setLoading(true);
+
     fetchAllProposals().then((data) => {
-      setProposals(data);
+      // Extra safety: sanitize any ghost deleted items
+      const sanitized = data.filter((p) => {
+        const slug = (p.clientSlug || '').toLowerCase();
+        const id = (p.id || '').toLowerCase();
+        const name = (p.clientName || '').toLowerCase();
+        return slug !== 'dra-camila-santos' && slug !== 'camila-santos' && id !== 'sample-corp-01' && !name.includes('camila santos');
+      });
+      setProposals(sanitized);
       setLoading(false);
+      if (manual) {
+        setTimeout(() => setIsSyncing(false), 600);
+      }
     });
   };
 
   useEffect(() => {
+    // Purge ghost local storage entries
+    if (typeof window !== 'undefined') {
+      try {
+        const cached = localStorage.getItem('modkovski_propostas_cache_v1');
+        if (cached) {
+          const list = JSON.parse(cached);
+          const cleaned = list.filter((p: any) => {
+            const slug = (p.clientSlug || '').toLowerCase();
+            const id = (p.id || '').toLowerCase();
+            const name = (p.clientName || '').toLowerCase();
+            return slug !== 'dra-camila-santos' && slug !== 'camila-santos' && id !== 'sample-corp-01' && !name.includes('camila santos');
+          });
+          if (cleaned.length !== list.length) {
+            localStorage.setItem('modkovski_propostas_cache_v1', JSON.stringify(cleaned));
+          }
+        }
+      } catch {}
+    }
+
     const timer = setTimeout(() => {
       setMounted(true);
       loadProposals();
@@ -469,6 +521,9 @@ export default function ProposalManager() {
   // Status counts for filters and statistics
   const statusCounts = {
     all: proposals.filter((p) => !p.isTemplate).length,
+    ativas: proposals.filter(
+      (p) => !p.isTemplate && p.status !== 'assinada' && p.status !== 'fechado' && p.status !== 'desistiu'
+    ).length,
     nova: proposals.filter((p) => !p.isTemplate && (p.status === 'nova' || !p.status)).length,
     visualizada: proposals.filter((p) => !p.isTemplate && p.status === 'visualizada').length,
     assinada: proposals.filter((p) => !p.isTemplate && (p.status === 'assinada' || p.status === 'fechado')).length,
@@ -485,7 +540,9 @@ export default function ProposalManager() {
       const currentStatus = p.status || 'nova';
       let matchesStatus = true;
       if (filterStatus !== 'all') {
-        if (filterStatus === 'assinada') {
+        if (filterStatus === 'ativas') {
+          matchesStatus = currentStatus !== 'assinada' && currentStatus !== 'fechado' && currentStatus !== 'desistiu';
+        } else if (filterStatus === 'assinada') {
           matchesStatus = currentStatus === 'assinada' || currentStatus === 'fechado';
         } else if (filterStatus === 'nova') {
           matchesStatus = currentStatus === 'nova' || !p.status;
@@ -645,10 +702,18 @@ export default function ProposalManager() {
             </div>
 
             <div className="shrink-0">
-              <span className="inline-flex items-center gap-2 bg-brand-cream px-4 py-2 rounded-2xl border border-brand-wine/15 text-xs text-brand-wine font-medium">
-                <CheckCircle2 className="w-4 h-4 text-green-700" />
-                <span>{proposals.length} propostas ativas</span>
-              </span>
+              <button
+                onClick={() => setFilterStatus(filterStatus === 'ativas' ? 'all' : 'ativas')}
+                className={`inline-flex items-center gap-2 px-4 py-2 rounded-2xl border text-xs font-semibold transition-all cursor-pointer ${
+                  filterStatus === 'ativas'
+                    ? 'bg-brand-wine text-white border-brand-wine shadow-sm'
+                    : 'bg-brand-cream border-brand-wine/15 text-brand-wine hover:bg-brand-wine/10'
+                }`}
+                title="Clique para filtrar apenas propostas ativas"
+              >
+                <CheckCircle2 className={`w-4 h-4 ${filterStatus === 'ativas' ? 'text-white' : 'text-green-700'}`} />
+                <span>{statusCounts.ativas} {statusCounts.ativas === 1 ? 'proposta ativa' : 'propostas ativas'}</span>
+              </button>
             </div>
           </div>
         </div>
@@ -727,19 +792,33 @@ export default function ProposalManager() {
           </div>
         </section>
 
-        {/* Section: Resumo e Gráfico dos Últimos 30 Dias */}
+        {/* Section: Resumo e Gráfico por Categoria */}
         <section className="mb-14 bg-white rounded-3xl p-6 sm:p-8 border border-brand-wine/15 shadow-sm">
           {(() => {
-            const thirtyDaysAgo = new Date();
-            thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+            const realProposals = proposals.filter((p) => !p.isTemplate);
+            const now = new Date();
 
-            const last30DaysProposals = proposals.filter((p) => {
-              const d = new Date(p.createdAt || new Date());
-              return d >= thirtyDaysAgo;
+            const periodFilteredProposals = realProposals.filter((p) => {
+              if (chartPeriod === 'all') return true;
+              const d = parseProposalDate(p);
+              if (chartPeriod === '30') {
+                const cutoff = new Date();
+                cutoff.setDate(now.getDate() - 30);
+                return d >= cutoff;
+              }
+              if (chartPeriod === '90') {
+                const cutoff = new Date();
+                cutoff.setDate(now.getDate() - 90);
+                return d >= cutoff;
+              }
+              if (chartPeriod === 'year') {
+                return d.getFullYear() === now.getFullYear();
+              }
+              return true;
             });
 
             const chartData = Object.keys(CATEGORY_LABELS).map((catKey) => {
-              const count = last30DaysProposals.filter((p) => p.category === catKey).length;
+              const count = periodFilteredProposals.filter((p) => p.category === catKey).length;
               return {
                 name: CATEGORY_LABELS[catKey as ProposalCategory],
                 key: catKey,
@@ -757,26 +836,82 @@ export default function ProposalManager() {
               institucional: '#85213b', // Deep Wine Burgundy
             };
 
+            const periodLabel = 
+              chartPeriod === 'all' ? 'Todas as Propostas' :
+              chartPeriod === '30' ? 'Últimos 30 Dias' :
+              chartPeriod === '90' ? 'Últimos 90 Dias' : 'Ano Atual';
+
             return (
               <>
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-6">
                   <div>
-                    <h2 className="font-serif text-xl sm:text-2xl text-brand-text font-medium">
-                      Resumo por Categoria (Últimos 30 Dias)
-                    </h2>
+                    <div className="flex items-center gap-2 mb-1">
+                      <h2 className="font-serif text-xl sm:text-2xl text-brand-text font-medium">
+                        Resumo Geral por Categoria
+                      </h2>
+                      <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-brand-wine/10 text-brand-wine">
+                        {periodLabel}
+                      </span>
+                    </div>
                     <p className="text-xs text-brand-text-soft">
-                      Quantidade de propostas geradas recentemente divididas por segmento.
+                      Quantidade de propostas cadastradas no sistema divididas por segmento.
                     </p>
                   </div>
+
                   <div className="flex flex-wrap items-center gap-2">
+                    {/* Period Switcher Buttons */}
+                    <div className="flex items-center p-1 bg-brand-cream/60 rounded-xl border border-brand-wine/15 text-xs font-semibold">
+                      <button
+                        onClick={() => setChartPeriod('all')}
+                        className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
+                          chartPeriod === 'all'
+                            ? 'bg-brand-wine text-white shadow-xs'
+                            : 'text-brand-text hover:text-brand-wine'
+                        }`}
+                      >
+                        Todas as Propostas
+                      </button>
+                      <button
+                        onClick={() => setChartPeriod('30')}
+                        className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
+                          chartPeriod === '30'
+                            ? 'bg-brand-wine text-white shadow-xs'
+                            : 'text-brand-text hover:text-brand-wine'
+                        }`}
+                      >
+                        30 Dias
+                      </button>
+                      <button
+                        onClick={() => setChartPeriod('90')}
+                        className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
+                          chartPeriod === '90'
+                            ? 'bg-brand-wine text-white shadow-xs'
+                            : 'text-brand-text hover:text-brand-wine'
+                        }`}
+                      >
+                        90 Dias
+                      </button>
+                      <button
+                        onClick={() => setChartPeriod('year')}
+                        className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
+                          chartPeriod === 'year'
+                            ? 'bg-brand-wine text-white shadow-xs'
+                            : 'text-brand-text hover:text-brand-wine'
+                        }`}
+                      >
+                        Este Ano
+                      </button>
+                    </div>
+
                     <div className="flex items-center gap-2 bg-brand-wine/5 px-3 py-1.5 rounded-xl border border-brand-wine/10 text-xs text-brand-wine font-medium">
                       <Sparkles className="w-4 h-4" />
-                      <span>Total no período: {last30DaysProposals.length} propostas</span>
+                      <span>Total: {periodFilteredProposals.length} {periodFilteredProposals.length === 1 ? 'proposta' : 'propostas'}</span>
                     </div>
+
                     <button
                       onClick={() => window.print()}
                       className="inline-flex items-center gap-1.5 bg-brand-wine text-white px-3 py-1.5 rounded-xl text-xs font-semibold hover:bg-brand-wine-dark transition-all shadow-sm cursor-pointer"
-                      title="Exportar ou imprimir relatório mensal em PDF"
+                      title="Exportar ou imprimir relatório em PDF"
                     >
                       <Download className="w-3.5 h-3.5" />
                       <span>Exportar PDF</span>
@@ -868,6 +1003,22 @@ export default function ProposalManager() {
                 <span>Todas</span>
                 <span className={`px-1.5 py-0.2 rounded-full text-[10px] font-bold ${filterStatus === 'all' ? 'bg-white/20 text-white' : 'bg-brand-cream text-brand-wine'}`}>
                   {statusCounts.all}
+                </span>
+              </button>
+
+              <button
+                onClick={() => setFilterStatus('ativas')}
+                className={`px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all flex items-center gap-1.5 cursor-pointer ${
+                  filterStatus === 'ativas'
+                    ? 'bg-amber-600 text-white shadow-xs'
+                    : 'bg-amber-50 border border-amber-200 text-amber-900 hover:bg-amber-100'
+                }`}
+                title="Filtrar propostas ativas (em andamento, novas, visualizadas ou pendentes)"
+              >
+                <Sparkles className="w-3 h-3 text-amber-500" />
+                <span>Ativas</span>
+                <span className={`px-1.5 py-0.2 rounded-full text-[10px] font-bold ${filterStatus === 'ativas' ? 'bg-white/20 text-white' : 'bg-amber-200/70 text-amber-900'}`}>
+                  {statusCounts.ativas}
                 </span>
               </button>
 
@@ -979,6 +1130,7 @@ export default function ProposalManager() {
                 className="px-3 py-2 rounded-xl border border-brand-wine/20 bg-brand-cream/30 text-xs text-brand-text focus:outline-none focus:ring-1 focus:ring-brand-wine cursor-pointer font-medium"
               >
                 <option value="all">Todos os Status ({statusCounts.all})</option>
+                <option value="ativas">⚡ Propostas Ativas ({statusCounts.ativas})</option>
                 <option value="nova">✦ Nova ({statusCounts.nova})</option>
                 <option value="visualizada">👁 Visualizada ({statusCounts.visualizada})</option>
                 <option value="assinada">✍ Assinada ({statusCounts.assinada})</option>
@@ -1035,8 +1187,27 @@ export default function ProposalManager() {
               </button>
             )}
 
-            {/* Exportar CSV e JSON */}
+            {/* Sync / Atualizar, Exportar CSV e JSON */}
             <div className="flex items-center gap-2 ml-auto">
+              <button
+                onClick={() => loadProposals(true)}
+                disabled={isSyncing}
+                className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border border-brand-wine/25 bg-white hover:bg-brand-cream text-xs text-brand-wine font-semibold transition-all shadow-2xs cursor-pointer disabled:opacity-60"
+                title="Sincronizar e recarregar propostas"
+              >
+                <RefreshCw className={`w-3.5 h-3.5 ${isSyncing ? 'animate-spin text-brand-wine' : ''}`} />
+                <span>{isSyncing ? 'Atualizando...' : 'Atualizar'}</span>
+              </button>
+
+              <button
+                onClick={() => setIsSqlModalOpen(true)}
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-emerald-600/30 bg-emerald-50 hover:bg-emerald-600 hover:text-white text-xs text-emerald-800 font-semibold transition-all shadow-2xs hover:shadow-xs cursor-pointer"
+                title="Abrir o código SQL para criar a tabela de propostas no Supabase"
+              >
+                <Database className="w-3.5 h-3.5 text-emerald-700 hover:text-white" />
+                <span>Editor SQL Supabase</span>
+              </button>
+
               <button
                 onClick={exportToJSON}
                 className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-brand-wine/25 bg-white hover:bg-brand-wine hover:text-white text-xs text-brand-wine font-semibold transition-all shadow-2xs hover:shadow-xs cursor-pointer"
@@ -1435,20 +1606,20 @@ export default function ProposalManager() {
                           }}
                           className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer shadow-2xs ${
                             editingProposal.hidePhotoSection
-                              ? 'bg-rose-50 hover:bg-rose-100 text-rose-800 border border-rose-300'
-                              : 'bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-300'
+                              ? 'bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-300'
+                              : 'bg-rose-50 hover:bg-rose-100 text-rose-800 border border-rose-300'
                           }`}
                           title={editingProposal.hidePhotoSection ? 'Clique para reativar esta seção na proposta' : 'Clique para desativar esta seção na proposta'}
                         >
                           {editingProposal.hidePhotoSection ? (
                             <>
-                              <EyeOff className="w-3.5 h-3.5 text-rose-600" />
-                              <span>Seção Desativada</span>
+                              <Eye className="w-3.5 h-3.5 text-emerald-600" />
+                              <span>Ativar Seção</span>
                             </>
                           ) : (
                             <>
-                              <Eye className="w-3.5 h-3.5 text-emerald-600" />
-                              <span>Seção Ativa</span>
+                              <EyeOff className="w-3.5 h-3.5 text-rose-600" />
+                              <span>Desativar Seção</span>
                             </>
                           )}
                         </button>
@@ -1693,20 +1864,20 @@ export default function ProposalManager() {
                           }}
                           className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer shadow-2xs ${
                             editingProposal.hideVideoSection
-                              ? 'bg-rose-50 hover:bg-rose-100 text-rose-800 border border-rose-300'
-                              : 'bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-300'
+                              ? 'bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-300'
+                              : 'bg-rose-50 hover:bg-rose-100 text-rose-800 border border-rose-300'
                           }`}
                           title={editingProposal.hideVideoSection ? 'Clique para reativar esta seção na proposta' : 'Clique para desativar esta seção na proposta'}
                         >
                           {editingProposal.hideVideoSection ? (
                             <>
-                              <EyeOff className="w-3.5 h-3.5 text-rose-600" />
-                              <span>Seção Desativada</span>
+                              <Eye className="w-3.5 h-3.5 text-emerald-600" />
+                              <span>Ativar Seção</span>
                             </>
                           ) : (
                             <>
-                              <Eye className="w-3.5 h-3.5 text-emerald-600" />
-                              <span>Seção Ativa</span>
+                              <EyeOff className="w-3.5 h-3.5 text-rose-600" />
+                              <span>Desativar Seção</span>
                             </>
                           )}
                         </button>
@@ -1958,20 +2129,20 @@ export default function ProposalManager() {
                           }}
                           className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer shadow-2xs ${
                             editingProposal.hidePhotoSection
-                              ? 'bg-rose-50 hover:bg-rose-100 text-rose-800 border border-rose-300'
-                              : 'bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-300'
+                              ? 'bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-300'
+                              : 'bg-rose-50 hover:bg-rose-100 text-rose-800 border border-rose-300'
                           }`}
                           title={editingProposal.hidePhotoSection ? 'Clique para reativar esta seção na proposta' : 'Clique para desativar esta seção na proposta'}
                         >
                           {editingProposal.hidePhotoSection ? (
                             <>
-                              <EyeOff className="w-3.5 h-3.5 text-rose-600" />
-                              <span>Seção Desativada</span>
+                              <Eye className="w-3.5 h-3.5 text-emerald-600" />
+                              <span>Ativar Seção</span>
                             </>
                           ) : (
                             <>
-                              <Eye className="w-3.5 h-3.5 text-emerald-600" />
-                              <span>Seção Ativa</span>
+                              <EyeOff className="w-3.5 h-3.5 text-rose-600" />
+                              <span>Desativar Seção</span>
                             </>
                           )}
                         </button>
@@ -2219,20 +2390,20 @@ export default function ProposalManager() {
                           }}
                           className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer shadow-2xs ${
                             editingProposal.hideVideoSection
-                              ? 'bg-rose-50 hover:bg-rose-100 text-rose-800 border border-rose-300'
-                              : 'bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-300'
+                              ? 'bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-300'
+                              : 'bg-rose-50 hover:bg-rose-100 text-rose-800 border border-rose-300'
                           }`}
                           title={editingProposal.hideVideoSection ? 'Clique para reativar esta seção na proposta' : 'Clique para desativar esta seção na proposta'}
                         >
                           {editingProposal.hideVideoSection ? (
                             <>
-                              <EyeOff className="w-3.5 h-3.5 text-rose-600" />
-                              <span>Seção Desativada</span>
+                              <Eye className="w-3.5 h-3.5 text-emerald-600" />
+                              <span>Ativar Seção</span>
                             </>
                           ) : (
                             <>
-                              <Eye className="w-3.5 h-3.5 text-emerald-600" />
-                              <span>Seção Ativa</span>
+                              <EyeOff className="w-3.5 h-3.5 text-rose-600" />
+                              <span>Desativar Seção</span>
                             </>
                           )}
                         </button>
@@ -2482,20 +2653,20 @@ export default function ProposalManager() {
                           }}
                           className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer shadow-2xs ${
                             editingProposal.hideConteudoSection
-                              ? 'bg-rose-50 hover:bg-rose-100 text-rose-800 border border-rose-300'
-                              : 'bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-300'
+                              ? 'bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-300'
+                              : 'bg-rose-50 hover:bg-rose-100 text-rose-800 border border-rose-300'
                           }`}
                           title={editingProposal.hideConteudoSection ? 'Clique para reativar esta seção na proposta' : 'Clique para desativar esta seção na proposta'}
                         >
                           {editingProposal.hideConteudoSection ? (
                             <>
-                              <EyeOff className="w-3.5 h-3.5 text-rose-600" />
-                              <span>Seção Desativada</span>
+                              <Eye className="w-3.5 h-3.5 text-emerald-600" />
+                              <span>Ativar Seção</span>
                             </>
                           ) : (
                             <>
-                              <Eye className="w-3.5 h-3.5 text-emerald-600" />
-                              <span>Seção Ativa</span>
+                              <EyeOff className="w-3.5 h-3.5 text-rose-600" />
+                              <span>Desativar Seção</span>
                             </>
                           )}
                         </button>
@@ -2745,20 +2916,20 @@ export default function ProposalManager() {
                         }}
                         className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer shadow-2xs ${
                           editingProposal.hidePhotoSection
-                            ? 'bg-rose-50 hover:bg-rose-100 text-rose-800 border border-rose-300'
-                            : 'bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-300'
+                            ? 'bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-300'
+                            : 'bg-rose-50 hover:bg-rose-100 text-rose-800 border border-rose-300'
                         }`}
                         title={editingProposal.hidePhotoSection ? 'Clique para reativar esta seção na proposta' : 'Clique para desativar esta seção na proposta'}
                       >
                         {editingProposal.hidePhotoSection ? (
                           <>
-                            <EyeOff className="w-3.5 h-3.5 text-rose-600" />
-                            <span>Seção Desativada</span>
+                            <Eye className="w-3.5 h-3.5 text-emerald-600" />
+                            <span>Ativar Seção</span>
                           </>
                         ) : (
                           <>
-                            <Eye className="w-3.5 h-3.5 text-emerald-600" />
-                            <span>Seção Ativa</span>
+                            <EyeOff className="w-3.5 h-3.5 text-rose-600" />
+                            <span>Desativar Seção</span>
                           </>
                         )}
                       </button>
@@ -3054,6 +3225,139 @@ export default function ProposalManager() {
                   </>
                 )}
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL: Script para o SQL Editor do Supabase */}
+      {isSqlModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/60 backdrop-blur-sm animate-fade-in">
+          <div className="bg-white w-full max-w-2xl rounded-3xl p-6 sm:p-8 shadow-2xl border border-emerald-200 text-left relative max-h-[90vh] flex flex-col">
+            <button
+              onClick={() => setIsSqlModalOpen(false)}
+              className="absolute top-5 right-5 text-gray-400 hover:text-gray-700 p-1 rounded-full hover:bg-gray-100 transition-colors"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            <div className="flex items-center gap-3 pb-3 mb-4 border-b border-emerald-100">
+              <div className="w-10 h-10 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
+                <Database className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="font-serif text-xl text-brand-text font-bold">
+                  Código para o SQL Editor do Supabase
+                </h3>
+                <p className="text-xs text-brand-text-soft">
+                  Cria a tabela <code className="font-mono bg-emerald-50 text-emerald-800 px-1 py-0.5 rounded font-bold">propostas</code> no Supabase onde todos os dados das propostas são salvos em JSON.
+                </p>
+              </div>
+            </div>
+
+            <div className="text-xs text-emerald-900 bg-emerald-50/80 p-3.5 rounded-2xl border border-emerald-200 mb-4 space-y-1">
+              <p className="font-semibold text-emerald-950">Instruções para o Supabase:</p>
+              <ol className="list-decimal list-inside space-y-0.5 text-emerald-800">
+                <li>Acesse seu painel no Supabase: <a href="https://supabase.com/dashboard" target="_blank" rel="noreferrer" className="underline font-bold">supabase.com/dashboard</a></li>
+                <li>Clique no menu lateral em <strong>SQL Editor</strong></li>
+                <li>Clique em <strong>+ New Query</strong></li>
+                <li>Cole o código abaixo e clique no botão verde <strong>Run</strong></li>
+              </ol>
+            </div>
+
+            <div className="relative flex-1 bg-slate-950 rounded-2xl overflow-hidden p-4 text-xs font-mono text-emerald-400 overflow-y-auto mb-4 border border-slate-800">
+              <pre className="whitespace-pre-wrap leading-relaxed select-all">
+{`-- 1. Cria a tabela 'propostas' no Supabase
+CREATE TABLE IF NOT EXISTS public.propostas (
+  id TEXT PRIMARY KEY,
+  dados JSONB NOT NULL,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+-- 2. Cria índices para acelerar consultas por categoria e slug
+CREATE INDEX IF NOT EXISTS idx_propostas_category ON public.propostas ((dados->>'category'));
+CREATE INDEX IF NOT EXISTS idx_propostas_slug ON public.propostas ((dados->>'clientSlug'));
+
+-- 3. Habilita a Segurança em Nível de Linha (RLS)
+ALTER TABLE public.propostas ENABLE ROW LEVEL SECURITY;
+
+-- 4. Políticas de permissão para ler, criar, editar e excluir
+DROP POLICY IF EXISTS "Permitir leitura publica de propostas" ON public.propostas;
+CREATE POLICY "Permitir leitura publica de propostas" ON public.propostas FOR SELECT TO public USING (true);
+
+DROP POLICY IF EXISTS "Permitir criacao de propostas" ON public.propostas;
+CREATE POLICY "Permitir criacao de propostas" ON public.propostas FOR INSERT TO public WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Permitir edicao de propostas" ON public.propostas;
+CREATE POLICY "Permitir edicao de propostas" ON public.propostas FOR UPDATE TO public USING (true);
+
+DROP POLICY IF EXISTS "Permitir exclusao de propostas" ON public.propostas;
+CREATE POLICY "Permitir exclusao de propostas" ON public.propostas FOR DELETE TO public USING (true);`}
+              </pre>
+            </div>
+
+            <div className="flex items-center justify-between gap-3 pt-2">
+              <span className="text-[11px] text-brand-text-soft">
+                Tabela: <span className="font-mono font-bold text-brand-text">public.propostas</span> (coluna <span className="font-mono font-bold text-brand-text">dados</span>)
+              </span>
+
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    const code = `-- 1. Cria a tabela 'propostas' no Supabase
+CREATE TABLE IF NOT EXISTS public.propostas (
+  id TEXT PRIMARY KEY,
+  dados JSONB NOT NULL,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_propostas_category ON public.propostas ((dados->>'category'));
+CREATE INDEX IF NOT EXISTS idx_propostas_slug ON public.propostas ((dados->>'clientSlug'));
+
+ALTER TABLE public.propostas ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Permitir leitura publica de propostas" ON public.propostas;
+CREATE POLICY "Permitir leitura publica de propostas" ON public.propostas FOR SELECT TO public USING (true);
+
+DROP POLICY IF EXISTS "Permitir criacao de propostas" ON public.propostas;
+CREATE POLICY "Permitir criacao de propostas" ON public.propostas FOR INSERT TO public WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Permitir edicao de propostas" ON public.propostas;
+CREATE POLICY "Permitir edicao de propostas" ON public.propostas FOR UPDATE TO public USING (true);
+
+DROP POLICY IF EXISTS "Permitir exclusao de propostas" ON public.propostas;
+CREATE POLICY "Permitir exclusao de propostas" ON public.propostas FOR DELETE TO public USING (true);`;
+
+                    navigator.clipboard.writeText(code);
+                    setCopiedSql(true);
+                    setTimeout(() => setCopiedSql(false), 3000);
+                  }}
+                  className="px-5 py-2.5 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition-all shadow-md cursor-pointer flex items-center gap-2"
+                >
+                  {copiedSql ? (
+                    <>
+                      <Check className="w-4 h-4 text-white" />
+                      <span>Copiado com Sucesso!</span>
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="w-4 h-4" />
+                      <span>Copiar Código SQL</span>
+                    </>
+                  )}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setIsSqlModalOpen(false)}
+                  className="px-4 py-2.5 rounded-full border border-gray-300 text-gray-700 hover:bg-gray-100 text-xs font-semibold uppercase tracking-wider transition-all cursor-pointer"
+                >
+                  Fechar
+                </button>
+              </div>
             </div>
           </div>
         </div>

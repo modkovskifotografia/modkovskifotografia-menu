@@ -23,6 +23,7 @@ export function isValidSupabaseUrl(url: string | undefined): boolean {
 export function isSupabaseConfigured(): boolean {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseKey =
+    process.env.SUPABASE_SERVICE_ROLE_KEY ||
     process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ||
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
@@ -36,8 +37,8 @@ export function isSupabaseConfigured(): boolean {
 }
 
 /**
- * Retorna o cliente Supabase inicializado com segurança (Lazy Initialization).
- * Retorna null silenciosamente caso as chaves não estejam configuradas ou sejam inválidas.
+ * Retorna o cliente Supabase inicializado com seguranca (Lazy Initialization).
+ * Retorna null silenciosamente caso as chaves nao estejam configuradas ou sejam invalidas.
  */
 export function getSupabase(): SupabaseClient | null {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL?.trim();
@@ -64,6 +65,35 @@ export function getSupabase(): SupabaseClient | null {
   }
 
   return supabaseClient;
+}
+
+/**
+ * Retorna o cliente Supabase para o lado do servidor (API routes),
+ * utilizando a service role key se disponivel (para operacoes administrativas sem restricoes de RLS),
+ * ou as chaves publicas/anon.
+ */
+export function getServerSupabase(): SupabaseClient | null {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL?.trim();
+  const supabaseKey = (
+    process.env.SUPABASE_SERVICE_ROLE_KEY ||
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ||
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  )?.trim();
+
+  if (!isValidSupabaseUrl(supabaseUrl) || !supabaseKey || supabaseKey.length < 10) {
+    return null;
+  }
+
+  try {
+    return createClient(supabaseUrl!, supabaseKey, {
+      auth: {
+        persistSession: false,
+        autoRefreshToken: false,
+      }
+    });
+  } catch {
+    return null;
+  }
 }
 
 /**

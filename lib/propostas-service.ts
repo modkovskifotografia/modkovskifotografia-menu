@@ -1,11 +1,76 @@
 'use client';
 
 import { Proposal, ProposalCategory, STANDARD_TEMPLATES, calculateDefaultInstallments } from './propostas';
-import rawProposalsData from '@/data/propostas.json';
 
 const STORAGE_KEY = 'modkovski_propostas_cache_v1';
+const TOMBSTONE_STORAGE_KEY = 'modkovski_deleted_proposals_v1';
 export const PROPOSAL_SYNC_CHANNEL = 'modkovski_proposals_broadcast_v1';
 export const PROPOSAL_CUSTOM_EVENT = 'modkovski:proposal-update';
+
+// Hardcoded permanently deleted proposals to prevent resurrection across browsers and caches
+const INITIAL_DELETED_TOMBSTONES = [
+  'sample-corp-01',
+  'dra-camila-santos',
+  'camila-santos',
+  'corporativo:dra-camila-santos',
+  'corporativo:camila-santos',
+  'prop-sample-corp-01',
+];
+
+export function getTombstones(): string[] {
+  if (typeof window === 'undefined') return INITIAL_DELETED_TOMBSTONES;
+  try {
+    const raw = localStorage.getItem(TOMBSTONE_STORAGE_KEY);
+    const stored: string[] = raw ? JSON.parse(raw) : [];
+    const set = new Set([...INITIAL_DELETED_TOMBSTONES, ...stored]);
+    return Array.from(set);
+  } catch {
+    return INITIAL_DELETED_TOMBSTONES;
+  }
+}
+
+export function addTombstone(id?: string, category?: string, slug?: string) {
+  if (typeof window === 'undefined') return;
+  try {
+    const tombstones = new Set(getTombstones());
+    if (id) tombstones.add(id.toLowerCase());
+    if (slug) {
+      tombstones.add(slug.toLowerCase());
+      if (category) {
+        tombstones.add(`${category.toLowerCase()}:${slug.toLowerCase()}`);
+      }
+    }
+    localStorage.setItem(TOMBSTONE_STORAGE_KEY, JSON.stringify(Array.from(tombstones)));
+  } catch {}
+}
+
+export function isTombstoned(p: { id?: string; category?: string; clientSlug?: string; clientName?: string }): boolean {
+  const tombstones = getTombstones();
+  const id = p.id?.toLowerCase() || '';
+  const slug = p.clientSlug?.toLowerCase() || '';
+  const category = p.category?.toLowerCase() || '';
+  const name = p.clientName?.toLowerCase() || '';
+  const catSlug = category && slug ? `${category}:${slug}` : '';
+
+  // Permanent block for Camila Santos
+  if (
+    slug === 'dra-camila-santos' ||
+    slug === 'camila-santos' ||
+    id === 'sample-corp-01' ||
+    name.includes('camila santos') ||
+    catSlug === 'corporativo:dra-camila-santos'
+  ) {
+    return true;
+  }
+
+  for (const t of tombstones) {
+    const lt = t.toLowerCase();
+    if (id && id === lt) return true;
+    if (slug && slug === lt) return true;
+    if (catSlug && catSlug === lt) return true;
+  }
+  return false;
+}
 
 function enrichProposal(proposal: Proposal): Proposal {
   return {
@@ -13,18 +78,18 @@ function enrichProposal(proposal: Proposal): Proposal {
     hidePhotoSection: proposal.hidePhotoSection ?? false,
     hideVideoSection: proposal.hideVideoSection ?? false,
     hideConteudoSection: proposal.hideConteudoSection ?? false,
-    packages: (proposal.packages || []).map(pkg => ({
+    packages: (proposal.packages || []).map((pkg) => ({
       ...pkg,
-      installments: calculateDefaultInstallments(pkg.price)
+      installments: pkg.installments || calculateDefaultInstallments(pkg.price),
     })),
-    videoPackages: (proposal.videoPackages || []).map(pkg => ({
+    videoPackages: (proposal.videoPackages || []).map((pkg) => ({
       ...pkg,
-      installments: calculateDefaultInstallments(pkg.price)
+      installments: pkg.installments || calculateDefaultInstallments(pkg.price),
     })),
-    conteudoPackages: (proposal.conteudoPackages || []).map(pkg => ({
+    conteudoPackages: (proposal.conteudoPackages || []).map((pkg) => ({
       ...pkg,
-      installments: calculateDefaultInstallments(pkg.price)
-    }))
+      installments: pkg.installments || calculateDefaultInstallments(pkg.price),
+    })),
   };
 }
 
@@ -63,18 +128,22 @@ export function getInitialProposalSnapshot(category: string, slug: string): Prop
     return template;
   }
 
-  // 1. Check localStorage if in browser
+  // Check if tombstoned
+  if (isTombstoned({ category: cleanCategory, clientSlug: cleanSlug })) {
+    return null;
+  }
+
+  // Check localStorage if in browser
   if (typeof window !== 'undefined') {
     try {
       const cached = localStorage.getItem(STORAGE_KEY);
       if (cached) {
         const list: Proposal[] = JSON.parse(cached);
         const found = list.find(
-          (p) => p.category.toLowerCase() === cleanCategory && (
-            p.clientSlug.toLowerCase() === cleanSlug ||
-            p.clientSlug.toLowerCase().includes(cleanSlug) ||
-            cleanSlug.includes(p.clientSlug.toLowerCase())
-          )
+          (p) =>
+            !isTombstoned(p) &&
+            p.category.toLowerCase() === cleanCategory &&
+            p.clientSlug.toLowerCase() === cleanSlug
         );
         if (found) {
           return enrichProposal({
@@ -83,9 +152,9 @@ export function getInitialProposalSnapshot(category: string, slug: string): Prop
             hidePhotoSection: found.hidePhotoSection ?? false,
             hideVideoSection: found.hideVideoSection ?? false,
             hideConteudoSection: found.hideConteudoSection ?? false,
-            packages: Array.isArray(found.packages) ? found.packages : template.packages,
-            videoPackages: Array.isArray(found.videoPackages) ? found.videoPackages : template.videoPackages,
-            conteudoPackages: Array.isArray(found.conteudoPackages) ? found.conteudoPackages : template.conteudoPackages,
+            packages: Array.isArray(found.packages) && found.packages.length > 0 ? found.packages : template.packages,
+            videoPackages: Array.isArray(found.videoPackages) ? found.videoPackages : (template.videoPackages || []),
+            conteudoPackages: Array.isArray(found.conteudoPackages) ? found.conteudoPackages : (template.conteudoPackages || []),
             proposalDate: found.proposalDate || template.proposalDate,
             title: found.title || template.title,
             subtitle: found.subtitle || template.subtitle,
@@ -99,70 +168,27 @@ export function getInitialProposalSnapshot(category: string, slug: string): Prop
     } catch {}
   }
 
-  // 2. Check bundled static data/propostas.json (guaranteed across deployments and initial render)
-  try {
-    const staticList = (rawProposalsData as unknown as Proposal[]) || [];
-    const foundStatic = staticList.find(
-      (p) => p.category.toLowerCase() === cleanCategory && (
-        p.clientSlug.toLowerCase() === cleanSlug ||
-        p.clientSlug.toLowerCase().includes(cleanSlug) ||
-        cleanSlug.includes(p.clientSlug.toLowerCase())
-      )
-    );
-    if (foundStatic) {
-      return enrichProposal({
-        ...template,
-        ...foundStatic,
-        hidePhotoSection: foundStatic.hidePhotoSection ?? false,
-        hideVideoSection: foundStatic.hideVideoSection ?? false,
-        hideConteudoSection: foundStatic.hideConteudoSection ?? false,
-        packages: Array.isArray(foundStatic.packages) ? foundStatic.packages : template.packages,
-        videoPackages: Array.isArray(foundStatic.videoPackages) ? foundStatic.videoPackages : template.videoPackages,
-        conteudoPackages: Array.isArray(foundStatic.conteudoPackages) ? foundStatic.conteudoPackages : template.conteudoPackages,
-        proposalDate: foundStatic.proposalDate || template.proposalDate,
-        title: foundStatic.title || template.title,
-        subtitle: foundStatic.subtitle || template.subtitle,
-        investmentNote: foundStatic.investmentNote !== undefined ? foundStatic.investmentNote : template.investmentNote,
-        welcomeMessage: foundStatic.welcomeMessage !== undefined ? foundStatic.welcomeMessage : template.welcomeMessage,
-        clientName: foundStatic.clientName || cleanSlug,
-        clientSlug: foundStatic.clientSlug || cleanSlug,
-      });
-    }
-  } catch {}
-
-  const formattedName = cleanSlug === '[nome]' ? '[nome]' : cleanSlug
-    .split('-')
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(' ');
-
-  return enrichProposal({
-    ...template,
-    id: `prop-initial-${cleanCategory}-${cleanSlug}`,
-    category: (cleanCategory as ProposalCategory) || 'individual',
-    clientName: formattedName || 'Cliente',
-    clientSlug: cleanSlug,
-    proposalDate: new Date().toLocaleDateString('pt-BR'),
-    isTemplate: false,
-    packages: template.packages,
-    videoPackages: (cleanCategory === 'casamento' || cleanCategory === 'casal') ? [] : template.videoPackages,
-    conteudoPackages: (cleanCategory === 'corporativo' || cleanCategory === 'evento' || cleanCategory === 'institucional') ? template.conteudoPackages : undefined,
-  });
+  // If not found in localStorage cache, return null so ProposalView waits for API/Supabase response
+  return null;
 }
 
 export async function fetchAllProposals(): Promise<Proposal[]> {
   let serverProposals: Proposal[] = [];
+  let serverFetchSuccess = false;
+
   try {
-    const res = await fetch(`/api/propostas?_t=${Date.now()}`, { 
+    const res = await fetch(`/api/propostas?_t=${Date.now()}`, {
       cache: 'no-store',
       headers: {
         'Cache-Control': 'no-cache, no-store, must-revalidate',
-        'Pragma': 'no-cache',
-      }
+        Pragma: 'no-cache',
+      },
     });
     if (res.ok) {
       const data = await res.json();
       if (data.success && Array.isArray(data.proposals)) {
-        serverProposals = data.proposals.map(enrichProposal);
+        serverProposals = data.proposals.filter((p: Proposal) => !isTombstoned(p)).map(enrichProposal);
+        serverFetchSuccess = true;
       }
     }
   } catch (err) {
@@ -174,55 +200,63 @@ export async function fetchAllProposals(): Promise<Proposal[]> {
     try {
       const cached = localStorage.getItem(STORAGE_KEY);
       if (cached) {
-        localProposals = JSON.parse(cached).map(enrichProposal);
+        localProposals = JSON.parse(cached)
+          .filter((p: Proposal) => !isTombstoned(p))
+          .map(enrichProposal);
       }
     } catch {}
   }
 
-  // Merge server, static file, and local proposals (deduplicating by category + clientSlug)
   const map = new Map<string, Proposal>();
-  
-  // 1. Static base from data/propostas.json
-  const staticList = (rawProposalsData as unknown as Proposal[]) || [];
-  staticList.forEach(p => map.set(`${p.category}:${p.clientSlug.toLowerCase()}`, enrichProposal(p)));
 
-  // 2. Server proposals (overwrite static)
-  serverProposals.forEach(p => map.set(`${p.category}:${p.clientSlug.toLowerCase()}`, p));
+  if (serverFetchSuccess) {
+    // Server is authoritative source
+    serverProposals.forEach((p) => {
+      map.set(`${p.category}:${p.clientSlug.toLowerCase()}`, p);
+    });
 
-  // 3. Local proposals (if newer)
-  localProposals.forEach(p => {
-    const key = `${p.category}:${p.clientSlug.toLowerCase()}`;
-    if (!map.has(key)) {
-      map.set(key, p);
-    } else {
-      const existingProp = map.get(key)!;
-      const localUpdated = p.updatedAt ? new Date(p.updatedAt).getTime() : 0;
-      const existingUpdated = existingProp.updatedAt 
-        ? new Date(existingProp.updatedAt).getTime() 
-        : (existingProp.createdAt ? new Date(existingProp.createdAt).getTime() : 0);
-      
-      if (localUpdated > existingUpdated) {
-        map.set(key, { ...existingProp, ...p });
+    // Check if any local proposals were created offline and have not yet synced
+    localProposals.forEach((p) => {
+      const key = `${p.category}:${p.clientSlug.toLowerCase()}`;
+      if (!map.has(key) && !isTombstoned(p)) {
+        // Only keep if created very recently (within 24 hours) as an unsaved draft
+        const createdAtTime = p.createdAt ? new Date(p.createdAt).getTime() : 0;
+        const now = Date.now();
+        if (now - createdAtTime < 24 * 60 * 60 * 1000) {
+          map.set(key, p);
+        }
       }
-    }
-  });
+    });
+  } else {
+    // If offline/server failed, fall back to local cached proposals
+    localProposals.forEach((p) => {
+      if (!isTombstoned(p)) {
+        map.set(`${p.category}:${p.clientSlug.toLowerCase()}`, p);
+      }
+    });
+  }
 
   const merged = Array.from(map.values());
+
+  // Clean local storage cache: persist authoritative filtered list
   if (typeof window !== 'undefined') {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(merged));
     } catch {}
   }
+
   return merged;
 }
 
-export async function fetchProposalBySlug(
-  category: string,
-  slug: string
-): Promise<Proposal | null> {
+export async function fetchProposalBySlug(category: string, slug: string): Promise<Proposal | null> {
   const cleanCategory = category.toLowerCase();
   const cleanSlug = slug.toLowerCase();
   const template = STANDARD_TEMPLATES[cleanCategory as ProposalCategory] || STANDARD_TEMPLATES['individual'];
+
+  // If permanently deleted/tombstoned, do not return or recreate
+  if (isTombstoned({ category: cleanCategory, clientSlug: cleanSlug })) {
+    return null;
+  }
 
   // If asking for the standard template preview:
   if (cleanSlug === 'padrao' && template) {
@@ -236,14 +270,16 @@ export async function fetchProposalBySlug(
       cache: 'no-store',
       headers: {
         'Cache-Control': 'no-cache, no-store, must-revalidate',
-        'Pragma': 'no-cache',
-      }
+        Pragma: 'no-cache',
+      },
     });
     if (res.ok) {
       const data = await res.json();
       if (data.success && data.proposal) {
-        foundProposal = data.proposal;
-        updateLocalCache(data.proposal);
+        if (!isTombstoned(data.proposal)) {
+          foundProposal = data.proposal;
+          updateLocalCache(data.proposal);
+        }
       }
     }
   } catch (err) {
@@ -257,32 +293,14 @@ export async function fetchProposalBySlug(
       if (cached) {
         const list: Proposal[] = JSON.parse(cached);
         const found = list.find(
-          (p) => p.category.toLowerCase() === cleanCategory && (
-            p.clientSlug.toLowerCase() === cleanSlug ||
-            p.clientSlug.toLowerCase().includes(cleanSlug) ||
-            cleanSlug.includes(p.clientSlug.toLowerCase())
-          )
+          (p) =>
+            !isTombstoned(p) &&
+            p.category.toLowerCase() === cleanCategory &&
+            p.clientSlug.toLowerCase() === cleanSlug
         );
         if (found) {
           foundProposal = found;
         }
-      }
-    } catch {}
-  }
-
-  // Fallback 2: static data/propostas.json
-  if (!foundProposal) {
-    try {
-      const staticList = (rawProposalsData as unknown as Proposal[]) || [];
-      const foundStatic = staticList.find(
-        (p) => p.category.toLowerCase() === cleanCategory && (
-          p.clientSlug.toLowerCase() === cleanSlug ||
-          p.clientSlug.toLowerCase().includes(cleanSlug) ||
-          cleanSlug.includes(p.clientSlug.toLowerCase())
-        )
-      );
-      if (foundStatic) {
-        foundProposal = foundStatic;
       }
     } catch {}
   }
@@ -300,34 +318,24 @@ export async function fetchProposalBySlug(
       hideVideoSection: foundProposal.hideVideoSection ?? false,
       hideConteudoSection: foundProposal.hideConteudoSection ?? false,
       packages: Array.isArray(foundProposal.packages) ? foundProposal.packages : template.packages,
-      videoPackages: Array.isArray(foundProposal.videoPackages) ? foundProposal.videoPackages : template.videoPackages,
-      conteudoPackages: Array.isArray(foundProposal.conteudoPackages) ? foundProposal.conteudoPackages : template.conteudoPackages,
+      videoPackages: Array.isArray(foundProposal.videoPackages) ? foundProposal.videoPackages : (template.videoPackages || []),
+      conteudoPackages: Array.isArray(foundProposal.conteudoPackages)
+        ? foundProposal.conteudoPackages
+        : (template.conteudoPackages || []),
       proposalDate: foundProposal.proposalDate || template.proposalDate,
       title: foundProposal.title || template.title,
       subtitle: foundProposal.subtitle || template.subtitle,
-      investmentNote: foundProposal.investmentNote !== undefined ? foundProposal.investmentNote : template.investmentNote,
-      welcomeMessage: foundProposal.welcomeMessage !== undefined ? foundProposal.welcomeMessage : template.welcomeMessage,
+      investmentNote:
+        foundProposal.investmentNote !== undefined ? foundProposal.investmentNote : template.investmentNote,
+      welcomeMessage:
+        foundProposal.welcomeMessage !== undefined ? foundProposal.welcomeMessage : template.welcomeMessage,
       clientName: foundProposal.clientName || formattedName,
       clientSlug: foundProposal.clientSlug || cleanSlug,
     });
   }
 
-  // Fallback: Always return a valid personalized proposal based on template if not found in DB/localStorage
-  const fallbackProp: Proposal = enrichProposal({
-    ...template,
-    id: `prop-${Date.now()}-${Math.random().toString(36).substr(2, 6)}`,
-    category: (cleanCategory as ProposalCategory) || 'individual',
-    clientName: formattedName || 'Cliente',
-    clientSlug: cleanSlug,
-    proposalDate: new Date().toLocaleDateString('pt-BR'),
-    isTemplate: false,
-    createdAt: new Date().toISOString(),
-    packages: template.packages,
-    videoPackages: (cleanCategory === 'casamento' || cleanCategory === 'casal') ? [] : template.videoPackages,
-    conteudoPackages: (cleanCategory === 'corporativo' || cleanCategory === 'evento' || cleanCategory === 'institucional') ? template.conteudoPackages : undefined,
-  });
-  updateLocalCache(fallbackProp);
-  return fallbackProp;
+  // If proposal is not found on server or local cache, return null so client doesn't see false default prices
+  return null;
 }
 
 export async function saveProposalAction(proposal: Proposal): Promise<Proposal> {
@@ -345,7 +353,6 @@ export async function saveProposalAction(proposal: Proposal): Promise<Proposal> 
     if (res.ok) {
       const data = await res.json();
       if (data.success && data.proposal) {
-        // update local cache and broadcast
         updateLocalCache(data.proposal);
         return data.proposal;
       }
@@ -396,6 +403,13 @@ export async function updateProposalStatusAction(
 }
 
 export async function deleteProposalAction(id: string, category?: string, clientSlug?: string): Promise<boolean> {
+  // 1. Immediately register tombstone to prevent resurrection
+  addTombstone(id, category, clientSlug);
+
+  // 2. Remove from local cache
+  deleteFromLocalCache(id, category, clientSlug);
+
+  // 3. Call backend API
   try {
     const query = new URLSearchParams();
     if (id) query.set('id', id);
@@ -406,30 +420,34 @@ export async function deleteProposalAction(id: string, category?: string, client
       method: 'DELETE',
     });
     if (res.ok) {
-      deleteFromLocalCache(id, category, clientSlug);
       return true;
     }
   } catch (err) {
     console.warn('Error deleting proposal from API:', err);
   }
 
-  deleteFromLocalCache(id, category, clientSlug);
   return true;
 }
 
 function updateLocalCache(proposal: Proposal) {
   if (typeof window === 'undefined') return;
+  if (isTombstoned(proposal)) return;
   try {
     const cached = localStorage.getItem(STORAGE_KEY);
     let list: Proposal[] = cached ? JSON.parse(cached) : [];
-    const idx = list.findIndex((p) => p.id === proposal.id || (p.category === proposal.category && p.clientSlug === proposal.clientSlug));
+    list = list.filter((p) => !isTombstoned(p));
+    const idx = list.findIndex(
+      (p) =>
+        p.id === proposal.id ||
+        (p.category.toLowerCase() === proposal.category.toLowerCase() &&
+          p.clientSlug.toLowerCase() === proposal.clientSlug.toLowerCase())
+    );
     if (idx >= 0) {
       list[idx] = proposal;
     } else {
       list.unshift(proposal);
     }
     localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
-    // Broadcast instant update across tabs and windows
     broadcastProposalSync({
       action: 'save',
       category: proposal.category,
@@ -448,15 +466,20 @@ function deleteFromLocalCache(id: string, category?: string, clientSlug?: string
       let list: Proposal[] = JSON.parse(cached);
       list = list.filter((p) => {
         if (id && p.id === id) return false;
-        if (category && clientSlug && p.category.toLowerCase() === category.toLowerCase() && (
-          p.clientSlug.toLowerCase() === clientSlug.toLowerCase() ||
-          p.clientSlug.toLowerCase().includes(clientSlug.toLowerCase()) ||
-          clientSlug.toLowerCase().includes(p.clientSlug.toLowerCase())
-        )) return false;
+        if (
+          category &&
+          clientSlug &&
+          p.category.toLowerCase() === category.toLowerCase() &&
+          (p.clientSlug.toLowerCase() === clientSlug.toLowerCase() ||
+            p.clientSlug.toLowerCase().includes(clientSlug.toLowerCase()) ||
+            clientSlug.toLowerCase().includes(p.clientSlug.toLowerCase()))
+        ) {
+          return false;
+        }
+        if (isTombstoned(p)) return false;
         return true;
       });
       localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
-      // Broadcast instant delete
       broadcastProposalSync({
         action: 'delete',
         category,

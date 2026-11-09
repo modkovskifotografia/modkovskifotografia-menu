@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
-import { Proposal, ProposalCategory, STANDARD_TEMPLATES, calculateDefaultInstallments } from '@/lib/propostas';
+import { Proposal, calculateDefaultInstallments, slugify } from '@/lib/propostas';
+import { getServerSupabase } from '@/lib/supabase';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -14,137 +15,54 @@ function enrichProposal(proposal: Proposal): Proposal {
     hidePhotoSection: proposal.hidePhotoSection ?? false,
     hideVideoSection: proposal.hideVideoSection ?? false,
     hideConteudoSection: proposal.hideConteudoSection ?? false,
-    packages: (proposal.packages || []).map(pkg => ({
+    packages: (proposal.packages || []).map((pkg) => ({
       ...pkg,
-      installments: calculateDefaultInstallments(pkg.price)
+      installments: calculateDefaultInstallments(pkg.price),
     })),
-    videoPackages: (proposal.videoPackages || []).map(pkg => ({
+    videoPackages: (proposal.videoPackages || []).map((pkg) => ({
       ...pkg,
-      installments: calculateDefaultInstallments(pkg.price)
+      installments: calculateDefaultInstallments(pkg.price),
     })),
-    conteudoPackages: (proposal.conteudoPackages || []).map(pkg => ({
+    conteudoPackages: (proposal.conteudoPackages || []).map((pkg) => ({
       ...pkg,
-      installments: calculateDefaultInstallments(pkg.price)
-    }))
+      installments: calculateDefaultInstallments(pkg.price),
+    })),
   };
 }
 
-function ensureDataFile(): Proposal[] {
+function parseProposalRow(row: any): Proposal | null {
+  if (!row) return null;
+  let p = row.dados || row.data || row;
+  if (typeof p === 'string') {
+    try {
+      p = JSON.parse(p);
+    } catch {
+      return null;
+    }
+  }
+  if (!p || typeof p !== 'object') return null;
+  if (!p.id && row.id) p.id = row.id;
+  return enrichProposal(p);
+}
+
+function readLocalDataFile(): Proposal[] {
   try {
     const dir = path.dirname(DATA_FILE);
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir, { recursive: true });
     }
-
-    const maysaProposal: Proposal = {
-      id: 'prop-maysa-rickely',
-      category: 'casamento',
-      clientName: 'Maysa Rickely',
-      clientSlug: 'maysa-rickely',
-      title: 'Proposta de Cobertura de Casamento',
-      subtitle: 'Registros espontâneos, poéticos e inesquecíveis do dia mais emocionante da vida de vocês.',
-      welcomeMessage: 'O casamento é o início de um novo capítulo. Estamos preparados para captar cada lágrima de alegria, abraço sincero e sorriso com máxima sensibilidade e atenção aos detalhes.',
-      validityDays: 10,
-      createdAt: new Date().toISOString(),
-      investmentNote: 'Contrato formal com garantia de data. Pagamento facilitado em até 12x no cartão ou entrada de 30% + parcelas.',
-      isTemplate: false,
-      packages: [
-        {
-          id: 'cas-01',
-          name: 'Cobertura Essencial',
-          highlight: false,
-          price: 'R$ 650',
-          paymentMethod: 'Pix',
-          duration: '2 horas de cobertura',
-          features: [
-            '40 fotos selecionadas',
-            '1 vídeo de até 1min30',
-            'Registro dos principais momentos',
-            'Prazo de entrega de até 10 dias',
-            'Foto extra R$ 25,00'
-          ],
-          installments: calculateDefaultInstallments('R$ 650')
-        },
-        {
-          id: 'cas-02',
-          name: 'Cobertura Especial',
-          highlight: false,
-          price: 'R$ 750',
-          paymentMethod: 'Pix',
-          duration: '2 horas de cobertura',
-          features: [
-            '60 fotos selecionadas',
-            '1 vídeos de até 1min30',
-            'Cobertura ampliada da cerimônia',
-            'Prazo de entrega de até 15 dias',
-            'Foto extra R$ 23,00'
-          ],
-          installments: calculateDefaultInstallments('R$ 750')
-        },
-        {
-          id: 'cas-03',
-          name: 'Cobertura Completa',
-          highlight: false,
-          price: 'R$ 950',
-          paymentMethod: 'Pix',
-          duration: '3 horas de cobertura',
-          features: [
-            '80 fotos selecionadas',
-            '2 vídeos de até 1min30',
-            'Maior tempo de cobertura',
-            'Prazo de entrega de até 20 dias',
-            'Foto extra R$ 20,00'
-          ],
-          installments: calculateDefaultInstallments('R$ 950')
-        },
-        {
-          id: 'cas-04',
-          name: 'Para guardar tudo.',
-          highlight: true,
-          price: 'R$ 1.350',
-          paymentMethod: 'Pix',
-          duration: '2 horas de Making Of da noiva + 4 horas de cobertura',
-          features: [
-            'Todas as fotos realizadas durante a cobertura',
-            'Média de aproximadamente 200 fotos',
-            'Making Of da noiva',
-            '3 vídeos de até 1min30',
-            'Cobertura completa do evento',
-            'Prazo de entrega de até 25 dias'
-          ],
-          extraNote: 'Porque você não precisa escolher quais memórias merecem permanecer.',
-          installments: calculateDefaultInstallments('R$ 1.350')
-        }
-      ]
-    };
-
-    let list: Proposal[] = [];
     if (!fs.existsSync(DATA_FILE)) {
-      list = [
-        maysaProposal,
-        {
-          ...STANDARD_TEMPLATES.corporativo,
-          id: 'sample-corp-01',
-          clientName: 'Dra. Camila Santos',
-          clientSlug: 'dra-camila-santos',
-          isTemplate: false,
-          createdAt: new Date().toISOString(),
-          welcomeMessage: 'Olá Dra. Camila! Foi um prazer conversar com você. Esta proposta foi desenhada especialmente para elevar o posicionamento digital da sua clínica com fotos de autoridade e vídeos estratégicos.,',
-        }
-      ];
-      fs.writeFileSync(DATA_FILE, JSON.stringify(list, null, 2), 'utf-8');
-    } else {
-      const content = fs.readFileSync(DATA_FILE, 'utf-8');
-      list = JSON.parse(content || '[]');
+      return [];
     }
-    return list;
+    const content = fs.readFileSync(DATA_FILE, 'utf-8');
+    return JSON.parse(content || '[]');
   } catch (err) {
     console.error('Error reading propostas.json:', err);
     return [];
   }
 }
 
-function writeDataFile(data: Proposal[]) {
+function writeLocalDataFile(data: Proposal[]) {
   try {
     const dir = path.dirname(DATA_FILE);
     if (!fs.existsSync(dir)) {
@@ -156,71 +74,172 @@ function writeDataFile(data: Proposal[]) {
   }
 }
 
+async function getSupabaseProposals(): Promise<{ success: boolean; proposals?: Proposal[]; error?: any }> {
+  const supabase = getServerSupabase();
+  if (!supabase) return { success: false, error: 'Supabase client not initialized' };
+
+  try {
+    const { data, error } = await supabase
+      .from('propostas')
+      .select('*')
+      .order('updated_at', { ascending: false });
+
+    if (error) {
+      return { success: false, error };
+    }
+
+    const proposals = (data || []).map(parseProposalRow).filter(Boolean) as Proposal[];
+    return { success: true, proposals };
+  } catch (err) {
+    return { success: false, error: err };
+  }
+}
+
+async function autoMigrateLocalToSupabase(supabase: any, localList: Proposal[]) {
+  if (!localList || localList.length === 0) return;
+  try {
+    const rows = localList.map((p) => ({
+      id: p.id || `prop-${Date.now()}-${Math.random().toString(36).substr(2, 6)}`,
+      dados: p,
+      created_at: p.createdAt || new Date().toISOString(),
+      updated_at: p.updatedAt || new Date().toISOString(),
+    }));
+
+    await supabase.from('propostas').upsert(rows, { onConflict: 'id' });
+    console.log(`Auto-migrated ${rows.length} proposals to Supabase propostas table.`);
+  } catch (err) {
+    console.warn('Auto-migration notice:', err);
+  }
+}
+
 // GET: list all proposals or get single by category + slug
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const category = searchParams.get('category');
   const slug = searchParams.get('slug');
+  const id = searchParams.get('id');
 
-  const list = ensureDataFile();
+  const supabase = getServerSupabase();
+  let list: Proposal[] = [];
+  let source: 'supabase' | 'local' = 'local';
 
-  if (category && slug) {
-    const cleanSlug = slug.toLowerCase().trim();
-    let found = list.find(
-      (p) => p.category === category && p.clientSlug.toLowerCase() === cleanSlug
-    );
-    if (!found) {
-      // try partial match or startsWith
-      found = list.find(
-        (p) => p.category === category && (p.clientSlug.toLowerCase().includes(cleanSlug) || cleanSlug.includes(p.clientSlug.toLowerCase()))
-      );
+  if (supabase) {
+    const sbResult = await getSupabaseProposals();
+    if (sbResult.success && sbResult.proposals) {
+      list = sbResult.proposals;
+      source = 'supabase';
+
+      // If Supabase table is empty but local disk has existing proposals, auto-migrate!
+      if (list.length === 0) {
+        const localList = readLocalDataFile();
+        if (localList.length > 0) {
+          await autoMigrateLocalToSupabase(supabase, localList);
+          const recheck = await getSupabaseProposals();
+          if (recheck.success && recheck.proposals && recheck.proposals.length > 0) {
+            list = recheck.proposals;
+          } else {
+            list = localList;
+          }
+        }
+      } else {
+        // Keep local backup synced with fresh Supabase data
+        writeLocalDataFile(list);
+      }
+    } else {
+      console.warn('Supabase query failed or table not created yet, using local data backup:', sbResult.error);
+      list = readLocalDataFile();
     }
+  } else {
+    list = readLocalDataFile();
+  }
+
+  // Filter single proposal by id OR category + slug
+  if (id || (category && slug)) {
+    let found: Proposal | undefined;
+    if (id) {
+      found = list.find((p) => p.id === id);
+    }
+    if (!found && category && slug) {
+      const cleanCategory = decodeURIComponent(category).toLowerCase().trim();
+      const rawSlug = decodeURIComponent(slug).toLowerCase().trim();
+      const normSlug = slugify(rawSlug);
+
+      found = list.find((p) => {
+        const pCat = p.category.toLowerCase().trim();
+        const pSlug = p.clientSlug.toLowerCase().trim();
+        const pNormSlug = slugify(pSlug);
+        return (pCat === cleanCategory || slugify(pCat) === slugify(cleanCategory)) && (pSlug === rawSlug || pNormSlug === normSlug);
+      });
+
+      if (!found) {
+        found = list.find((p) => {
+          const pCat = p.category.toLowerCase().trim();
+          const pNormSlug = slugify(p.clientSlug || '');
+          return (pCat === cleanCategory || slugify(pCat) === slugify(cleanCategory)) && (pNormSlug.includes(normSlug) || normSlug.includes(pNormSlug));
+        });
+      }
+
+      if (!found) {
+        found = list.find((p) => slugify(p.clientSlug || '') === normSlug);
+      }
+    }
+
     if (found) {
-      // Auto-update status to visualizada if client views and it was nova or unset
       const fromAdmin = searchParams.get('admin') === 'true';
       if (!fromAdmin && (!found.status || found.status === 'nova')) {
         found.status = 'visualizada';
         found.viewedAt = new Date().toISOString();
-        writeDataFile(list);
+        found.updatedAt = new Date().toISOString();
+
+        // Update status in Supabase if connected
+        if (supabase) {
+          try {
+            await supabase.from('propostas').update({
+              dados: found,
+              updated_at: found.updatedAt,
+            }).eq('id', found.id);
+          } catch {}
+        }
+        writeLocalDataFile(list);
       }
+
       return NextResponse.json(
-        { success: true, proposal: enrichProposal(found) },
+        { success: true, proposal: enrichProposal(found), source },
         {
           headers: {
             'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
-            'Pragma': 'no-cache',
-            'Expires': '0',
+            Pragma: 'no-cache',
+            Expires: '0',
           },
         }
       );
     }
-    
-    // If not found in file, return null without creating or writing any fake proposal to disk
+
     return NextResponse.json(
-      { success: true, proposal: null },
+      { success: true, proposal: null, source },
       {
         headers: {
           'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
-          'Pragma': 'no-cache',
-          'Expires': '0',
+          Pragma: 'no-cache',
+          Expires: '0',
         },
       }
     );
   }
 
   return NextResponse.json(
-    { success: true, proposals: list.map(enrichProposal) },
+    { success: true, proposals: list.map(enrichProposal), source },
     {
       headers: {
         'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
-        'Pragma': 'no-cache',
-        'Expires': '0',
+        Pragma: 'no-cache',
+        Expires: '0',
       },
     }
   );
 }
 
-// POST: create new proposal
+// POST: create or edit proposal
 export async function POST(req: NextRequest) {
   try {
     const body = (await req.json()) as Proposal;
@@ -232,42 +251,125 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const list = ensureDataFile();
+    const cleanCategory = body.category.toLowerCase().trim();
+    const cleanSlug = body.clientSlug.toLowerCase().trim();
+    const now = new Date().toISOString();
 
-    // Check if duplicate slug in same category exists
-    const existingIndex = list.findIndex(
-      (p) => p.category === body.category && p.clientSlug.toLowerCase() === body.clientSlug.toLowerCase()
-    );
+    const supabase = getServerSupabase();
+    let targetId = body.id;
+    let existingDbRowIds: string[] = [];
+
+    // Lookup existing Supabase rows to match ID and remove duplicates
+    if (supabase) {
+      try {
+        const { data: rows } = await supabase.from('propostas').select('*');
+        if (rows && rows.length > 0) {
+          const matchingRows = rows.filter((r) => {
+            if (r.id === body.id) return true;
+            const p = parseProposalRow(r);
+            if (!p) return false;
+            return (
+              p.category.toLowerCase() === cleanCategory &&
+              p.clientSlug.toLowerCase() === cleanSlug
+            );
+          });
+
+          if (matchingRows.length > 0) {
+            targetId = matchingRows[0].id;
+            existingDbRowIds = matchingRows.map((r) => r.id);
+          }
+        }
+      } catch (err) {
+        console.warn('Error querying existing rows in Supabase POST:', err);
+      }
+    }
+
+    // Lookup in local file backup if targetId still not set
+    if (!targetId) {
+      const localList = readLocalDataFile();
+      const localFound = localList.find(
+        (p) =>
+          p.id === body.id ||
+          (p.category.toLowerCase() === cleanCategory &&
+            p.clientSlug.toLowerCase() === cleanSlug)
+      );
+      if (localFound) {
+        targetId = localFound.id;
+      }
+    }
+
+    const finalId = targetId || `prop-${Date.now()}-${Math.random().toString(36).substr(2, 6)}`;
 
     const newProposal: Proposal = enrichProposal({
       ...body,
-      id: body.id || `prop-${Date.now()}-${Math.random().toString(36).substr(2, 6)}`,
-      createdAt: body.createdAt || new Date().toISOString(),
-      updatedAt: body.updatedAt || new Date().toISOString(),
+      id: finalId,
+      createdAt: body.createdAt || now,
+      updatedAt: now,
       isTemplate: false,
     });
 
+    let savedInSupabase = false;
+    let supabaseError: any = null;
+
+    if (supabase) {
+      try {
+        // First upsert the target row
+        const { error } = await supabase.from('propostas').upsert({
+          id: newProposal.id,
+          dados: newProposal,
+          updated_at: newProposal.updatedAt,
+        }, { onConflict: 'id' });
+
+        if (!error) {
+          savedInSupabase = true;
+          // Clean up any duplicate rows if they existed with different IDs
+          const duplicateIds = existingDbRowIds.filter((id) => id !== finalId);
+          if (duplicateIds.length > 0) {
+            await supabase.from('propostas').delete().in('id', duplicateIds);
+          }
+        } else {
+          supabaseError = error;
+          console.warn('Erro ao salvar no Supabase:', error);
+        }
+      } catch (err) {
+        supabaseError = err;
+        console.warn('Exceção ao salvar no Supabase:', err);
+      }
+    }
+
+    // Always update local disk backup as well
+    const list = readLocalDataFile();
+    const existingIndex = list.findIndex(
+      (p) =>
+        p.id === newProposal.id ||
+        (p.category.toLowerCase() === cleanCategory &&
+          p.clientSlug.toLowerCase() === cleanSlug)
+    );
     if (existingIndex >= 0) {
       list[existingIndex] = newProposal;
     } else {
       list.unshift(newProposal);
     }
-
-    writeDataFile(list);
+    writeLocalDataFile(list);
 
     return NextResponse.json(
-      { success: true, proposal: newProposal },
+      {
+        success: true,
+        proposal: newProposal,
+        source: savedInSupabase ? 'supabase' : 'local',
+        supabaseError: supabaseError ? (supabaseError.message || String(supabaseError)) : null,
+      },
       {
         headers: {
           'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
-          'Pragma': 'no-cache',
-          'Expires': '0',
+          Pragma: 'no-cache',
+          Expires: '0',
         },
       }
     );
-  } catch (err) {
+  } catch (err: any) {
     console.error('Error in POST /api/propostas:', err);
-    return NextResponse.json({ success: false, message: 'Erro ao salvar proposta' }, { status: 500 });
+    return NextResponse.json({ success: false, message: 'Erro ao salvar proposta: ' + err.message }, { status: 500 });
   }
 }
 
@@ -277,29 +379,86 @@ export async function PATCH(req: NextRequest) {
     const body = await req.json();
     const { id, category, slug, status } = body;
 
-    const list = ensureDataFile();
+    const supabase = getServerSupabase();
+    let updatedProposal: Proposal | null = null;
+    let savedInSupabase = false;
+
+    // Check local disk backup
+    const list = readLocalDataFile();
     const index = list.findIndex((p) => {
       if (id && p.id === id) return true;
-      if (category && slug && p.category === category && p.clientSlug.toLowerCase() === slug.toLowerCase()) return true;
+      if (category && slug && p.category.toLowerCase() === category.toLowerCase() && p.clientSlug.toLowerCase() === slug.toLowerCase()) return true;
       return false;
     });
 
-    if (index === -1) {
-      return NextResponse.json({ success: false, message: 'Proposta não encontrada' }, { status: 404 });
+    if (index >= 0) {
+      if (status) {
+        list[index].status = status;
+        if (status === 'visualizada' && !list[index].viewedAt) {
+          list[index].viewedAt = new Date().toISOString();
+        }
+      }
+      list[index].updatedAt = new Date().toISOString();
+      updatedProposal = list[index];
+      writeLocalDataFile(list);
     }
 
-    if (status) {
-      list[index].status = status;
-      if (status === 'visualizada' && !list[index].viewedAt) {
-        list[index].viewedAt = new Date().toISOString();
+    // Update in Supabase
+    if (supabase) {
+      try {
+        let targetId = id;
+        const { data: rows } = await supabase.from('propostas').select('*');
+        const foundRow = (rows || []).find((r) => {
+          if (id && r.id === id) return true;
+          const p = parseProposalRow(r);
+          if (!p) return false;
+          return (
+            (id && p.id === id) ||
+            (category && slug && p.category.toLowerCase() === category.toLowerCase() && p.clientSlug.toLowerCase() === slug.toLowerCase())
+          );
+        });
+
+        if (foundRow) {
+          targetId = foundRow.id;
+          const parsed = parseProposalRow(foundRow);
+          if (parsed) {
+            if (status) {
+              parsed.status = status;
+              if (status === 'visualizada' && !parsed.viewedAt) parsed.viewedAt = new Date().toISOString();
+            }
+            parsed.updatedAt = new Date().toISOString();
+            updatedProposal = parsed;
+          }
+        }
+
+        if (targetId && updatedProposal) {
+          const { error } = await supabase
+            .from('propostas')
+            .update({
+              dados: updatedProposal,
+              updated_at: updatedProposal.updatedAt || new Date().toISOString(),
+            })
+            .eq('id', targetId);
+
+          if (!error) savedInSupabase = true;
+        }
+      } catch (err) {
+        console.warn('Erro ao atualizar status no Supabase:', err);
       }
     }
 
-    writeDataFile(list);
-    return NextResponse.json({ success: true, proposal: enrichProposal(list[index]) });
-  } catch (err) {
+    if (!updatedProposal) {
+      return NextResponse.json({ success: false, message: 'Proposta não encontrada' }, { status: 404 });
+    }
+
+    return NextResponse.json({
+      success: true,
+      proposal: enrichProposal(updatedProposal),
+      source: savedInSupabase ? 'supabase' : 'local',
+    });
+  } catch (err: any) {
     console.error('Error in PATCH /api/propostas:', err);
-    return NextResponse.json({ success: false, message: 'Erro ao atualizar proposta' }, { status: 500 });
+    return NextResponse.json({ success: false, message: 'Erro ao atualizar proposta: ' + err.message }, { status: 500 });
   }
 }
 
@@ -311,30 +470,81 @@ export async function DELETE(req: NextRequest) {
     const category = searchParams.get('category');
     const slug = searchParams.get('slug');
 
-    let list = ensureDataFile();
-
-    if (id || (category && slug)) {
-      list = list.filter((p) => {
-        if (id && p.id === id) return false;
-        if (category && slug && p.category.toLowerCase() === category.toLowerCase() && (
-          p.clientSlug.toLowerCase() === slug.toLowerCase() ||
-          p.clientSlug.toLowerCase().includes(slug.toLowerCase()) ||
-          slug.toLowerCase().includes(p.clientSlug.toLowerCase())
-        )) return false;
-        return true;
-      });
-    } else {
+    if (!id && (!category || !slug)) {
       return NextResponse.json(
         { success: false, message: 'Informe o ID ou a Categoria e o Slug para excluir' },
         { status: 400 }
       );
     }
 
-    writeDataFile(list);
+    const supabase = getServerSupabase();
+    let deletedFromSupabase = false;
 
-    return NextResponse.json({ success: true, message: 'Proposta excluída com sucesso' });
-  } catch (err) {
+    if (supabase) {
+      try {
+        const { data: rows } = await supabase.from('propostas').select('*');
+        const idsToDelete = new Set<string>();
+
+        (rows || []).forEach((r) => {
+          if (id && r.id === id) {
+            idsToDelete.add(r.id);
+          }
+          const p = parseProposalRow(r);
+          if (p) {
+            if (id && p.id === id) {
+              idsToDelete.add(r.id);
+            }
+            if (category && slug) {
+              const cleanCategory = category.toLowerCase().trim();
+              const cleanSlug = slug.toLowerCase().trim();
+              if (
+                p.category.toLowerCase() === cleanCategory &&
+                p.clientSlug.toLowerCase() === cleanSlug
+              ) {
+                idsToDelete.add(r.id);
+              }
+            }
+          }
+        });
+
+        if (idsToDelete.size > 0) {
+          const idList = Array.from(idsToDelete);
+          const { error } = await supabase.from('propostas').delete().in('id', idList);
+          if (!error) {
+            deletedFromSupabase = true;
+          } else {
+            console.warn('Supabase delete in error:', error);
+          }
+        }
+      } catch (err) {
+        console.warn('Erro ao excluir no Supabase:', err);
+      }
+    }
+
+    // Always remove from local disk backup
+    let list = readLocalDataFile();
+    list = list.filter((p) => {
+      if (id && p.id === id) return false;
+      if (
+        category &&
+        slug &&
+        p.category.toLowerCase() === category.toLowerCase() &&
+        p.clientSlug.toLowerCase() === slug.toLowerCase()
+      ) {
+        return false;
+      }
+      return true;
+    });
+    writeLocalDataFile(list);
+
+    return NextResponse.json({
+      success: true,
+      message: 'Proposta excluída com sucesso',
+      source: deletedFromSupabase ? 'supabase' : 'local',
+    });
+  } catch (err: any) {
     console.error('Error in DELETE /api/propostas:', err);
-    return NextResponse.json({ success: false, message: 'Erro ao excluir proposta' }, { status: 500 });
+    return NextResponse.json({ success: false, message: 'Erro ao excluir proposta: ' + err.message }, { status: 500 });
   }
 }
+

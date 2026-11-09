@@ -34,18 +34,54 @@
           "Foto extra R$ 20,00"
         ],
         "installments": [
-          { "times": "1x", "value": "R$ 365,33" },
-          { "times": "2x", "value": "R$ 186,36 (R$ 372,72)" },
-          { "times": "3x", "value": "R$ 125,46 (R$ 376,39)" },
-          { "times": "4x", "value": "R$ 95,03 (R$ 380,10)" },
-          { "times": "5x", "value": "R$ 76,76 (R$ 383,78)" },
-          { "times": "6x", "value": "R$ 64,58 (R$ 387,49)" },
-          { "times": "7x", "value": "R$ 57,20 (R$ 400,40)" },
-          { "times": "8x", "value": "R$ 50,53 (R$ 404,25)" },
-          { "times": "9x", "value": "R$ 45,34 (R$ 408,10)" },
-          { "times": "10x", "value": "R$ 41,20 (R$ 411,95)" },
-          { "times": "11x", "value": "R$ 37,83 (R$ 416,15)" },
-          { "times": "12x", "value": "R$ 35,00 (R$ 420,00)" }
+          {
+            "times": "1x",
+            "value": "R$ 365,33"
+          },
+          {
+            "times": "2x",
+            "value": "R$ 186,36 (R$ 372,72)"
+          },
+          {
+            "times": "3x",
+            "value": "R$ 125,46 (R$ 376,39)"
+          },
+          {
+            "times": "4x",
+            "value": "R$ 95,03 (R$ 380,10)"
+          },
+          {
+            "times": "5x",
+            "value": "R$ 76,76 (R$ 383,78)"
+          },
+          {
+            "times": "6x",
+            "value": "R$ 64,58 (R$ 387,49)"
+          },
+          {
+            "times": "7x",
+            "value": "R$ 57,20 (R$ 400,40)"
+          },
+          {
+            "times": "8x",
+            "value": "R$ 50,53 (R$ 404,25)"
+          },
+          {
+            "times": "9x",
+            "value": "R$ 45,34 (R$ 408,10)"
+          },
+          {
+            "times": "10x",
+            "value": "R$ 41,20 (R$ 411,95)"
+          },
+          {
+            "times": "11x",
+            "value": "R$ 37,83 (R$ 416,15)"
+          },
+          {
+            "times": "12x",
+            "value": "R$ 35,00 (R$ 420,00)"
+          }
         ]
       },
       {
@@ -63,18 +99,54 @@
           "Foto extra R$ 18,00"
         ],
         "installments": [
-          { "times": "1x", "value": "R$ 574,09" },
-          { "times": "2x", "value": "R$ 292,85 (R$ 585,69)" },
-          { "times": "3x", "value": "R$ 197,16 (R$ 591,47)" },
-          { "times": "4x", "value": "R$ 149,33 (R$ 597,30)" },
-          { "times": "5x", "value": "R$ 120,62 (R$ 603,08)" },
-          { "times": "6x", "value": "R$ 101,48 (R$ 608,90)" },
-          { "times": "7x", "value": "R$ 89,89 (R$ 629,20)" },
-          { "times": "8x", "value": "R$ 79,41 (R$ 635,25)" },
-          { "times": "9x", "value": "R$ 71,26 (R$ 641,30)" },
-          { "times": "10x", "value": "R$ 64,74 (R$ 647,35)" },
-          { "times": "11x", "value": "R$ 59,45 (R$ 653,95)" },
-          { "times": "12x", "value": "R$ 55,00 (R$ 660,00)" }
+          {
+            "times": "1x",
+            "value": "R$ 574,09"
+          },
+          {
+            "times": "2x",
+            "value": "R$ 292,85 (R$ 585,69)"
+          },
+          {
+            "times": "3x",
+            "value": "R$ 197,16 (R$ 591,47)"
+          },
+          {
+            "times": "4x",
+            "value": "R$ 149,33 (R$ 597,30)"
+          },
+          {
+            "times": "5x",
+            "value": "R$ 120,62 (R$ 603,08)"
+          },
+          {
+            "times": "6x",
+            "value": "R$ 101,48 (R$ 608,90)"
+          },
+          {
+            "times": "7x",
+            "value": "R$ 89,89 (R$ 629,20)"
+          },
+          {
+            "times": "8x",
+            "value": "R$ 79,41 (R$ 635,25)"
+          },
+          {
+            "times": "9x",
+            "value": "R$ 71,26 (R$ 641,30)"
+          },
+          {
+            "times": "10x",
+            "value": "R$ 64,74 (R$ 647,35)"
+          },
+          {
+            "times": "11x",
+            "value": "R$ 59,45 (R$ 653,95)"
+          },
+          {
+            "times": "12x",
+            "value": "R$ 55,00 (R$ 660,00)"
+          }
         ]
       },
       {
@@ -91,18 +163,54 @@
           "Foto extra R$ 16,00"
         ],
         "installments": [
-          { "times": "1x", "value": "R$ 782,85" },
-          { "times": "2x", "value": "R$ 399,34 (R$ 798,68)" },
-          { "times": "3x", "value": "R$ 268,85 (R$ 806,55)" },
-          { "times": "4x", "value": "R$ 203,63 (R$ 814,50)" },
-          { "times": "5x", "value": "R$ 164,48 (R$ 822,38)" },
-          { "times": "6x", "value": "R$ 138,39 (R$ 830,32)" },
-          { "times": "7x", "value": "R$ 122,57 (R$ 858,00)" },
-          { "times": "8x", "value": "R$ 108,28 (R$ 866,25)" },
-          { "times": "9x", "value": "R$ 97,17 (R$ 874,50)" },
-          { "times": "10x", "value": "R$ 88,28 (R$ 882,75)" },
-          { "times": "11x", "value": "R$ 81,07 (R$ 891,75)" },
-          { "times": "12x", "value": "R$ 75,00 (R$ 900,00)" }
+          {
+            "times": "1x",
+            "value": "R$ 782,85"
+          },
+          {
+            "times": "2x",
+            "value": "R$ 399,34 (R$ 798,68)"
+          },
+          {
+            "times": "3x",
+            "value": "R$ 268,85 (R$ 806,55)"
+          },
+          {
+            "times": "4x",
+            "value": "R$ 203,63 (R$ 814,50)"
+          },
+          {
+            "times": "5x",
+            "value": "R$ 164,48 (R$ 822,38)"
+          },
+          {
+            "times": "6x",
+            "value": "R$ 138,39 (R$ 830,32)"
+          },
+          {
+            "times": "7x",
+            "value": "R$ 122,57 (R$ 858,00)"
+          },
+          {
+            "times": "8x",
+            "value": "R$ 108,28 (R$ 866,25)"
+          },
+          {
+            "times": "9x",
+            "value": "R$ 97,17 (R$ 874,50)"
+          },
+          {
+            "times": "10x",
+            "value": "R$ 88,28 (R$ 882,75)"
+          },
+          {
+            "times": "11x",
+            "value": "R$ 81,07 (R$ 891,75)"
+          },
+          {
+            "times": "12x",
+            "value": "R$ 75,00 (R$ 900,00)"
+          }
         ]
       },
       {
@@ -119,18 +227,54 @@
           "Prazo de entrega de até 20 dias"
         ],
         "installments": [
-          { "times": "1x", "value": "R$ 1.022,92" },
-          { "times": "2x", "value": "R$ 521,80 (R$ 1.043,60)" },
-          { "times": "3x", "value": "R$ 351,30 (R$ 1.053,89)" },
-          { "times": "4x", "value": "R$ 266,07 (R$ 1.064,28)" },
-          { "times": "5x", "value": "R$ 214,91 (R$ 1.074,57)" },
-          { "times": "6x", "value": "R$ 180,83 (R$ 1.084,96)" },
-          { "times": "7x", "value": "R$ 160,16 (R$ 1.121,12)" },
-          { "times": "8x", "value": "R$ 141,49 (R$ 1.131,90)" },
-          { "times": "9x", "value": "R$ 126,97 (R$ 1.142,68)" },
-          { "times": "10x", "value": "R$ 115,35 (R$ 1.153,46)" },
-          { "times": "11x", "value": "R$ 105,93 (R$ 1.165,22)" },
-          { "times": "12x", "value": "R$ 98,00 (R$ 1.176,00)" }
+          {
+            "times": "1x",
+            "value": "R$ 1.022,92"
+          },
+          {
+            "times": "2x",
+            "value": "R$ 521,80 (R$ 1.043,60)"
+          },
+          {
+            "times": "3x",
+            "value": "R$ 351,30 (R$ 1.053,89)"
+          },
+          {
+            "times": "4x",
+            "value": "R$ 266,07 (R$ 1.064,28)"
+          },
+          {
+            "times": "5x",
+            "value": "R$ 214,91 (R$ 1.074,57)"
+          },
+          {
+            "times": "6x",
+            "value": "R$ 180,83 (R$ 1.084,96)"
+          },
+          {
+            "times": "7x",
+            "value": "R$ 160,16 (R$ 1.121,12)"
+          },
+          {
+            "times": "8x",
+            "value": "R$ 141,49 (R$ 1.131,90)"
+          },
+          {
+            "times": "9x",
+            "value": "R$ 126,97 (R$ 1.142,68)"
+          },
+          {
+            "times": "10x",
+            "value": "R$ 115,35 (R$ 1.153,46)"
+          },
+          {
+            "times": "11x",
+            "value": "R$ 105,93 (R$ 1.165,22)"
+          },
+          {
+            "times": "12x",
+            "value": "R$ 98,00 (R$ 1.176,00)"
+          }
         ]
       }
     ],
@@ -150,18 +294,54 @@
           "Prazo de entrega de até 48 horas úteis"
         ],
         "installments": [
-          { "times": "1x", "value": "R$ 208,76" },
-          { "times": "2x", "value": "R$ 106,49 (R$ 212,98)" },
-          { "times": "3x", "value": "R$ 71,69 (R$ 215,08)" },
-          { "times": "4x", "value": "R$ 54,30 (R$ 217,20)" },
-          { "times": "5x", "value": "R$ 43,86 (R$ 219,30)" },
-          { "times": "6x", "value": "R$ 36,90 (R$ 221,42)" },
-          { "times": "7x", "value": "R$ 32,69 (R$ 228,80)" },
-          { "times": "8x", "value": "R$ 28,88 (R$ 231,00)" },
-          { "times": "9x", "value": "R$ 25,91 (R$ 233,20)" },
-          { "times": "10x", "value": "R$ 23,54 (R$ 235,40)" },
-          { "times": "11x", "value": "R$ 21,62 (R$ 237,80)" },
-          { "times": "12x", "value": "R$ 20,00 (R$ 240,00)" }
+          {
+            "times": "1x",
+            "value": "R$ 208,76"
+          },
+          {
+            "times": "2x",
+            "value": "R$ 106,49 (R$ 212,98)"
+          },
+          {
+            "times": "3x",
+            "value": "R$ 71,69 (R$ 215,08)"
+          },
+          {
+            "times": "4x",
+            "value": "R$ 54,30 (R$ 217,20)"
+          },
+          {
+            "times": "5x",
+            "value": "R$ 43,86 (R$ 219,30)"
+          },
+          {
+            "times": "6x",
+            "value": "R$ 36,90 (R$ 221,42)"
+          },
+          {
+            "times": "7x",
+            "value": "R$ 32,69 (R$ 228,80)"
+          },
+          {
+            "times": "8x",
+            "value": "R$ 28,88 (R$ 231,00)"
+          },
+          {
+            "times": "9x",
+            "value": "R$ 25,91 (R$ 233,20)"
+          },
+          {
+            "times": "10x",
+            "value": "R$ 23,54 (R$ 235,40)"
+          },
+          {
+            "times": "11x",
+            "value": "R$ 21,62 (R$ 237,80)"
+          },
+          {
+            "times": "12x",
+            "value": "R$ 20,00 (R$ 240,00)"
+          }
         ]
       },
       {
@@ -179,18 +359,54 @@
           "Prazo de entrega de até 72 horas úteis"
         ],
         "installments": [
-          { "times": "1x", "value": "R$ 407,08" },
-          { "times": "2x", "value": "R$ 207,66 (R$ 415,31)" },
-          { "times": "3x", "value": "R$ 139,80 (R$ 419,41)" },
-          { "times": "4x", "value": "R$ 105,88 (R$ 423,54)" },
-          { "times": "5x", "value": "R$ 85,53 (R$ 427,64)" },
-          { "times": "6x", "value": "R$ 71,96 (R$ 431,77)" },
-          { "times": "7x", "value": "R$ 63,74 (R$ 446,16)" },
-          { "times": "8x", "value": "R$ 56,31 (R$ 450,45)" },
-          { "times": "9x", "value": "R$ 50,53 (R$ 454,74)" },
-          { "times": "10x", "value": "R$ 45,90 (R$ 459,03)" },
-          { "times": "11x", "value": "R$ 42,16 (R$ 463,71)" },
-          { "times": "12x", "value": "R$ 39,00 (R$ 468,00)" }
+          {
+            "times": "1x",
+            "value": "R$ 407,08"
+          },
+          {
+            "times": "2x",
+            "value": "R$ 207,66 (R$ 415,31)"
+          },
+          {
+            "times": "3x",
+            "value": "R$ 139,80 (R$ 419,41)"
+          },
+          {
+            "times": "4x",
+            "value": "R$ 105,88 (R$ 423,54)"
+          },
+          {
+            "times": "5x",
+            "value": "R$ 85,53 (R$ 427,64)"
+          },
+          {
+            "times": "6x",
+            "value": "R$ 71,96 (R$ 431,77)"
+          },
+          {
+            "times": "7x",
+            "value": "R$ 63,74 (R$ 446,16)"
+          },
+          {
+            "times": "8x",
+            "value": "R$ 56,31 (R$ 450,45)"
+          },
+          {
+            "times": "9x",
+            "value": "R$ 50,53 (R$ 454,74)"
+          },
+          {
+            "times": "10x",
+            "value": "R$ 45,90 (R$ 459,03)"
+          },
+          {
+            "times": "11x",
+            "value": "R$ 42,16 (R$ 463,71)"
+          },
+          {
+            "times": "12x",
+            "value": "R$ 39,00 (R$ 468,00)"
+          }
         ]
       },
       {
@@ -208,18 +424,54 @@
           "Prazo de entrega de até 72 horas úteis"
         ],
         "installments": [
-          { "times": "1x", "value": "R$ 521,90" },
-          { "times": "2x", "value": "R$ 266,23 (R$ 532,45)" },
-          { "times": "3x", "value": "R$ 179,23 (R$ 537,70)" },
-          { "times": "4x", "value": "R$ 135,75 (R$ 543,00)" },
-          { "times": "5x", "value": "R$ 109,65 (R$ 548,25)" },
-          { "times": "6x", "value": "R$ 92,26 (R$ 553,55)" },
-          { "times": "7x", "value": "R$ 81,71 (R$ 572,00)" },
-          { "times": "8x", "value": "R$ 72,19 (R$ 577,50)" },
-          { "times": "9x", "value": "R$ 64,78 (R$ 583,00)" },
-          { "times": "10x", "value": "R$ 58,85 (R$ 588,50)" },
-          { "times": "11x", "value": "R$ 54,05 (R$ 594,50)" },
-          { "times": "12x", "value": "R$ 50,00 (R$ 600,00)" }
+          {
+            "times": "1x",
+            "value": "R$ 521,90"
+          },
+          {
+            "times": "2x",
+            "value": "R$ 266,23 (R$ 532,45)"
+          },
+          {
+            "times": "3x",
+            "value": "R$ 179,23 (R$ 537,70)"
+          },
+          {
+            "times": "4x",
+            "value": "R$ 135,75 (R$ 543,00)"
+          },
+          {
+            "times": "5x",
+            "value": "R$ 109,65 (R$ 548,25)"
+          },
+          {
+            "times": "6x",
+            "value": "R$ 92,26 (R$ 553,55)"
+          },
+          {
+            "times": "7x",
+            "value": "R$ 81,71 (R$ 572,00)"
+          },
+          {
+            "times": "8x",
+            "value": "R$ 72,19 (R$ 577,50)"
+          },
+          {
+            "times": "9x",
+            "value": "R$ 64,78 (R$ 583,00)"
+          },
+          {
+            "times": "10x",
+            "value": "R$ 58,85 (R$ 588,50)"
+          },
+          {
+            "times": "11x",
+            "value": "R$ 54,05 (R$ 594,50)"
+          },
+          {
+            "times": "12x",
+            "value": "R$ 50,00 (R$ 600,00)"
+          }
         ]
       },
       {
@@ -237,18 +489,54 @@
           "Prazo de entrega de até 96 horas úteis"
         ],
         "installments": [
-          { "times": "1x", "value": "R$ 678,47" },
-          { "times": "2x", "value": "R$ 346,09 (R$ 692,19)" },
-          { "times": "3x", "value": "R$ 233,00 (R$ 699,01)" },
-          { "times": "4x", "value": "R$ 176,48 (R$ 705,90)" },
-          { "times": "5x", "value": "R$ 142,55 (R$ 712,73)" },
-          { "times": "6x", "value": "R$ 119,94 (R$ 719,62)" },
-          { "times": "7x", "value": "R$ 106,23 (R$ 743,60)" },
-          { "times": "8x", "value": "R$ 93,84 (R$ 750,75)" },
-          { "times": "9x", "value": "R$ 84,21 (R$ 757,90)" },
-          { "times": "10x", "value": "R$ 76,51 (R$ 765,05)" },
-          { "times": "11x", "value": "R$ 70,26 (R$ 772,85)" },
-          { "times": "12x", "value": "R$ 65,00 (R$ 780,00)" }
+          {
+            "times": "1x",
+            "value": "R$ 678,47"
+          },
+          {
+            "times": "2x",
+            "value": "R$ 346,09 (R$ 692,19)"
+          },
+          {
+            "times": "3x",
+            "value": "R$ 233,00 (R$ 699,01)"
+          },
+          {
+            "times": "4x",
+            "value": "R$ 176,48 (R$ 705,90)"
+          },
+          {
+            "times": "5x",
+            "value": "R$ 142,55 (R$ 712,73)"
+          },
+          {
+            "times": "6x",
+            "value": "R$ 119,94 (R$ 719,62)"
+          },
+          {
+            "times": "7x",
+            "value": "R$ 106,23 (R$ 743,60)"
+          },
+          {
+            "times": "8x",
+            "value": "R$ 93,84 (R$ 750,75)"
+          },
+          {
+            "times": "9x",
+            "value": "R$ 84,21 (R$ 757,90)"
+          },
+          {
+            "times": "10x",
+            "value": "R$ 76,51 (R$ 765,05)"
+          },
+          {
+            "times": "11x",
+            "value": "R$ 70,26 (R$ 772,85)"
+          },
+          {
+            "times": "12x",
+            "value": "R$ 65,00 (R$ 780,00)"
+          }
         ]
       }
     ]
@@ -1153,226 +1441,6 @@
           "Prazo de entrega de até 25 dias"
         ],
         "extraNote": "Porque você não precisa escolher quais memórias merecem permanecer."
-      }
-    ]
-  },
-  {
-    "id": "sample-corp-01",
-    "category": "corporativo",
-    "clientName": "Dra. Camila Santos",
-    "clientSlug": "dra-camila-santos",
-    "title": "Proposta de Posicionamento de Imagem & Conteúdo Corporativo",
-    "subtitle": "Fotografia e vídeos estratégicos para elevar a percepção de autoridade e credibilidade da sua marca.",
-    "welcomeMessage": "Olá Dra. Camila! Foi um prazer conversar com você. Esta proposta foi desenhada especialmente para elevar o posicionamento digital da sua clínica com fotos de autoridade e vídeos estratégicos.",
-    "validityDays": 10,
-    "createdAt": "2026-09-30T15:27:58.760Z",
-    "investmentNote": "Garantia de reserva mediante sinal de 30% do valor contratado, com os 70% restantes quitados no dia do ensaio. Facilitamos o pagamento em até 12x no cartão de crédito.",
-    "beforeImage": "/images/corporativoantes.jpeg",
-    "afterImage": "/images/corporativodepois.jpeg",
-    "isTemplate": false,
-    "packages": [
-      {
-        "id": "corp-01",
-        "name": "Ensaio Essencial",
-        "highlight": false,
-        "price": "R$ 257",
-        "paymentMethod": "Pix",
-        "duration": "Duração de até 01 hora",
-        "features": [
-          "10 fotos selecionadas",
-          "01 vídeo brinde Making Of",
-          "Prazo de entrega de até 10 dias",
-          "Foto extra R$ 25,00 (desconto a partir de 13 extras)"
-        ]
-      },
-      {
-        "id": "corp-02",
-        "name": "Ensaio Clássico",
-        "highlight": false,
-        "price": "R$ 357",
-        "paymentMethod": "Pix",
-        "duration": "Duração de até 01 hora",
-        "features": [
-          "15 fotos selecionadas",
-          "01 vídeo brinde Making Of",
-          "Prazo de entrega de até 15 dias",
-          "Foto extra R$ 23,00 (desconto a partir de 13 extras)"
-        ]
-      },
-      {
-        "id": "corp-03",
-        "name": "Ensaio Especial",
-        "highlight": false,
-        "price": "R$ 447",
-        "paymentMethod": "Pix",
-        "duration": "Duração de até 02 horas",
-        "features": [
-          "20 fotos selecionadas",
-          "01 vídeo brinde Making Of",
-          "Prazo de entrega de até 15 dias",
-          "Foto extra R$ 22,00 (desconto a partir de 13 extras)"
-        ]
-      },
-      {
-        "id": "corp-04",
-        "name": "Ensaio Completo",
-        "highlight": true,
-        "price": "R$ 597",
-        "paymentMethod": "Pix",
-        "duration": "Duração de até 02 horas",
-        "features": [
-          "35 fotos selecionadas",
-          "01 vídeo brinde Making Of",
-          "Prazo de entrega de até 20 dias",
-          "Foto extra R$ 19,00 (desconto a partir de 13 extras)"
-        ]
-      }
-    ],
-    "videoPackages": [
-      {
-        "id": "vid-co-01",
-        "name": "Prático",
-        "highlight": false,
-        "price": "R$ 157",
-        "paymentMethod": "Pix",
-        "duration": "01 vídeo até 1:30seg",
-        "features": [
-          "01 vídeo até 1:30seg",
-          "01 capa pra vídeo",
-          "Roteirização, direção e posicionamento",
-          "Edição dinâmica, cortes essenciais, legenda e trilha sonora",
-          "Prazo de entrega de até 72 horas"
-        ]
-      },
-      {
-        "id": "vid-co-02",
-        "name": "Essencial",
-        "highlight": false,
-        "price": "R$ 587",
-        "paymentMethod": "Pix",
-        "duration": "04 vídeos até 1:30seg",
-        "features": [
-          "04 vídeos até 1:30seg",
-          "04 capas pra vídeo",
-          "Roteirização, direção e posicionamento",
-          "Edição dinâmica, cortes essenciais, legenda e trilha sonora",
-          "02 vídeos brindes curtos até 15seg",
-          "Prazo de entrega de até 10 dias"
-        ]
-      },
-      {
-        "id": "vid-co-03",
-        "name": "Presença",
-        "highlight": false,
-        "price": "R$ 1.087",
-        "paymentMethod": "Pix",
-        "duration": "08 vídeos até 1:30seg",
-        "features": [
-          "08 vídeos até 1:30seg",
-          "08 capas pra vídeo",
-          "Roteirização, direção e posicionamento",
-          "Edição dinâmica, cortes essenciais, legenda e trilha sonora",
-          "03 vídeos brindes curtos até 15seg",
-          "Prazo de entrega de até 15 dias"
-        ]
-      },
-      {
-        "id": "vid-co-04",
-        "name": "Autoridade",
-        "highlight": true,
-        "price": "R$ 1.487",
-        "paymentMethod": "Pix",
-        "duration": "12 vídeos até 1:30seg",
-        "features": [
-          "12 vídeos até 1:30seg",
-          "12 capas pra vídeo",
-          "Roteirização, direção e posicionamento",
-          "Edição dinâmica, cortes essenciais, legenda e trilha sonora",
-          "04 vídeos brindes curtos até 15seg",
-          "Prazo de entrega de até 20 dias"
-        ]
-      }
-    ],
-    "conteudoPackages": [
-      {
-        "id": "cont-01",
-        "name": "Prático",
-        "highlight": false,
-        "price": "R$ 667",
-        "paymentMethod": "Pix",
-        "duration": "Entrega mensal",
-        "features": [
-          "04 vídeos até 1:30seg (Feed)",
-          "Capas para vídeos (Feed)",
-          "04 vídeos até 20seg ou cards (Story)",
-          "Gerenciamento de postagens e análise dos melhores dias e horários",
-          "Acompanhamento, roteirização, direção e posicionamento",
-          "Edição dinâmica, cortes essenciais, legenda e trilha sonora",
-          "Entrega mensal, postagem média de 1x feed por semana"
-        ]
-      },
-      {
-        "id": "cont-02",
-        "name": "Essencial",
-        "highlight": false,
-        "price": "R$ 777",
-        "paymentMethod": "Pix",
-        "duration": "Entrega mensal",
-        "features": [
-          "04 vídeos até 1:30seg (Feed)",
-          "04 vídeos até 20seg ou cards/carrossel (Feed)",
-          "Capas para vídeos (Feed)",
-          "08 vídeos até 20seg ou cards (Story)",
-          "Gerenciamento de postagens e área de Destaques do Instagram, análise dos melhores dias e horários",
-          "Acompanhamento, roteirização, direção e posicionamento",
-          "Edição dinâmica, cortes essenciais, legenda e trilha sonora",
-          "Entrega mensal, postagem média de 2x feed e 3x story na semana",
-          "__DIVIDER__",
-          "*Bônus: 05 capas para Destaques do Instagram.",
-          "Card ou vídeo curto extra em caso de faltar."
-        ]
-      },
-      {
-        "id": "cont-03",
-        "name": "Presença",
-        "highlight": false,
-        "price": "R$ 1.267",
-        "paymentMethod": "Pix",
-        "duration": "Entrega mensal",
-        "features": [
-          "08 vídeos até 1:30seg (Feed)",
-          "04 vídeos até 20seg ou cards/carrossel (Feed)",
-          "Capas para vídeos (Feed)",
-          "12 vídeos até 20seg ou cards (Story)",
-          "Gerenciamento de postagens e área de Destaques do Instagram, análise dos melhores dias e horários",
-          "Acompanhamento, roteirização, direção e posicionamento",
-          "Edição dinâmica, cortes essenciais, legenda e trilha sonora",
-          "Entrega mensal, postagem média de 3x feed e 3x story na semana",
-          "__DIVIDER__",
-          "*Bônus: 05 capas para Destaques do Instagram.",
-          "Card ou vídeo curto extra em caso de faltar."
-        ]
-      },
-      {
-        "id": "cont-04",
-        "name": "Autoridade",
-        "highlight": true,
-        "price": "R$ 1.547",
-        "paymentMethod": "Pix",
-        "duration": "Entrega mensal",
-        "features": [
-          "12 vídeos até 1:30seg (Feed)",
-          "04 vídeos até 20seg ou cards/carrossel (Feed)",
-          "Capas para vídeos (Feed)",
-          "20 vídeos até 20seg ou cards (Story)",
-          "Gerenciamento de postagens e área de Destaques do Instagram, análise dos melhores dias e horários",
-          "Acompanhamento, roteirização, direção e posicionamento",
-          "Edição dinâmica, cortes essenciais, legenda e trilha sonora",
-          "Entrega mensal, postagem média de 4x feed e 5x story na semana",
-          "__DIVIDER__",
-          "*Bônus: 05 capas para Destaques do Instagram.",
-          "Card ou vídeo curto extra em caso de faltar."
-        ]
       }
     ]
   }

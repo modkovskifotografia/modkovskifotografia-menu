@@ -330,13 +330,12 @@ export default function ProposalView({ category, slug, initialProposal }: Propos
     );
   }
 
-  const effectiveWelcomeMessage = proposal.category === 'individual'
-    ? (proposal.welcomeMessage && !proposal.welcomeMessage.includes('É uma alegria apresentar')
-        ? proposal.welcomeMessage
-        : 'Meu objetivo é transformar o nosso ensaio em um momento leve e divertido. Vou te guiar em cada passo para que a timidez vá embora e você se sinta em casa logo no primeiro clique.')
-    : proposal.welcomeMessage;
+  const effectiveWelcomeMessage = proposal.welcomeMessage || 
+    (proposal.category === 'individual' 
+      ? 'Meu objetivo é transformar o nosso ensaio em um momento leve e divertido. Vou te guiar em cada passo para que a timidez vá embora e você se sinta em casa logo no primeiro clique.'
+      : 'É uma alegria apresentar este orçamento exclusivo preparado especialmente para você.');
 
-   const isRestricted = proposal.category === 'individual';
+  const isPhotoSectionVisible = proposal.hidePhotoSection !== true || (Array.isArray(proposal.packages) && proposal.packages.length > 0);
 
   return (
     <main className="w-full relative min-h-screen flex flex-col bg-brand-cream selection:bg-brand-wine selection:text-white pt-20" id="main-proposal-page">
@@ -398,12 +397,24 @@ export default function ProposalView({ category, slug, initialProposal }: Propos
               <span>{copied ? 'Link Copiado!' : 'Copiar Link'}</span>
             </button>
 
-            <a
-              href={!proposal.hidePhotoSection ? (proposal.category === 'individual' ? '#ensaio-fotografico' : '#orcamento-personalizado') : (!proposal.hideVideoSection ? '#producao-de-video' : '#producao-de-conteudo')}
-              className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-white text-brand-wine text-[11px] font-bold uppercase tracking-wider hover:bg-brand-cream transition-all shadow-sm"
+            <button
+              type="button"
+              onClick={(e) => {
+                e.preventDefault();
+                const targetId = isPhotoSectionVisible
+                  ? (proposal.category === 'individual' || proposal.category === 'casal' ? 'ensaio-fotografico' : 'orcamento-personalizado')
+                  : (!proposal.hideVideoSection ? 'producao-de-video' : 'producao-de-conteudo');
+                const el = document.getElementById(targetId) || document.getElementById('ensaio-fotografico') || document.getElementById('orcamento-personalizado');
+                if (el) {
+                  const yOffset = -90;
+                  const y = el.getBoundingClientRect().top + window.pageYOffset + yOffset;
+                  window.scrollTo({ top: y, behavior: 'smooth' });
+                }
+              }}
+              className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-white text-brand-wine text-[11px] font-bold uppercase tracking-wider hover:bg-brand-cream transition-all shadow-sm cursor-pointer"
             >
               Ver Valores e Pacotes ↓
-            </a>
+            </button>
           </div>
         </div>
       </div>
@@ -483,7 +494,7 @@ export default function ProposalView({ category, slug, initialProposal }: Propos
         videoButtonWine={proposal.category === 'individual' || proposal.category === 'personalizado' || proposal.category === 'corporativo' || proposal.category === 'evento' || proposal.category === 'institucional'}
         conteudoButtonWine={proposal.category === 'corporativo' || proposal.category === 'evento' || proposal.category === 'institucional'}
         fotoButtonText={proposal.category === 'casal' ? 'VER ENSAIO FOTOGRÁFICO' : (proposal.category === 'casamento' || proposal.category === 'personalizado' ? 'VER PROPOSTA' : 'VER COBERTURA FOTOGRÁFICA')}
-        hideFotoButton={!!proposal.hidePhotoSection}
+        hideFotoButton={!isPhotoSectionVisible}
         hideVideoButton={!!proposal.hideVideoSection || proposal.category === 'casamento' || proposal.category === 'casal'}
         hideConteudoButton={
           !!proposal.hideConteudoSection || 
@@ -524,24 +535,13 @@ export default function ProposalView({ category, slug, initialProposal }: Propos
         }
       />
 
-      {/* 5. Conexão com a Fotógrafa (About) - Exibido acima de 'Histórias reais' para corporativo, evento, institucional, casamento e casal */}
-      {(proposal.category === 'corporativo' || proposal.category === 'evento' || proposal.category === 'institucional' || proposal.category === 'casal' || !isRestricted) && <About />}
-      
-      {/* 6. Portfólio Completo de Imagens e Vídeos ('Histórias reais.') */}
-      {proposal.category === 'individual' ? (
-        <Portfolio limitSlots={3} showViewMoreButton={true} showViewPortfolioButton={true} />
-      ) : (
-        <Portfolio showViewPortfolioButton={true} />
-      )}
-      
-      {/* 7. SEÇÃO DE PACOTES E ORÇAMENTO EXCLUSIVO DO CLIENTE */}
-      {!proposal.hidePhotoSection && (!isRestricted || proposal.category === 'corporativo' || proposal.category === 'evento' || proposal.category === 'institucional' || proposal.category === 'casal') && (
+      {/* 5. SEÇÃO DE PACOTES E ORÇAMENTO EXCLUSIVO DO CLIENTE */}
+      {isPhotoSectionVisible && (
         <section 
-          id={proposal.category === 'individual' || proposal.category === 'casal' ? 'ensaio-fotografico' : 'orcamento-personalizado'} 
-          className="w-full py-20 px-4 sm:px-6 lg:px-8 bg-white border-y border-brand-wine/10 relative"
+          id="ensaio-fotografico"
+          className="w-full py-20 px-4 sm:px-6 lg:px-8 bg-white border-y border-brand-wine/10 relative scroll-mt-24"
         >
-          <span id="orcamento-personalizado" className="sr-only" />
-          <span id="ensaio-fotografico" className="sr-only" />
+          <div id="orcamento-personalizado" className="absolute -top-24 left-0 w-0 h-0 pointer-events-none" />
           <div className="max-w-7xl mx-auto">
             
             <div className="text-center max-w-3xl mx-auto mb-12">
@@ -883,6 +883,16 @@ export default function ProposalView({ category, slug, initialProposal }: Propos
         </section>
       )}
 
+      {/* 6. Conexão com a Fotógrafa (About) */}
+      <About />
+      
+      {/* 7. Portfólio Completo de Imagens e Vídeos ('Histórias reais.') */}
+      {proposal.category === 'individual' ? (
+        <Portfolio limitSlots={3} showViewMoreButton={true} showViewPortfolioButton={true} />
+      ) : (
+        <Portfolio showViewPortfolioButton={true} />
+      )}
+
       {/* Seção Personalizada se for categoria personalizado */}
       {proposal.category === 'personalizado' && (
         <section className="py-20 px-6 md:px-12 bg-white border-y border-brand-wine/10 my-10" id="orcamento-personalizado">
@@ -910,8 +920,8 @@ export default function ProposalView({ category, slug, initialProposal }: Propos
         </section>
       )}
 
-      {/* Campo Antes e Depois da Edição (Para corporativo e outros) */}
-      {(!isRestricted || proposal.category === 'corporativo') && proposal.category !== 'evento' && proposal.category !== 'casal' && (() => {
+      {/* Campo Antes e Depois da Edição */}
+      {proposal.category !== 'evento' && proposal.category !== 'casal' && (() => {
         const catDefaults = CATEGORY_DEFAULT_BEFORE_AFTER[proposal.category] || CATEGORY_DEFAULT_BEFORE_AFTER.corporativo;
         return (
           <BeforeAfterSlider 
@@ -1412,7 +1422,7 @@ export default function ProposalView({ category, slug, initialProposal }: Propos
       })()}
 
       {/* 8. Processo de Contratação (Como funciona - Igual à página Início) */}
-      {(!isRestricted || proposal.category === 'corporativo' || proposal.category === 'institucional') && <Process />}
+      <Process />
       
       {/* 9. Depoimentos das Clientes (Igual à página Início) */}
       <Testimonial buttonWine={true} />

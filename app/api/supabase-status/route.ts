@@ -90,6 +90,28 @@ export async function GET() {
       }
     }
 
+    // Teste da tabela 'propostas' no banco de dados
+    let propostasStatus = {
+      tableExists: false,
+      count: 0,
+      error: null as string | null
+    };
+
+    try {
+      const { data: propData, error: propError, count: propCount } = await supabase
+        .from('propostas')
+        .select('id', { count: 'exact' });
+
+      if (!propError) {
+        propostasStatus.tableExists = true;
+        propostasStatus.count = propCount ?? (propData?.length || 0);
+      } else {
+        propostasStatus.error = propError.message;
+      }
+    } catch (e: any) {
+      propostasStatus.error = e?.message || String(e);
+    }
+
     if (foundBucket && files.length > 0) {
       return NextResponse.json({
         connected: true,
@@ -99,7 +121,8 @@ export async function GET() {
           supabaseUrl,
           bucket: foundBucket,
           filesCount: files.length,
-          filesList: files.map((f) => f.name)
+          filesList: files.map((f) => f.name),
+          propostasTable: propostasStatus
         }
       });
     }
@@ -108,10 +131,11 @@ export async function GET() {
     return NextResponse.json({
       connected: true,
       status: 'bucket_empty_or_private',
-      message: 'Conectado ao Supabase, mas nenhum arquivo foi encontrado nos buckets de mídia (portfolio/videos).',
+      message: 'Conectado ao Supabase! Verifique os buckets e tabelas.',
       details: {
         supabaseUrl,
-        testedBuckets: targetBuckets
+        testedBuckets: targetBuckets,
+        propostasTable: propostasStatus
       }
     });
   } catch (err: any) {
