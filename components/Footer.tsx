@@ -55,7 +55,7 @@ export default function Footer() {
             </p>
             <span>•</span>
             <Link 
-              href="/propostas" 
+              href="/painel" 
               className="hover:text-white/80 transition-colors inline-flex items-center gap-1 opacity-40 hover:opacity-100"
               title="Gestão de Propostas e Orçamentos"
             >

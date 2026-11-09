@@ -1,6 +1,9 @@
 import React from 'react';
 import ProposalView from '@/components/ProposalView';
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 interface PageProps {
   params: Promise<{ nome: string }>;
 }
