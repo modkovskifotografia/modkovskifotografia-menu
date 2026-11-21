@@ -610,7 +610,7 @@ export const STANDARD_TEMPLATES: Record<ProposalCategory, Proposal> = {
     welcomeMessage: 'O casamento é o início de um novo capítulo. Estamos preparados para captar cada lágrima de alegria, abraço sincero e sorriso com máxima sensibilidade e atenção aos detalhes.',
     validityDays: 10,
     createdAt: new Date().toISOString(),
-    investmentNote: 'Contrato formal com garantia de data. Pagamento facilitado em até 12x no cartão ou entrada de 30% + parcelas.',
+    investmentNote: 'Garantia de reserva mediante sinal de 30% do valor contratado, com os 70% restantes quitados até o dia da cerimônia. Facilitamos o pagamento em até 12x no cartão de crédito.',
     beforeImage: '/images/casamentoantes.jpeg',
     afterImage: '/images/casamentodepois.jpeg',
     isTemplate: true,
@@ -625,8 +625,9 @@ export const STANDARD_TEMPLATES: Record<ProposalCategory, Proposal> = {
         features: [
           '40 fotos selecionadas',
           '1 vídeo de até 1min30',
+          '1 vídeo de Making Of até 30seg (brinde)',
           'Registro dos principais momentos',
-          'Prazo de entrega de até 10 dias',
+          'Prazo de entrega de até 10 dias úteis',
           'Foto extra R$ 25,00'
         ],
         installments: calculateDefaultInstallments('R$ 650')
@@ -640,9 +641,10 @@ export const STANDARD_TEMPLATES: Record<ProposalCategory, Proposal> = {
         duration: '2 horas de cobertura',
         features: [
           '60 fotos selecionadas',
-          '1 vídeos de até 1min30',
+          '1 vídeo de até 1min30',
+          '1 vídeo de Making Of até 30seg (brinde)',
           'Cobertura ampliada da cerimônia',
-          'Prazo de entrega de até 15 dias',
+          'Prazo de entrega de até 15 dias úteis',
           'Foto extra R$ 23,00'
         ],
         installments: calculateDefaultInstallments('R$ 750')
@@ -657,8 +659,9 @@ export const STANDARD_TEMPLATES: Record<ProposalCategory, Proposal> = {
         features: [
           '80 fotos selecionadas',
           '2 vídeos de até 1min30',
+          '1 vídeo de Making Of até 30seg (brinde)',
           'Maior tempo de cobertura',
-          'Prazo de entrega de até 20 dias',
+          'Prazo de entrega de até 20 dias úteis',
           'Foto extra R$ 20,00'
         ],
         installments: calculateDefaultInstallments('R$ 950')
@@ -674,9 +677,10 @@ export const STANDARD_TEMPLATES: Record<ProposalCategory, Proposal> = {
           'Todas as fotos realizadas durante a cobertura',
           'Média de aproximadamente 200 fotos',
           'Making Of da noiva',
-          '3 vídeos de até 1min30',
-          'Cobertura completa do evento',
-          'Prazo de entrega de até 25 dias'
+          '2 vídeos de até 1min30',
+          '1 vídeo de Making Of até 30seg (brinde)',
+          'Cobertura completa da cerimônia',
+          'Prazo de entrega de até 25 dias úteis'
         ],
         extraNote: 'Porque você não precisa escolher quais memórias merecem permanecer.',
         installments: calculateDefaultInstallments('R$ 1.350')

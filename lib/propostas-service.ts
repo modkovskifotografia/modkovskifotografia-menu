@@ -73,7 +73,7 @@ export function isTombstoned(p: { id?: string; category?: string; clientSlug?: s
 }
 
 function enrichProposal(proposal: Proposal): Proposal {
-  return {
+  const enriched = {
     ...proposal,
     hidePhotoSection: proposal.hidePhotoSection ?? false,
     hideVideoSection: proposal.hideVideoSection ?? false,
@@ -91,6 +91,19 @@ function enrichProposal(proposal: Proposal): Proposal {
       installments: pkg.installments || calculateDefaultInstallments(pkg.price),
     })),
   };
+  if (enriched.category === 'casamento') {
+    const templatePackages = STANDARD_TEMPLATES.casamento.packages.map(pkg => ({
+      ...pkg,
+      installments: pkg.installments || calculateDefaultInstallments(pkg.price),
+    }));
+    if (!enriched.packages || enriched.packages.length === 0 || enriched.packages.some(p => p.features.some(f => (f.includes('10 dias') || f.includes('15 dias') || f.includes('20 dias') || f.includes('25 dias') || f.includes('3 vídeos') || f.includes('Cobertura completa do evento')) && !f.includes('úteis') && !f.includes('Cobertura completa da cerimônia')))) {
+      enriched.packages = templatePackages;
+    }
+    if (!enriched.investmentNote || enriched.investmentNote.includes('Contrato formal')) {
+      enriched.investmentNote = STANDARD_TEMPLATES.casamento.investmentNote;
+    }
+  }
+  return enriched;
 }
 
 export interface ProposalSyncMessage {

@@ -535,6 +535,23 @@ export default function ProposalView({ category, slug, initialProposal }: Propos
         }
       />
 
+      {/* Exclusivamente para Casamento: 1° Quem vai registrar esse momento? (About), 2° Histórias reais. (Portfolio), 3° O PODER DA REVELAÇÃO (BeforeAfterSlider) */}
+      {proposal.category === 'casamento' && (
+        <>
+          <About />
+          <Portfolio showViewPortfolioButton={true} />
+          {(() => {
+            const catDefaults = CATEGORY_DEFAULT_BEFORE_AFTER[proposal.category] || CATEGORY_DEFAULT_BEFORE_AFTER.corporativo;
+            return (
+              <BeforeAfterSlider 
+                beforeImage={proposal.beforeImage || catDefaults.before}
+                afterImage={proposal.afterImage || catDefaults.after}
+              />
+            );
+          })()}
+        </>
+      )}
+
       {/* 5. SEÇÃO DE PACOTES E ORÇAMENTO EXCLUSIVO DO CLIENTE */}
       {isPhotoSectionVisible && (
         <section 
@@ -851,6 +868,16 @@ export default function ProposalView({ category, slug, initialProposal }: Propos
               </div>
             )}
 
+            {/* Observação de Tempo de Cobertura para Casamento */}
+            {proposal.category === 'casamento' && (
+              <div className="max-w-4xl mx-auto mb-6 bg-brand-wine/5 border border-brand-wine/20 rounded-2xl p-4 sm:p-4.5 flex items-start sm:items-center gap-3 text-brand-wine shadow-xs">
+                <Clock className="w-4 h-4 text-brand-wine shrink-0 mt-0.5 sm:mt-0" />
+                <p className="text-xs sm:text-sm font-medium leading-relaxed">
+                  Para ajustar o tempo de cobertura padrão, será acrescido o valor de R$ 50,00/hora.
+                </p>
+              </div>
+            )}
+
             {/* Garantias e Condições Comerciais */}
             <div className="bg-brand-cream/40 rounded-3xl p-6 sm:p-8 border border-brand-wine/10 max-w-4xl mx-auto">
               <div className="flex items-center gap-2 mb-2">
@@ -883,14 +910,16 @@ export default function ProposalView({ category, slug, initialProposal }: Propos
         </section>
       )}
 
-      {/* 6. Conexão com a Fotógrafa (About) */}
-      <About />
+      {/* 6. Conexão com a Fotógrafa (About) - Para não-casamento */}
+      {proposal.category !== 'casamento' && <About />}
       
-      {/* 7. Portfólio Completo de Imagens e Vídeos ('Histórias reais.') */}
-      {proposal.category === 'individual' ? (
-        <Portfolio limitSlots={3} showViewMoreButton={true} showViewPortfolioButton={true} />
-      ) : (
-        <Portfolio showViewPortfolioButton={true} />
+      {/* 7. Portfólio Completo de Imagens e Vídeos ('Histórias reais.') - Para não-casamento */}
+      {proposal.category !== 'casamento' && (
+        proposal.category === 'individual' ? (
+          <Portfolio limitSlots={3} showViewMoreButton={true} showViewPortfolioButton={true} />
+        ) : (
+          <Portfolio showViewPortfolioButton={true} />
+        )
       )}
 
       {/* Seção Personalizada se for categoria personalizado */}
@@ -920,8 +949,8 @@ export default function ProposalView({ category, slug, initialProposal }: Propos
         </section>
       )}
 
-      {/* Campo Antes e Depois da Edição */}
-      {proposal.category !== 'evento' && proposal.category !== 'casal' && (() => {
+      {/* Campo Antes e Depois da Edição (para não-casamento) */}
+      {proposal.category !== 'casamento' && proposal.category !== 'evento' && proposal.category !== 'casal' && (() => {
         const catDefaults = CATEGORY_DEFAULT_BEFORE_AFTER[proposal.category] || CATEGORY_DEFAULT_BEFORE_AFTER.corporativo;
         return (
           <BeforeAfterSlider 
