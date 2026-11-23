@@ -146,7 +146,10 @@ export async function GET(req: NextRequest) {
         writeLocalDataFile(list);
       }
     } else {
-      console.warn('Supabase query failed or table not created yet, using local data backup:', sbResult.error);
+      const errStr = String(sbResult.error?.message || sbResult.error || '');
+      if (!errStr.includes('ENOTFOUND') && !errStr.includes('fetch failed')) {
+        console.warn('Supabase query failed or table not created yet, using local data backup:', sbResult.error);
+      }
       list = readLocalDataFile();
     }
   } else {
