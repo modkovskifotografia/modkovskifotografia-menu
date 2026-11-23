@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
-import { Proposal, calculateDefaultInstallments, slugify } from '@/lib/propostas';
+import { Proposal, ProposalCategory, STANDARD_TEMPLATES, calculateDefaultInstallments, slugify } from '@/lib/propostas';
 import { getServerSupabase } from '@/lib/supabase';
 
 export const dynamic = 'force-dynamic';
@@ -114,10 +114,11 @@ async function autoMigrateLocalToSupabase(supabase: any, localList: Proposal[]) 
 
 // GET: list all proposals or get single by category + slug
 export async function GET(req: NextRequest) {
-  const { searchParams } = new URL(req.url);
-  const category = searchParams.get('category');
-  const slug = searchParams.get('slug');
-  const id = searchParams.get('id');
+  try {
+    const { searchParams } = new URL(req.url);
+    const category = searchParams.get('category');
+    const slug = searchParams.get('slug');
+    const id = searchParams.get('id');
 
   const supabase = getServerSupabase();
   let list: Proposal[] = [];
@@ -185,7 +186,45 @@ export async function GET(req: NextRequest) {
       if (!found) {
         found = list.find((p) => slugify(p.clientSlug || '') === normSlug);
       }
+
+      if (!found && rawSlug !== 'padrao') {
+        const template = STANDARD_TEMPLATES[cleanCategory as ProposalCategory] || STANDARD_TEMPLATES['individual'];
+        const formattedName = rawSlug
+          .split('-')
+          .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+          .join(' ');
+        
+        const autoCreated: Proposal = enrichProposal({
+          ...template,
+          id: `prop-${cleanCategory}-${rawSlug}-${Date.now()}`,
+          category: cleanCategory as ProposalCategory,
+          clientName: formattedName,
+          clientSlug: rawSlug,
+          title: template.title,
+          subtitle: template.subtitle,
+          welcomeMessage: template.welcomeMessage,
+          createdAt: new Date().toISOString(),
+          proposalDate: new Date().toLocaleDateString('pt-BR'),
+          isTemplate: false,
+          status: 'nova',
+        });
+
+        list.unshift(autoCreated);
+        writeLocalDataFile(list);
+        if (supabase) {
+          try {
+            await supabase.from('propostas').upsert({
+              id: autoCreated.id,
+              dados: autoCreated,
+              updated_at: autoCreated.updatedAt,
+            }, { onConflict: 'id' });
+          } catch {}
+        }
+        found = autoCreated;
+      }
     }
+
+    console.log('API GET DEBUG:', { category, slug, found: found ? found.clientSlug : 'NOT FOUND' });
 
     if (found) {
       const fromAdmin = searchParams.get('admin') === 'true';
@@ -240,6 +279,13 @@ export async function GET(req: NextRequest) {
       },
     }
   );
+  } catch (err: any) {
+    console.error('API GET Propostas error:', err);
+    return NextResponse.json(
+      { success: false, message: err?.message || 'Erro ao carregar propostas' },
+      { status: 500 }
+    );
+  }
 }
 
 // POST: create or edit proposal

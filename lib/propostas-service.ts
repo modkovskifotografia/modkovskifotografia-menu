@@ -181,8 +181,26 @@ export function getInitialProposalSnapshot(category: string, slug: string): Prop
     } catch {}
   }
 
-  // If not found in localStorage cache, return null so ProposalView waits for API/Supabase response
-  return null;
+  // Auto-create snapshot if not found in cache
+  const formattedName = cleanSlug
+    .split('-')
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+
+  return enrichProposal({
+    ...template,
+    id: `prop-${cleanCategory}-${cleanSlug}-${Date.now()}`,
+    category: cleanCategory as ProposalCategory,
+    clientName: formattedName,
+    clientSlug: cleanSlug,
+    title: template.title,
+    subtitle: template.subtitle,
+    welcomeMessage: template.welcomeMessage,
+    createdAt: new Date().toISOString(),
+    proposalDate: new Date().toLocaleDateString('pt-BR'),
+    isTemplate: false,
+    status: 'nova',
+  });
 }
 
 export async function fetchAllProposals(): Promise<Proposal[]> {
@@ -347,8 +365,28 @@ export async function fetchProposalBySlug(category: string, slug: string): Promi
     });
   }
 
-  // If proposal is not found on server or local cache, return null so client doesn't see false default prices
-  return null;
+  // Auto-create proposal on-the-fly if it doesn't exist yet
+  const autoCreated: Proposal = enrichProposal({
+    ...template,
+    id: `prop-${cleanCategory}-${cleanSlug}-${Date.now()}`,
+    category: cleanCategory as ProposalCategory,
+    clientName: formattedName,
+    clientSlug: cleanSlug,
+    title: template.title,
+    subtitle: template.subtitle,
+    welcomeMessage: template.welcomeMessage,
+    createdAt: new Date().toISOString(),
+    proposalDate: new Date().toLocaleDateString('pt-BR'),
+    isTemplate: false,
+    status: 'nova',
+  });
+
+  updateLocalCache(autoCreated);
+  try {
+    saveProposalAction(autoCreated);
+  } catch {}
+
+  return autoCreated;
 }
 
 export async function saveProposalAction(proposal: Proposal): Promise<Proposal> {
